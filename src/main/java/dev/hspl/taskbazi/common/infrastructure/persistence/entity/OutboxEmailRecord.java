@@ -1,0 +1,44 @@
+package dev.hspl.taskbazi.common.infrastructure.persistence.entity;
+
+import dev.hspl.taskbazi.common.infrastructure.persistence.enums.OutboxEmailStatus;
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+@Entity
+@Table(name = "outbox_email_records")
+@Getter
+@Setter
+@ToString
+public class OutboxEmailRecord {
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(nullable = false,name = "id",updatable = false,columnDefinition = "UUID")
+    private UUID id;
+
+    @Column(nullable = false,name = "email",length = 60)
+    private String targetEmailAddress;
+
+    @Column(nullable = false,name = "subject",length = 100)
+    private String messageSubject;
+
+    @Column(nullable = false,name = "simple_message",columnDefinition = "text")
+    private String messageSimpleBody;
+
+    @Column(nullable = true,name = "html_message",columnDefinition = "text")
+    private String messageHTMLBody;
+
+    @Column(nullable = false,name = "status")
+    @Enumerated(EnumType.STRING)
+    private OutboxEmailStatus status = OutboxEmailStatus.CREATED;
+
+    @Column(nullable = false,name = "attempts")
+    private short numberOfAttempts = 0;
+
+    @Column(nullable = false,name = "created_at",updatable = false)
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+}
