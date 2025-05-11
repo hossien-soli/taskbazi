@@ -5,6 +5,9 @@ import dev.hspl.taskbazi.common.application.UUIDGenerator;
 import dev.hspl.taskbazi.common.domain.value.RequestClientIdentifier;
 import dev.hspl.taskbazi.common.domain.value.GenericUser;
 import dev.hspl.taskbazi.common.domain.value.UserId;
+import dev.hspl.taskbazi.common.domain.value.UserRole;
+import dev.hspl.taskbazi.user.application.dto.PresentedRefreshToken;
+import dev.hspl.taskbazi.user.domain.entity.RefreshToken;
 import dev.hspl.taskbazi.user.domain.repository.RefreshTokenRepository;
 import dev.hspl.taskbazi.user.domain.value.*;
 import dev.hspl.taskbazi.user.application.exception.InvalidUsernameOrEmailAddressLoginException;
@@ -38,7 +41,7 @@ public class UserLoginApplicationService implements UserLoginUseCase {
     @Override
     public UserLoginResult execute(
             UserLoginCommand command,
-            boolean clientLogin,
+            UserRole roleToLogin,
             @NonNull RequestClientIdentifier requestClientIdentifier,
             @Nullable RequestIdentificationDetails requestIdentificationDetails
     ) {
@@ -49,7 +52,7 @@ public class UserLoginApplicationService implements UserLoginUseCase {
         AuthenticatableUser authenticatableUser = null;
         short numberOfUserActiveLoginSessions = Short.MAX_VALUE;
 
-        if (clientLogin) {
+        if (roleToLogin.equals(UserRole.CLIENT)) {
             Optional<Client> fetchResult = isEmailAddress ?
                     userRepository.findClientByEmailAddress(usernameOrEmailAddress.asEmailAddress()) :
                     userRepository.findClientByUsername(usernameOrEmailAddress.asUsername());
@@ -83,8 +86,16 @@ public class UserLoginApplicationService implements UserLoginUseCase {
                 plainRefreshToken
         );
 
-        // save the refresh token tracker
+        RefreshToken resultRefreshToken = result.refreshToken();
+        if (roleToLogin.equals(UserRole.CLIENT)) {
+            tokenRepository.saveForClient(resultRefreshToken);
+        } else {
+            throw new UnsupportedOperationException("non-client user login logic not implemented yet!");
+        }
 
-        return result;
+        String rawRefreshTokenWithId = roleToLogin + "." + resultRefreshToken.getId().toString() + "." + plainRefreshToken.value();
+        PresentedRefreshToken presentedRefreshToken = new PresentedRefreshToken(rawRefreshTokenWithId);
+
+        return new UserLoginResult(presentedRefreshToken,result.accessToken());
     }
 }

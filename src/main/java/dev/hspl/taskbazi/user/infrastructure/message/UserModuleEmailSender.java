@@ -1,16 +1,16 @@
-package dev.hspl.taskbazi.user.infrastructure.email;
+package dev.hspl.taskbazi.user.infrastructure.message;
 
-import dev.hspl.taskbazi.common.infrastructure.email.GenericEmailMessage;
-import dev.hspl.taskbazi.common.infrastructure.email.GlobalEmailSender;
+import dev.hspl.taskbazi.common.infrastructure.message.email.GlobalEmailSender;
+import dev.hspl.taskbazi.common.infrastructure.message.UserFriendlyMessage;
 import dev.hspl.taskbazi.user.domain.service.ClientRegistrationEmailSender;
 import dev.hspl.taskbazi.user.domain.value.ClientFullName;
 import dev.hspl.taskbazi.common.domain.value.EmailAddress;
 import dev.hspl.taskbazi.user.domain.value.PlainVerificationCode;
 import dev.hspl.taskbazi.common.domain.value.Username;
-import dev.hspl.taskbazi.user.infrastructure.email.messages.ClientRegistrationVerificationEmailMessage;
-import dev.hspl.taskbazi.user.infrastructure.email.messages.ClientRegistrationWelcomeEmailMessage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
+import org.thymeleaf.TemplateEngine;
 
 import java.time.LocalDateTime;
 
@@ -18,6 +18,8 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class UserModuleEmailSender implements ClientRegistrationEmailSender {
     private final GlobalEmailSender globalEmailSender;
+    private final MessageSource messageSource;
+    private final TemplateEngine templateEngine;
 
     @Override
     public void sendVerificationEmail(
@@ -27,14 +29,12 @@ public class UserModuleEmailSender implements ClientRegistrationEmailSender {
             LocalDateTime sessionValidUntil,
             ClientFullName clientFullName
     ) {
-        GenericEmailMessage emailMessage = new ClientRegistrationVerificationEmailMessage(
-                emailAddress,
-                clientFullName,
-                verificationCode,
-                sessionLifetimeSeconds,
-                sessionValidUntil
-        );
+        String subject = "";
+        String plainTextBody = "";
+        String htmlBody = "";
+        boolean isImportant = true;
 
+        UserFriendlyMessage emailMessage = new UserFriendlyMessage(subject,plainTextBody,htmlBody,isImportant);
         globalEmailSender.sendEmailMessage(emailAddress,emailMessage);
     }
 
@@ -45,13 +45,12 @@ public class UserModuleEmailSender implements ClientRegistrationEmailSender {
             ClientFullName clientFullName,
             LocalDateTime registrationDateTime
     ) {
-        GenericEmailMessage emailMessage = new ClientRegistrationWelcomeEmailMessage(
-                emailAddress,
-                clientUsername,
-                clientFullName,
-                registrationDateTime
-        );
+        String subject = "";
+        String plainTextBody = "";
+        String htmlBody = "";
+        boolean isImportant = false;
 
+        UserFriendlyMessage emailMessage = new UserFriendlyMessage(subject,plainTextBody,htmlBody,isImportant);
         globalEmailSender.sendEmailMessage(emailAddress,emailMessage);
     }
 }

@@ -7,6 +7,7 @@ create table outbox_email_records
     subject varchar(100) not null,
     simple_message text not null,
     html_message text null,
+    important_message boolean not null,
     status OutboxRecordStatus not null,
     attempts smallint not null,
     created_at timestamp not null

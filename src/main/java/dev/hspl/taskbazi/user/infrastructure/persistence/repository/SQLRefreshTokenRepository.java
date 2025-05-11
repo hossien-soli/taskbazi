@@ -5,6 +5,8 @@ import dev.hspl.taskbazi.user.domain.entity.RefreshToken;
 import dev.hspl.taskbazi.user.domain.repository.RefreshTokenRepository;
 import dev.hspl.taskbazi.user.domain.value.LoginSessionState;
 import dev.hspl.taskbazi.user.infrastructure.persistence.UserModulePersistenceMapper;
+import dev.hspl.taskbazi.user.infrastructure.persistence.entity.LoginSessionJPAEntity;
+import dev.hspl.taskbazi.user.infrastructure.persistence.entity.RefreshTokenJPAEntity;
 import dev.hspl.taskbazi.user.infrastructure.persistence.repository.jpa.LoginSessionJPARepository;
 import dev.hspl.taskbazi.user.infrastructure.persistence.repository.jpa.RefreshTokenJPARepository;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +29,11 @@ public class SQLRefreshTokenRepository implements RefreshTokenRepository {
     }
 
     private void saveForUser(RefreshToken refreshToken) {
+        RefreshTokenJPAEntity tokenJPAEntity = mapper.mapRefreshTokenToJPAEntity(refreshToken);
+        LoginSessionJPAEntity sessionJPAEntity = tokenJPAEntity.getLoginSession();
 
+        sessionJPARepository.save(sessionJPAEntity);
+        tokenJPARepository.save(tokenJPAEntity);
     }
 
     @Override
