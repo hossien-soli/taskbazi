@@ -1,9 +1,10 @@
 package dev.hspl.taskbazi.user.application.service;
 
+import dev.hspl.taskbazi.common.application.GlobalDomainEventPublisher;
 import dev.hspl.taskbazi.common.application.TimeProvider;
 import dev.hspl.taskbazi.common.application.UUIDGenerator;
-import dev.hspl.taskbazi.common.domain.value.RequestClientIdentifier;
 import dev.hspl.taskbazi.common.domain.value.EmailAddress;
+import dev.hspl.taskbazi.common.domain.value.RequestClientIdentifier;
 import dev.hspl.taskbazi.common.domain.value.UserId;
 import dev.hspl.taskbazi.user.application.exception.InvalidRegistrationSessionIdException;
 import dev.hspl.taskbazi.user.application.exception.PasswordConfirmationMismatchException;
@@ -41,6 +42,7 @@ public class ClientRegistrationApplicationService implements ClientRegistrationR
     private final ClientRegistrationSessionRepository sessionRepository;
     private final UserRepository userRepository;
     private final VerificationCodeGenerator verificationCodeGenerator;
+    private final GlobalDomainEventPublisher domainEventPublisher;
 
     @Override
     public ClientRegistrationRequestResult execute(
@@ -114,6 +116,8 @@ public class ClientRegistrationApplicationService implements ClientRegistrationR
 
             Client client = domainService.registerClient(currentDateTime,newUserId,session);
             userRepository.saveClient(client);
+            domainEventPublisher.publishAll(client);
+
             userRegistered = true;
         }
 

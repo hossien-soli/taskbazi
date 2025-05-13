@@ -1,9 +1,9 @@
 package dev.hspl.taskbazi.user.domain.entity;
 
-import dev.hspl.taskbazi.common.domain.value.RequestClientIdentifier;
+import dev.hspl.taskbazi.common.domain.DomainAggregateRoot;
 import dev.hspl.taskbazi.common.domain.exception.RequestClientIdentifierMismatchException;
 import dev.hspl.taskbazi.common.domain.value.EmailAddress;
-import dev.hspl.taskbazi.user.domain.value.ProtectedPassword;
+import dev.hspl.taskbazi.common.domain.value.RequestClientIdentifier;
 import dev.hspl.taskbazi.common.domain.value.Username;
 import dev.hspl.taskbazi.user.domain.exception.ClosedRegistrationSessionException;
 import dev.hspl.taskbazi.user.domain.service.UserAuthenticationConstraints;
@@ -19,7 +19,7 @@ import java.util.UUID;
 // we should have a scheduled task to remove old garbage registration sessions
 
 @Getter
-public class ClientRegistrationSession {
+public class ClientRegistrationSession extends DomainAggregateRoot {
     private UUID id;
 
     private final EmailAddress emailAddress;

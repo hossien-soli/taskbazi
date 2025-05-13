@@ -6,10 +6,12 @@ import dev.hspl.taskbazi.common.infrastructure.message.notification.delivery.Not
 import dev.hspl.taskbazi.common.infrastructure.message.notification.delivery.NotificationDeliveryMethod;
 import dev.hspl.taskbazi.common.infrastructure.message.notification.delivery.UserNativeApplicationDetector;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
+@Order(3)
 public class NativeApplicationNotificationDeliveryAgent implements NotificationDeliveryAgent {
     //private final UserNativeApplicationDetector userNativeApplicationDetector;
 
@@ -19,10 +21,9 @@ public class NativeApplicationNotificationDeliveryAgent implements NotificationD
     }
 
     @Override
-    public boolean tryDeliver(UserFriendlyMessage message, NotificationRecipient recipient) {
-        // do nothing and just return false for now!!!
+    public void tryDeliver(UserFriendlyMessage message, NotificationRecipient recipient) {
+        // do nothing and just return for now!!!
         // we should create an outbox pattern for pushing notifications to the native front-end applications
         // OUTBOX-PATTERN
-        return false;
     }
 }

@@ -1,13 +1,17 @@
 package dev.hspl.taskbazi.user.domain.entity;
 
+import dev.hspl.taskbazi.common.domain.DomainAggregateRoot;
+import dev.hspl.taskbazi.common.domain.event.DomainNotificationRequestEvent;
+import dev.hspl.taskbazi.common.domain.value.GenericUser;
 import dev.hspl.taskbazi.common.domain.value.RequestClientIdentifier;
-import dev.hspl.taskbazi.user.domain.value.RequestIdentificationDetails;
 import dev.hspl.taskbazi.common.domain.value.UserId;
+import dev.hspl.taskbazi.user.domain.event.NewAccountLoginDomainEvent;
 import dev.hspl.taskbazi.user.domain.service.OpaqueTokenProtector;
 import dev.hspl.taskbazi.user.domain.service.UserAuthenticationConstraints;
 import dev.hspl.taskbazi.user.domain.value.LoginSessionState;
 import dev.hspl.taskbazi.user.domain.value.PlainOpaqueToken;
 import dev.hspl.taskbazi.user.domain.value.ProtectedOpaqueToken;
+import dev.hspl.taskbazi.user.domain.value.RequestIdentificationDetails;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -18,7 +22,7 @@ import java.util.UUID;
 // In the database, login sessions will be persisted in a separate table
 
 @Getter
-public class RefreshToken {
+public class RefreshToken extends DomainAggregateRoot {
     private final UUID id;
 
     private final ProtectedOpaqueToken actualToken;
@@ -57,7 +61,7 @@ public class RefreshToken {
             UUID newRefreshTokenId,
             PlainOpaqueToken plainRefreshToken,
             UUID newLoginSessionId,
-            UserId userId,
+            GenericUser genericUserInfo,
             RequestClientIdentifier requestClientIdentifier,
             RequestIdentificationDetails requestIdentificationDetails,
             UserAuthenticationConstraints constraints,
@@ -66,11 +70,27 @@ public class RefreshToken {
         ProtectedOpaqueToken protectedRefreshToken = tokenProtector.protect(plainRefreshToken);
         short tokenLifetime = constraints.refreshTokenLifetimeHours();
 
-        LoginSession loginSession = LoginSession.newSession(currentDateTime,newLoginSessionId,userId,
-                requestClientIdentifier,requestIdentificationDetails);
+        LoginSession loginSession = LoginSession.newSession(currentDateTime,newLoginSessionId,
+                genericUserInfo.genericUserId(),requestClientIdentifier,requestIdentificationDetails);
 
-        return new RefreshToken(newRefreshTokenId,protectedRefreshToken,tokenLifetime,false,
+        DomainNotificationRequestEvent notifRequestEvent = new NewAccountLoginDomainEvent(
+                currentDateTime,
+                RefreshToken.class.getSimpleName(),
+                newRefreshTokenId,
+                genericUserInfo.userRole(),
+                genericUserInfo.genericUserId(),
+                genericUserInfo.genericUserEmailAddress(),
+                requestClientIdentifier,
+                requestIdentificationDetails,
+                newLoginSessionId
+        );
+
+        RefreshToken result = new RefreshToken(newRefreshTokenId,protectedRefreshToken,tokenLifetime,false,
                 currentDateTime,null,loginSession,null);
+
+        result.registerDomainEvent(notifRequestEvent);
+
+        return result;
     }
 
     public static RefreshToken existingInstance(
@@ -108,6 +128,7 @@ public class RefreshToken {
         this.refreshed = true;
         this.refreshedAt = currentDateTime;
         this.loginSession.newTokenRefresh(newRequestClientIdentifier,newRequestIdentificationDetails);
+        //registerDomainEvent(new TokenRefreshedDomainEvent());
     }
 
     // returns the new token

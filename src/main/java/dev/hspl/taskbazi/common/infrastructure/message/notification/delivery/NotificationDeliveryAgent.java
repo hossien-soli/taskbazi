@@ -6,5 +6,5 @@ import dev.hspl.taskbazi.common.infrastructure.message.notification.Notification
 public interface NotificationDeliveryAgent {
     boolean support(NotificationDeliveryMethod deliveryMethod);
 
-    boolean tryDeliver(UserFriendlyMessage message, NotificationRecipient recipient); // true=success & false=failure
+    void tryDeliver(UserFriendlyMessage message, NotificationRecipient recipient);
 }

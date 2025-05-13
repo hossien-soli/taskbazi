@@ -18,8 +18,8 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class UserModuleEmailSender implements ClientRegistrationEmailSender {
     private final GlobalEmailSender globalEmailSender;
-    private final MessageSource messageSource;
-    private final TemplateEngine templateEngine;
+    private final MessageSource messageSource; // Necessary for constructing the email message content
+    private final TemplateEngine htmlTemplateEngine; // Necessary for constructing the email message content
 
     @Override
     public void sendVerificationEmail(
@@ -33,22 +33,6 @@ public class UserModuleEmailSender implements ClientRegistrationEmailSender {
         String plainTextBody = "";
         String htmlBody = "";
         boolean isImportant = true;
-
-        UserFriendlyMessage emailMessage = new UserFriendlyMessage(subject,plainTextBody,htmlBody,isImportant);
-        globalEmailSender.sendEmailMessage(emailAddress,emailMessage);
-    }
-
-    @Override
-    public void sendWelcomeEmail(
-            EmailAddress emailAddress,
-            Username clientUsername,
-            ClientFullName clientFullName,
-            LocalDateTime registrationDateTime
-    ) {
-        String subject = "";
-        String plainTextBody = "";
-        String htmlBody = "";
-        boolean isImportant = false;
 
         UserFriendlyMessage emailMessage = new UserFriendlyMessage(subject,plainTextBody,htmlBody,isImportant);
         globalEmailSender.sendEmailMessage(emailAddress,emailMessage);

@@ -1,22 +1,22 @@
 package dev.hspl.taskbazi.user.application.service;
 
+import dev.hspl.taskbazi.common.application.GlobalDomainEventPublisher;
 import dev.hspl.taskbazi.common.application.TimeProvider;
 import dev.hspl.taskbazi.common.application.UUIDGenerator;
-import dev.hspl.taskbazi.common.domain.value.RequestClientIdentifier;
 import dev.hspl.taskbazi.common.domain.value.GenericUser;
-import dev.hspl.taskbazi.common.domain.value.UserId;
+import dev.hspl.taskbazi.common.domain.value.RequestClientIdentifier;
 import dev.hspl.taskbazi.common.domain.value.UserRole;
 import dev.hspl.taskbazi.user.application.dto.PresentedRefreshToken;
-import dev.hspl.taskbazi.user.domain.entity.RefreshToken;
-import dev.hspl.taskbazi.user.domain.repository.RefreshTokenRepository;
-import dev.hspl.taskbazi.user.domain.value.*;
 import dev.hspl.taskbazi.user.application.exception.InvalidUsernameOrEmailAddressLoginException;
 import dev.hspl.taskbazi.user.application.usage.UserLoginUseCase;
 import dev.hspl.taskbazi.user.application.usage.cmd.UserLoginCommand;
 import dev.hspl.taskbazi.user.application.usage.result.UserLoginResult;
 import dev.hspl.taskbazi.user.domain.entity.Client;
+import dev.hspl.taskbazi.user.domain.entity.RefreshToken;
+import dev.hspl.taskbazi.user.domain.repository.RefreshTokenRepository;
 import dev.hspl.taskbazi.user.domain.repository.UserRepository;
 import dev.hspl.taskbazi.user.domain.service.UserLoginService;
+import dev.hspl.taskbazi.user.domain.value.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
@@ -37,6 +37,7 @@ public class UserLoginApplicationService implements UserLoginUseCase {
     private final UserRepository userRepository;
     private final OpaqueTokenGenerator opaqueTokenGenerator;
     private final RefreshTokenRepository tokenRepository;
+    private final GlobalDomainEventPublisher domainEventPublisher;
 
     @Override
     public UserLoginResult execute(
@@ -89,6 +90,7 @@ public class UserLoginApplicationService implements UserLoginUseCase {
         RefreshToken resultRefreshToken = result.refreshToken();
         if (roleToLogin.equals(UserRole.CLIENT)) {
             tokenRepository.saveForClient(resultRefreshToken);
+            domainEventPublisher.publishAll(resultRefreshToken);
         } else {
             throw new UnsupportedOperationException("non-client user login logic not implemented yet!");
         }

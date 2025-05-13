@@ -1,8 +1,7 @@
 package dev.hspl.taskbazi.user.domain.service;
 
-import dev.hspl.taskbazi.common.domain.value.RequestClientIdentifier;
 import dev.hspl.taskbazi.common.domain.value.EmailAddress;
-import dev.hspl.taskbazi.user.domain.value.ProtectedPassword;
+import dev.hspl.taskbazi.common.domain.value.RequestClientIdentifier;
 import dev.hspl.taskbazi.common.domain.value.UserId;
 import dev.hspl.taskbazi.common.domain.value.Username;
 import dev.hspl.taskbazi.user.domain.entity.Client;
@@ -11,7 +10,10 @@ import dev.hspl.taskbazi.user.domain.exception.BadSessionStateRegistrationExcept
 import dev.hspl.taskbazi.user.domain.exception.EmailAddressAlreadyInUseException;
 import dev.hspl.taskbazi.user.domain.exception.RegistrationSessionRestrictionException;
 import dev.hspl.taskbazi.user.domain.exception.UsernameAlreadyInUseException;
-import dev.hspl.taskbazi.user.domain.value.*;
+import dev.hspl.taskbazi.user.domain.value.ClientFullName;
+import dev.hspl.taskbazi.user.domain.value.PlainPassword;
+import dev.hspl.taskbazi.user.domain.value.PlainVerificationCode;
+import dev.hspl.taskbazi.user.domain.value.ProtectedPassword;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -43,11 +45,11 @@ public class ClientRegistrationService {
             RequestClientIdentifier requestClientIdentifier,
             LocalDateTime lastSessionCreationTime // last session creation by email address or request client identifier
     ) {
-//        boolean isUsernameUnique = userUniquenessChecker.checkUsernameIsUnique(userUsername);
-//        if (!isUsernameUnique) { throw new UsernameAlreadyInUseException(); }
-//
-//        boolean isEmailAddressUnique = userUniquenessChecker.checkEmailAddressIsUnique(emailAddress);
-//        if (!isEmailAddressUnique) { throw new EmailAddressAlreadyInUseException(); }
+        boolean isUsernameUnique = userUniquenessChecker.checkUsernameIsUnique(userUsername);
+        if (!isUsernameUnique) { throw new UsernameAlreadyInUseException(); }
+
+        boolean isEmailAddressUnique = userUniquenessChecker.checkEmailAddressIsUnique(emailAddress);
+        if (!isEmailAddressUnique) { throw new EmailAddressAlreadyInUseException(); }
 
         int sessionLimitationDelay = constraints.registrationSessionLimitationDelaySeconds();
 
@@ -98,9 +100,6 @@ public class ClientRegistrationService {
 
         boolean isEmailAddressUnique = userUniquenessChecker.checkEmailAddressIsUnique(userEmailAddress);
         if (!isEmailAddressUnique) { throw new EmailAddressAlreadyInUseException(); }
-
-        emailSender.sendWelcomeEmail(userEmailAddress,userUsername,userFullName,currentDateTime);
-        // instead of this send a welcome notification to the user using domain events and AbstractAggregateRoot
 
         return Client.newUniqueClient(currentDateTime,newUserId,userFullName,userEmailAddress,userUsername,userPassword);
     }

@@ -1,9 +1,7 @@
 package dev.hspl.taskbazi.user.domain.service;
 
-import dev.hspl.taskbazi.common.domain.value.RequestClientIdentifier;
 import dev.hspl.taskbazi.common.domain.value.GenericUser;
-import dev.hspl.taskbazi.user.domain.value.ProtectedPassword;
-import dev.hspl.taskbazi.user.domain.value.RequestIdentificationDetails;
+import dev.hspl.taskbazi.common.domain.value.RequestClientIdentifier;
 import dev.hspl.taskbazi.user.domain.entity.RefreshToken;
 import dev.hspl.taskbazi.user.domain.exception.PasswordMismatchException;
 import dev.hspl.taskbazi.user.domain.exception.TooManyActiveLoginSessionException;
@@ -36,8 +34,6 @@ public class UserLoginService {
         boolean matches = passwordProtector.matches(plainPassword,userPassword);
         if (!matches) { throw new PasswordMismatchException(); }
 
-        // limit number of allowed attempts in the technical layer!!
-
         short maxAllowedActiveLoginSessionsByUser = constraints.maxAllowedActiveLoginSessions();
         boolean canHaveMoreSession = numberOfUserActiveSessions < maxAllowedActiveLoginSessionsByUser;
         if (!canHaveMoreSession) {
@@ -49,7 +45,7 @@ public class UserLoginService {
                 newRefreshTokenId,
                 plainRefreshToken,
                 newLoginSessionId,
-                genericUserInfo.genericUserId(),
+                genericUserInfo,
                 requestClientIdentifier,
                 requestIdentificationDetails,
                 constraints,
@@ -60,9 +56,6 @@ public class UserLoginService {
                 genericUserInfo,
                 constraints.accessTokenLifetimeMinutes()
         );
-
-        // send new-login notification to the user!!! using domain events!!! AbstractAggregateRoot
-        // send client identification details via email as notification!!!
 
         return new LoginSessionTrackingInfo(accessToken, refreshToken);
     }

@@ -1,6 +1,9 @@
 package dev.hspl.taskbazi.user.domain.entity;
 
+import dev.hspl.taskbazi.common.domain.DomainAggregateRoot;
+import dev.hspl.taskbazi.common.domain.event.DomainNotificationRequestEvent;
 import dev.hspl.taskbazi.common.domain.value.*;
+import dev.hspl.taskbazi.user.domain.event.ClientRegisteredDomainEvent;
 import dev.hspl.taskbazi.user.domain.exception.PasswordMismatchException;
 import dev.hspl.taskbazi.user.domain.service.PasswordProtector;
 import dev.hspl.taskbazi.user.domain.value.AuthenticatableUser;
@@ -15,7 +18,7 @@ import java.time.LocalDateTime;
 // other users = moderator & admin
 
 @Getter
-public class Client implements GenericUser, AuthenticatableUser {
+public class Client extends DomainAggregateRoot implements GenericUser, AuthenticatableUser {
     private UserId id;
     private ClientFullName fullName;
     private EmailAddress emailAddress;
@@ -56,7 +59,20 @@ public class Client implements GenericUser, AuthenticatableUser {
             Username username,
             ProtectedPassword password
     ) {
-        return new Client(newUserId,fullName,emailAddress,username,password,false,currentDateTime,null);
+        DomainNotificationRequestEvent notifRequestEvent = new ClientRegisteredDomainEvent(
+                currentDateTime,
+                Client.class.getSimpleName(),
+                newUserId.value(),
+                newUserId,
+                emailAddress,
+                fullName,
+                username
+        );
+
+        Client result = new Client(newUserId,fullName,emailAddress,username,password,false,currentDateTime,null);
+        result.registerDomainEvent(notifRequestEvent);
+
+        return result;
     }
 
     public static Client existingClient(
@@ -126,5 +142,6 @@ public class Client implements GenericUser, AuthenticatableUser {
         }
 
         this.password = passwordProtector.protect(newPassword);
+        //registerDomainEvent(); password changed notif event
     }
 }
