@@ -27,7 +27,7 @@ public class RefreshToken extends DomainAggregateRoot {
 
     private final ProtectedOpaqueToken actualToken;
 
-    private short lifetimeHours; // token expiration = login-session expiration
+    private final short lifetimeHours; // token expiration = login-session expiration
     private boolean refreshed;
     private final LocalDateTime createdAt;
     private LocalDateTime refreshedAt; // default=NULL
@@ -59,7 +59,7 @@ public class RefreshToken extends DomainAggregateRoot {
     public static RefreshToken newLogin(
             LocalDateTime currentDateTime,
             UUID newRefreshTokenId,
-            PlainOpaqueToken plainRefreshToken,
+            PlainOpaqueToken plainActualRefreshToken,
             UUID newLoginSessionId,
             GenericUser genericUserInfo,
             RequestClientIdentifier requestClientIdentifier,
@@ -67,7 +67,7 @@ public class RefreshToken extends DomainAggregateRoot {
             UserAuthenticationConstraints constraints,
             OpaqueTokenProtector tokenProtector
     ) {
-        ProtectedOpaqueToken protectedRefreshToken = tokenProtector.protect(plainRefreshToken);
+        ProtectedOpaqueToken protectedRefreshToken = tokenProtector.protect(plainActualRefreshToken);
         short tokenLifetime = constraints.refreshTokenLifetimeHours();
 
         LoginSession loginSession = LoginSession.newSession(currentDateTime,newLoginSessionId,
@@ -130,10 +130,4 @@ public class RefreshToken extends DomainAggregateRoot {
         this.loginSession.newTokenRefresh(newRequestClientIdentifier,newRequestIdentificationDetails);
         //registerDomainEvent(new TokenRefreshedDomainEvent());
     }
-
-    // returns the new token
-//    add refresh logic into the login service
-//    public RefreshTokenTracker refresh() {
-//
-//    }
 }

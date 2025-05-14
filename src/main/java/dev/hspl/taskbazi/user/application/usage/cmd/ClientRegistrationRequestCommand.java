@@ -1,10 +1,10 @@
 package dev.hspl.taskbazi.user.application.usage.cmd;
 
-import dev.hspl.taskbazi.user.application.exception.InvalidClientRegistrationRequestCommandException;
-import dev.hspl.taskbazi.user.domain.value.ClientFullName;
+import dev.hspl.taskbazi.common.application.InvalidApplicationCommandException;
 import dev.hspl.taskbazi.common.domain.value.EmailAddress;
-import dev.hspl.taskbazi.user.domain.value.PlainPassword;
 import dev.hspl.taskbazi.common.domain.value.Username;
+import dev.hspl.taskbazi.user.domain.value.ClientFullName;
+import dev.hspl.taskbazi.user.domain.value.PlainPassword;
 
 public record ClientRegistrationRequestCommand(
         ClientFullName fullName,
@@ -17,7 +17,7 @@ public record ClientRegistrationRequestCommand(
         boolean validate = fullName != null && emailAddress != null && username != null
                 && password != null && passwordConfirmation != null;
         if (!validate) {
-            throw new InvalidClientRegistrationRequestCommandException();
+            throw new InvalidApplicationCommandException("Provided client registration request command is invalid!");
         }
     }
 }

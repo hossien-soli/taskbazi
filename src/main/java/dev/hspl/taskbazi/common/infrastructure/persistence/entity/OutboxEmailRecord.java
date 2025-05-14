@@ -10,6 +10,9 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+// use pessimistic locking for preventing duplicate send
+// use pessimistic locking for preventing duplicate send
+
 @Entity
 @Table(name = "outbox_email_records")
 @Getter

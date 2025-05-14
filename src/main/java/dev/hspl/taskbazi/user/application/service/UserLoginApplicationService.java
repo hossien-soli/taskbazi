@@ -7,9 +7,13 @@ import dev.hspl.taskbazi.common.domain.value.GenericUser;
 import dev.hspl.taskbazi.common.domain.value.RequestClientIdentifier;
 import dev.hspl.taskbazi.common.domain.value.UserRole;
 import dev.hspl.taskbazi.user.application.dto.PresentedRefreshToken;
+import dev.hspl.taskbazi.user.application.dto.PresentedRefreshTokenElements;
 import dev.hspl.taskbazi.user.application.exception.InvalidUsernameOrEmailAddressLoginException;
+import dev.hspl.taskbazi.user.application.usage.TokenRefreshUseCase;
 import dev.hspl.taskbazi.user.application.usage.UserLoginUseCase;
+import dev.hspl.taskbazi.user.application.usage.cmd.TokenRefreshCommand;
 import dev.hspl.taskbazi.user.application.usage.cmd.UserLoginCommand;
+import dev.hspl.taskbazi.user.application.usage.result.TokenRefreshResult;
 import dev.hspl.taskbazi.user.application.usage.result.UserLoginResult;
 import dev.hspl.taskbazi.user.domain.entity.Client;
 import dev.hspl.taskbazi.user.domain.entity.RefreshToken;
@@ -30,7 +34,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class UserLoginApplicationService implements UserLoginUseCase {
+public class UserLoginApplicationService implements UserLoginUseCase, TokenRefreshUseCase {
     private final TimeProvider timeProvider;
     private final UUIDGenerator uuidGenerator;
     private final UserLoginService domainService;
@@ -72,7 +76,7 @@ public class UserLoginApplicationService implements UserLoginUseCase {
         UUID newRefreshTokenId = uuidGenerator.generateNew();
         UUID newLoginSessionId = uuidGenerator.generateNew();
 
-        PlainOpaqueToken plainRefreshToken = opaqueTokenGenerator.generateNew(45);
+        PlainOpaqueToken plainActualRefreshToken = opaqueTokenGenerator.generateNew(45);
 
         LoginSessionTrackingInfo result = domainService.loginUser(
                 currentDateTime,
@@ -84,7 +88,7 @@ public class UserLoginApplicationService implements UserLoginUseCase {
                 newLoginSessionId,
                 requestClientIdentifier,
                 requestIdentificationDetails,
-                plainRefreshToken
+                plainActualRefreshToken
         );
 
         RefreshToken resultRefreshToken = result.refreshToken();
@@ -95,9 +99,19 @@ public class UserLoginApplicationService implements UserLoginUseCase {
             throw new UnsupportedOperationException("non-client user login logic not implemented yet!");
         }
 
-        String rawRefreshTokenWithId = roleToLogin + "." + resultRefreshToken.getId().toString() + "." + plainRefreshToken.value();
-        PresentedRefreshToken presentedRefreshToken = new PresentedRefreshToken(rawRefreshTokenWithId);
+        PresentedRefreshTokenElements elements = new PresentedRefreshTokenElements(
+                roleToLogin,
+                resultRefreshToken.getId(),
+                plainActualRefreshToken
+        );
 
-        return new UserLoginResult(presentedRefreshToken,result.accessToken());
+        return new UserLoginResult(PresentedRefreshToken.buildForUser(elements),result.accessToken());
+    }
+
+    @Override
+    public TokenRefreshResult execute(TokenRefreshCommand command) {
+        PresentedRefreshTokenElements elements = command.presentedRefreshToken().getOrParseElements();
+
+        return null;
     }
 }

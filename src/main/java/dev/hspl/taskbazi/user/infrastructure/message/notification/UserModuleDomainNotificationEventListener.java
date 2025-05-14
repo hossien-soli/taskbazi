@@ -4,11 +4,11 @@ import dev.hspl.taskbazi.common.infrastructure.message.notification.Notification
 import dev.hspl.taskbazi.common.infrastructure.message.notification.handler.NotificationRequestHandler;
 import dev.hspl.taskbazi.user.domain.event.ClientRegisteredDomainEvent;
 import dev.hspl.taskbazi.user.domain.event.NewAccountLoginDomainEvent;
-import dev.hspl.taskbazi.user.infrastructure.message.notification.request.NewAccountLoginNotificationRequest;
+import dev.hspl.taskbazi.user.infrastructure.message.notification.request.AccountLoginAlertNotification;
+import dev.hspl.taskbazi.user.infrastructure.message.notification.request.RegistrationWelcomeMessageNotification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
@@ -28,9 +28,8 @@ public class UserModuleDomainNotificationEventListener {
 
     @TransactionalEventListener(fallbackExecution = true, phase = TransactionPhase.AFTER_COMMIT)
     @Async
-    //@Transactional
     public void handleNewLoginDomainEvent(NewAccountLoginDomainEvent event) {
-        NotificationRequest actualRequest = new NewAccountLoginNotificationRequest(
+        NotificationRequest actualRequest = new AccountLoginAlertNotification(
                 event.eventOccurredAt(),
                 event.notificationUserRole(),
                 event.notificationUserId(),
@@ -45,8 +44,16 @@ public class UserModuleDomainNotificationEventListener {
 
     @TransactionalEventListener(fallbackExecution = true, phase = TransactionPhase.AFTER_COMMIT)
     @Async
-    //@Transactional
     public void handleClientRegisteredDomainEvent(ClientRegisteredDomainEvent event) {
+        NotificationRequest actualRequest = new RegistrationWelcomeMessageNotification(
+                event.eventOccurredAt(),
+                event.notificationUserRole(),
+                event.notificationUserId(),
+                event.notificationUserEmailAddress(),
+                event.getDataClientFullName(),
+                event.getDataClientUsername()
+        );
 
+        notificationRequestHandler.handle(actualRequest);
     }
 }

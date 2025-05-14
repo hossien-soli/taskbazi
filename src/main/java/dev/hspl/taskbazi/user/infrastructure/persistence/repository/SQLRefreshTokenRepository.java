@@ -12,6 +12,9 @@ import dev.hspl.taskbazi.user.infrastructure.persistence.repository.jpa.RefreshT
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+import java.util.UUID;
+
 @Repository
 @RequiredArgsConstructor
 public class SQLRefreshTokenRepository implements RefreshTokenRepository {
@@ -39,5 +42,11 @@ public class SQLRefreshTokenRepository implements RefreshTokenRepository {
     @Override
     public void saveForClient(RefreshToken refreshToken) {
         saveForUser(refreshToken);
+    }
+
+    @Override
+    public Optional<RefreshToken> findForClient(UUID refreshTokenId) {
+
+        return null;
     }
 }

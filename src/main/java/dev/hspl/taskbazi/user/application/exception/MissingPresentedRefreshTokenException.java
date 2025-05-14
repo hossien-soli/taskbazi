@@ -4,7 +4,7 @@ import dev.hspl.taskbazi.common.application.ApplicationException;
 
 public class MissingPresentedRefreshTokenException extends ApplicationException {
     public MissingPresentedRefreshTokenException() {
-        super("presented refresh token is missing!!!");
+        super("presented refresh token by user is missing!!!");
     }
 
     @Override

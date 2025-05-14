@@ -28,7 +28,7 @@ public class UserLoginService {
             UUID newLoginSessionId,
             RequestClientIdentifier requestClientIdentifier,
             RequestIdentificationDetails requestIdentificationDetails,
-            PlainOpaqueToken plainRefreshToken
+            PlainOpaqueToken plainActualRefreshToken
     ) {
         ProtectedPassword userPassword = authenticatableUser.getAuthUserProtectedPassword();
         boolean matches = passwordProtector.matches(plainPassword,userPassword);
@@ -43,7 +43,7 @@ public class UserLoginService {
         RefreshToken refreshToken = RefreshToken.newLogin(
                 currentDateTime,
                 newRefreshTokenId,
-                plainRefreshToken,
+                plainActualRefreshToken,
                 newLoginSessionId,
                 genericUserInfo,
                 requestClientIdentifier,
@@ -58,5 +58,17 @@ public class UserLoginService {
         );
 
         return new LoginSessionTrackingInfo(accessToken, refreshToken);
+    }
+
+    // returns a new refresh token for tracking the login session (token rotation)
+    // this should detect the duplicate usage of token(reuse detection)
+    // can invalidate the login session due to reuse detection
+    // also can expire the login session due to a non-refreshed refresh token expiration
+    public RefreshToken refreshAndRotateTheToken(
+            LocalDateTime currentDateTime,
+            RefreshToken tokenToRefresh,
+            PlainOpaqueToken userPlainActualRefreshToken
+    ) {
+
     }
 }

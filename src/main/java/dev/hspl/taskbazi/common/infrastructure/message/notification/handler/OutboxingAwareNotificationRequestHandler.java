@@ -29,7 +29,7 @@ public class OutboxingAwareNotificationRequestHandler implements NotificationReq
     private final TemplateEngine htmlTemplateEngine; // Necessary for constructing the notification message content
 
     @Override
-    @Transactional // because all delivery agents are outboxing!!
+    @Transactional // because all delivery agents are working with database!!
     public void handle(NotificationRequest request) {
         NotificationRecipient recipient = request.recipient();
         UserFriendlyMessage message = request.prepareMessage(messageSource,htmlTemplateEngine);
