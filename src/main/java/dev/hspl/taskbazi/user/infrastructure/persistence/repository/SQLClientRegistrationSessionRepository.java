@@ -1,7 +1,7 @@
 package dev.hspl.taskbazi.user.infrastructure.persistence.repository;
 
-import dev.hspl.taskbazi.common.domain.value.RequestClientIdentifier;
 import dev.hspl.taskbazi.common.domain.value.EmailAddress;
+import dev.hspl.taskbazi.common.domain.value.RequestClientIdentifier;
 import dev.hspl.taskbazi.user.domain.entity.ClientRegistrationSession;
 import dev.hspl.taskbazi.user.domain.repository.ClientRegistrationSessionRepository;
 import dev.hspl.taskbazi.user.infrastructure.persistence.UserModulePersistenceMapper;
@@ -40,10 +40,7 @@ public class SQLClientRegistrationSessionRepository implements ClientRegistratio
 
     @Override
     public void saveSession(ClientRegistrationSession session) {
-        ClientRegistrationSessionJPAEntity sessionRecord = mapper.mapClientRegistrationSessionToJPAEntity(
-                session
-        );
-
+        ClientRegistrationSessionJPAEntity sessionRecord = mapper.mapClientRegistrationSessionToJPAEntity(session);
         jpaRepository.save(sessionRecord);
     }
 

@@ -9,6 +9,9 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 import java.util.UUID;
 
+// repository for all type/role of users in a single table
+// actually domain allow us to store different type/role of users inside separate tables
+
 public interface UserJPARepository extends JpaRepository<UserJPAEntity, UUID> {
     @Query("SELECT u FROM User u WHERE u.username = :username AND u.role = :userRole")
     Optional<UserJPAEntity> findRoleByUsername(
@@ -23,5 +26,6 @@ public interface UserJPARepository extends JpaRepository<UserJPAEntity, UUID> {
     );
 
     boolean existsByEmailAddress(String emailAddress);
+
     boolean existsByUsername(String username);
 }

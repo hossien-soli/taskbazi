@@ -1,11 +1,10 @@
 package dev.hspl.taskbazi.user.infrastructure.persistence.repository;
 
-import dev.hspl.taskbazi.common.domain.value.UserRole;
-import dev.hspl.taskbazi.user.domain.entity.Client;
-import dev.hspl.taskbazi.user.domain.repository.UserRepository;
 import dev.hspl.taskbazi.common.domain.value.EmailAddress;
+import dev.hspl.taskbazi.common.domain.value.UserRole;
 import dev.hspl.taskbazi.common.domain.value.Username;
-import dev.hspl.taskbazi.user.domain.value.UsernameOrEmailAddress;
+import dev.hspl.taskbazi.user.domain.entity.User;
+import dev.hspl.taskbazi.user.domain.repository.UserRepository;
 import dev.hspl.taskbazi.user.infrastructure.persistence.UserModulePersistenceMapper;
 import dev.hspl.taskbazi.user.infrastructure.persistence.entity.UserJPAEntity;
 import dev.hspl.taskbazi.user.infrastructure.persistence.repository.jpa.UserJPARepository;
@@ -14,6 +13,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+// this repository manage all type/role of users in a single table
+
 @Repository
 @RequiredArgsConstructor
 public class SQLUserRepository implements UserRepository {
@@ -21,38 +22,42 @@ public class SQLUserRepository implements UserRepository {
     private final UserModulePersistenceMapper mapper;
 
     @Override
-    public void saveClient(Client client) {
-        UserJPAEntity userRecord = mapper.mapClientToUserJPAEntity(client);
+    public void save(User user) {
+        UserJPAEntity userRecord = mapper.mapUserToJPAEntity(user);
         jpaRepository.save(userRecord);
     }
 
     @Override
-    public Optional<Client> findClientByUsername(Username username) {
+    public Optional<User> findByUsername(Username username, UserRole userRole) {
+        // apply role for more efficiency in application use-case and domain layer
         Optional<UserJPAEntity> fetchResult = jpaRepository.findRoleByUsername(
-                UserRole.CLIENT,
+                userRole,
                 username.value()
         );
 
-        return fetchResult.map(mapper::mapUserJPAEntityToClient);
+        return fetchResult.map(mapper::mapJPAEntityToUser);
     }
 
     @Override
-    public Optional<Client> findClientByEmailAddress(EmailAddress emailAddress) {
+    public Optional<User> findByEmailAddress(EmailAddress emailAddress, UserRole userRole) {
+        // apply role for more efficiency in application use-case and domain layer
         Optional<UserJPAEntity> fetchResult = jpaRepository.findRoleByEmailAddress(
-                UserRole.CLIENT,
+                userRole,
                 emailAddress.value()
         );
 
-        return fetchResult.map(mapper::mapUserJPAEntityToClient);
+        return fetchResult.map(mapper::mapJPAEntityToUser);
     }
 
     @Override
-    public boolean existsByEmail(EmailAddress emailAddress) {
+    public boolean existsByEmail(EmailAddress emailAddress, UserRole userRole) {
+        // we should ignore the role for this implementation because we have a unique constraint in database table for email
         return jpaRepository.existsByEmailAddress(emailAddress.value());
     }
 
     @Override
-    public boolean existsByUsername(Username username) {
+    public boolean existsByUsername(Username username, UserRole userRole) {
+        // we should ignore the role for this implementation because we have a unique constraint in database table for username
         return jpaRepository.existsByUsername(username.value());
     }
 }

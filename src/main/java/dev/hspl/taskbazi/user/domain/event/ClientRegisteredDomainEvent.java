@@ -5,12 +5,14 @@ import dev.hspl.taskbazi.common.domain.value.EmailAddress;
 import dev.hspl.taskbazi.common.domain.value.UserId;
 import dev.hspl.taskbazi.common.domain.value.UserRole;
 import dev.hspl.taskbazi.common.domain.value.Username;
-import dev.hspl.taskbazi.user.domain.value.ClientFullName;
+import dev.hspl.taskbazi.user.domain.value.UserFullName;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+
+// domain notification request event only for clients (UserRole.CLIENT)
 
 @RequiredArgsConstructor
 public class ClientRegisteredDomainEvent implements DomainNotificationRequestEvent {
@@ -22,7 +24,7 @@ public class ClientRegisteredDomainEvent implements DomainNotificationRequestEve
     private final EmailAddress notificationUserEmailAddress;
 
     @Getter
-    private final ClientFullName dataClientFullName;
+    private final UserFullName dataClientFullName;
 
     @Getter
     private final Username dataClientUsername;

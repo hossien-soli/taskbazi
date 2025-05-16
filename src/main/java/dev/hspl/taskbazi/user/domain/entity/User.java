@@ -6,38 +6,37 @@ import dev.hspl.taskbazi.common.domain.value.*;
 import dev.hspl.taskbazi.user.domain.event.ClientRegisteredDomainEvent;
 import dev.hspl.taskbazi.user.domain.exception.PasswordMismatchException;
 import dev.hspl.taskbazi.user.domain.service.PasswordProtector;
-import dev.hspl.taskbazi.user.domain.value.AuthenticatableUser;
-import dev.hspl.taskbazi.user.domain.value.ClientFullName;
 import dev.hspl.taskbazi.user.domain.value.PlainPassword;
 import dev.hspl.taskbazi.user.domain.value.ProtectedPassword;
+import dev.hspl.taskbazi.user.domain.value.UserFullName;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-// client = normal users of application
-// other users = moderator & admin
-
 @Getter
-public class Client extends DomainAggregateRoot implements GenericUser, AuthenticatableUser {
-    private UserId id;
-    private ClientFullName fullName;
+public class User extends DomainAggregateRoot implements UniversalUser {
+    private final UserId id;
+    private UserFullName fullName;
     private EmailAddress emailAddress;
     private Username username;
     private ProtectedPassword password;
     private boolean banned;
-    private LocalDateTime registeredAt;
+    private final LocalDateTime registeredAt;
 
-    private Integer version; // default=NULL - increments by repository implementations (jpa)
+    private UserRole role;
+
+    private final Integer version; // default=NULL - increments by repository implementations (jpa)
     // Optimistic concurrency control check with front-end clients in the domain layer!!!
 
-    private Client(
+    private User(
             UserId id,
-            ClientFullName fullName,
+            UserFullName fullName,
             EmailAddress emailAddress,
             Username username,
             ProtectedPassword password,
             boolean banned,
             LocalDateTime registeredAt,
+            UserRole role,
             Integer version
     ) {
         this.id = id;
@@ -47,64 +46,70 @@ public class Client extends DomainAggregateRoot implements GenericUser, Authenti
         this.password = password;
         this.banned = banned;
         this.registeredAt = registeredAt;
+        this.role = role;
         this.version = version;
     }
 
     // The uniqueness of the email and username must be checked beforehand in a domain service.
-    public static Client newUniqueClient(
+    public static User newUniqueUser(
             LocalDateTime currentDateTime,
             UserId newUserId,
-            ClientFullName fullName,
+            UserFullName fullName,
             EmailAddress emailAddress,
             Username username,
-            ProtectedPassword password
+            ProtectedPassword password,
+            UserRole role
     ) {
-        DomainNotificationRequestEvent notifRequestEvent = new ClientRegisteredDomainEvent(
-                currentDateTime,
-                Client.class.getSimpleName(),
-                newUserId.value(),
-                newUserId,
-                emailAddress,
-                fullName,
-                username
-        );
+        User result = new User(newUserId, fullName, emailAddress, username, password, false, currentDateTime, role, null);
 
-        Client result = new Client(newUserId,fullName,emailAddress,username,password,false,currentDateTime,null);
-        result.registerDomainEvent(notifRequestEvent);
+        if (role.equals(UserRole.CLIENT)) {
+            DomainNotificationRequestEvent notifRequestEvent = new ClientRegisteredDomainEvent(
+                    currentDateTime,
+                    User.class.getSimpleName(),
+                    newUserId.value(),
+                    newUserId,
+                    emailAddress,
+                    fullName,
+                    username
+            );
+
+            result.registerDomainEvent(notifRequestEvent);
+        }
 
         return result;
     }
 
-    public static Client existingClient(
+    public static User existingUser(
             UserId id,
-            ClientFullName fullName,
+            UserFullName fullName,
             EmailAddress emailAddress,
             Username username,
             ProtectedPassword password,
             boolean banned,
             LocalDateTime registeredAt,
+            UserRole role,
             Integer version
     ) {
-        return new Client(id, fullName, emailAddress, username, password, banned, registeredAt, version);
+        return new User(id, fullName, emailAddress, username, password, banned, registeredAt, role, version);
     }
 
     @Override
-    public UserId genericUserId() {
+    public UserId universalUserId() {
         return this.id;
     }
 
     @Override
-    public String genericUserFullName() {
+    public String universalUserFullName() {
         return this.fullName.value();
     }
 
     @Override
-    public EmailAddress genericUserEmailAddress() {
+    public EmailAddress universalUserEmailAddress() {
         return this.emailAddress;
     }
 
     @Override
-    public Username genericUserUsername() {
+    public Username universalUserUsername() {
         return this.username;
     }
 
@@ -115,12 +120,7 @@ public class Client extends DomainAggregateRoot implements GenericUser, Authenti
 
     @Override
     public UserRole userRole() {
-        return UserRole.CLIENT;
-    }
-
-    @Override
-    public ProtectedPassword getAuthUserProtectedPassword() {
-        return this.password;
+        return this.role;
     }
 
     public void updateEmailAddress(EmailAddress uniqueEmailAddress) {
@@ -136,7 +136,7 @@ public class Client extends DomainAggregateRoot implements GenericUser, Authenti
             PlainPassword newPassword,
             PasswordProtector passwordProtector
     ) {
-        boolean matches = passwordProtector.matches(currentPassword,this.password);
+        boolean matches = passwordProtector.matches(currentPassword, this.password);
         if (!matches) {
             throw new PasswordMismatchException();
         }

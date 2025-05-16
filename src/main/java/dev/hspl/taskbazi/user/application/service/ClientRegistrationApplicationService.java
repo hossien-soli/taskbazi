@@ -14,8 +14,8 @@ import dev.hspl.taskbazi.user.application.usage.cmd.ClientRegistrationFinalizeCo
 import dev.hspl.taskbazi.user.application.usage.cmd.ClientRegistrationRequestCommand;
 import dev.hspl.taskbazi.user.application.usage.result.ClientRegistrationFinalizeResult;
 import dev.hspl.taskbazi.user.application.usage.result.ClientRegistrationRequestResult;
-import dev.hspl.taskbazi.user.domain.entity.Client;
 import dev.hspl.taskbazi.user.domain.entity.ClientRegistrationSession;
+import dev.hspl.taskbazi.user.domain.entity.User;
 import dev.hspl.taskbazi.user.domain.repository.ClientRegistrationSessionRepository;
 import dev.hspl.taskbazi.user.domain.repository.UserRepository;
 import dev.hspl.taskbazi.user.domain.service.ClientRegistrationService;
@@ -52,7 +52,9 @@ public class ClientRegistrationApplicationService implements ClientRegistrationR
         PlainPassword password = command.password();
         PlainPassword passwordConfirmation = command.passwordConfirmation();
         boolean matches = password.equals(passwordConfirmation);
-        if (!matches) { throw new PasswordConfirmationMismatchException(); }
+        if (!matches) {
+            throw new PasswordConfirmationMismatchException();
+        }
 
         EmailAddress emailAddress = command.emailAddress();
 
@@ -114,8 +116,8 @@ public class ClientRegistrationApplicationService implements ClientRegistrationR
         if (success) {
             UserId newUserId = new UserId(uuidGenerator.generateNew());
 
-            Client client = domainService.registerClient(currentDateTime,newUserId,session);
-            userRepository.saveClient(client);
+            User client = domainService.registerClient(currentDateTime, newUserId, session);
+            userRepository.save(client);
             domainEventPublisher.publishAll(client);
 
             userRegistered = true;
@@ -123,6 +125,6 @@ public class ClientRegistrationApplicationService implements ClientRegistrationR
 
         sessionRepository.saveSession(session); // actually with jpa we don't need this!!!
 
-        return new ClientRegistrationFinalizeResult(userRegistered,result);
+        return new ClientRegistrationFinalizeResult(userRegistered, result);
     }
 }

@@ -2,12 +2,14 @@ package dev.hspl.taskbazi.user.infrastructure.persistence;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.hspl.taskbazi.common.domain.value.EmailAddress;
 import dev.hspl.taskbazi.common.domain.value.RequestClientIdentifier;
-import dev.hspl.taskbazi.common.domain.value.*;
-import dev.hspl.taskbazi.user.domain.entity.Client;
+import dev.hspl.taskbazi.common.domain.value.UserId;
+import dev.hspl.taskbazi.common.domain.value.Username;
 import dev.hspl.taskbazi.user.domain.entity.ClientRegistrationSession;
 import dev.hspl.taskbazi.user.domain.entity.LoginSession;
 import dev.hspl.taskbazi.user.domain.entity.RefreshToken;
+import dev.hspl.taskbazi.user.domain.entity.User;
 import dev.hspl.taskbazi.user.domain.value.*;
 import dev.hspl.taskbazi.user.infrastructure.persistence.entity.ClientRegistrationSessionJPAEntity;
 import dev.hspl.taskbazi.user.infrastructure.persistence.entity.LoginSessionJPAEntity;
@@ -30,9 +32,9 @@ public class UserModulePersistenceMapper {
         ClientRegistrationSessionJPAEntity result = new ClientRegistrationSessionJPAEntity();
         result.setId(domainSession.getId());
         result.setEmailAddress(domainSession.getEmailAddress().value());
-        result.setClientFullName(domainSession.getUserFullName().value());
-        result.setUserUsername(domainSession.getUserUsername().value());
-        result.setUserHashedPassword(domainSession.getUserPassword().value());
+        result.setClientFullName(domainSession.getClientFullName().value());
+        result.setClientUsername(domainSession.getClientUsername().value());
+        result.setClientHashedPassword(domainSession.getClientPassword().value());
         result.setHashedVerificationCode(domainSession.getVerificationCode().value());
         result.setRequestClientIdentifier(domainSession.getRequestClientIdentifier().value());
         result.setVerificationAttempts(domainSession.getVerificationAttempts());
@@ -52,9 +54,9 @@ public class UserModulePersistenceMapper {
         return ClientRegistrationSession.existingSession(
                 jpaSession.getId(),
                 new EmailAddress(jpaSession.getEmailAddress()),
-                new ClientFullName(jpaSession.getClientFullName()),
-                new Username(jpaSession.getUserUsername()),
-                new ProtectedPassword(jpaSession.getUserHashedPassword()),
+                new UserFullName(jpaSession.getClientFullName()),
+                new Username(jpaSession.getClientUsername()),
+                new ProtectedPassword(jpaSession.getClientHashedPassword()),
                 new ProtectedVerificationCode(jpaSession.getHashedVerificationCode()),
                 new RequestClientIdentifier(jpaSession.getRequestClientIdentifier()),
                 jpaSession.getVerificationAttempts(),
@@ -68,30 +70,31 @@ public class UserModulePersistenceMapper {
         );
     }
 
-    public UserJPAEntity mapClientToUserJPAEntity(Client client) {
+    public UserJPAEntity mapUserToJPAEntity(User user) {
         UserJPAEntity result = new UserJPAEntity();
-        result.setId(client.getId().value());
-        result.setFullName(client.getFullName().value());
-        result.setEmailAddress(client.getEmailAddress().value());
-        result.setUsername(client.getUsername().value());
-        result.setHashedPassword(client.getPassword().value());
-        result.setRole(UserRole.CLIENT);
-        result.setBanned(client.isBanned());
-        result.setRegisteredAt(client.getRegisteredAt());
-        result.setVersion(client.getVersion());
+        result.setId(user.getId().value());
+        result.setFullName(user.getFullName().value());
+        result.setEmailAddress(user.getEmailAddress().value());
+        result.setUsername(user.getUsername().value());
+        result.setHashedPassword(user.getPassword().value());
+        result.setRole(user.getRole());
+        result.setBanned(user.isBanned());
+        result.setRegisteredAt(user.getRegisteredAt());
+        result.setVersion(user.getVersion());
         return result;
     }
 
-    public Client mapUserJPAEntityToClient(UserJPAEntity jpaUser) {
-        return Client.existingClient(
-                new UserId(jpaUser.getId()),
-                new ClientFullName(jpaUser.getFullName()),
-                new EmailAddress(jpaUser.getEmailAddress()),
-                new Username(jpaUser.getUsername()),
-                new ProtectedPassword(jpaUser.getHashedPassword()),
-                jpaUser.isBanned(),
-                jpaUser.getRegisteredAt(),
-                jpaUser.getVersion()
+    public User mapJPAEntityToUser(UserJPAEntity jpaEntity) {
+        return User.existingUser(
+                new UserId(jpaEntity.getId()),
+                new UserFullName(jpaEntity.getFullName()),
+                new EmailAddress(jpaEntity.getEmailAddress()),
+                new Username(jpaEntity.getUsername()),
+                new ProtectedPassword(jpaEntity.getHashedPassword()),
+                jpaEntity.isBanned(),
+                jpaEntity.getRegisteredAt(),
+                jpaEntity.getRole(),
+                jpaEntity.getVersion()
         );
     }
 
@@ -102,7 +105,9 @@ public class UserModulePersistenceMapper {
 
         try {
             return objectMapper.writeValueAsString(identificationDetails);
-        } catch (JsonProcessingException exception) { return null; }
+        } catch (JsonProcessingException exception) {
+            return null;
+        }
     }
 
     private RequestIdentificationDetails mapJSONStringToRequestIdentificationDetails(
@@ -111,8 +116,10 @@ public class UserModulePersistenceMapper {
         if (jsonString == null || jsonString.isEmpty()) return null;
 
         try {
-            return objectMapper.readValue(jsonString,RequestIdentificationDetails.class);
-        } catch (JsonProcessingException exception) { return null; }
+            return objectMapper.readValue(jsonString, RequestIdentificationDetails.class);
+        } catch (JsonProcessingException exception) {
+            return null;
+        }
     }
 
     public LoginSession mapJPAEntityToLoginSession(LoginSessionJPAEntity jpaEntity) {

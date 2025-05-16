@@ -3,11 +3,11 @@ package dev.hspl.taskbazi.user.application.usage.cmd;
 import dev.hspl.taskbazi.common.application.InvalidApplicationCommandException;
 import dev.hspl.taskbazi.common.domain.value.EmailAddress;
 import dev.hspl.taskbazi.common.domain.value.Username;
-import dev.hspl.taskbazi.user.domain.value.ClientFullName;
 import dev.hspl.taskbazi.user.domain.value.PlainPassword;
+import dev.hspl.taskbazi.user.domain.value.UserFullName;
 
 public record ClientRegistrationRequestCommand(
-        ClientFullName fullName,
+        UserFullName fullName,
         EmailAddress emailAddress,
         Username username,
         PlainPassword password,

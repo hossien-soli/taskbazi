@@ -11,7 +11,6 @@ import org.springframework.lang.Nullable;
 public interface UserLoginUseCase {
     UserLoginResult execute(
             UserLoginCommand command,
-            UserRole roleToLogin,
             @NonNull RequestClientIdentifier requestClientIdentifier,
             @Nullable RequestIdentificationDetails requestIdentificationDetails
     );

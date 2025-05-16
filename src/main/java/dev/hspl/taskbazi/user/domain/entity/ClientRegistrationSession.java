@@ -20,13 +20,13 @@ import java.util.UUID;
 
 @Getter
 public class ClientRegistrationSession extends DomainAggregateRoot {
-    private UUID id;
+    private final UUID id;
 
     private final EmailAddress emailAddress;
 
-    private final ClientFullName userFullName;
-    private final Username userUsername;
-    private final ProtectedPassword userPassword;
+    private final UserFullName clientFullName;
+    private final Username clientUsername;
+    private final ProtectedPassword clientPassword;
 
     private final ProtectedVerificationCode verificationCode;
     private final RequestClientIdentifier requestClientIdentifier; // technical client (server/client) not a business client
@@ -46,8 +46,8 @@ public class ClientRegistrationSession extends DomainAggregateRoot {
     private ClientRegistrationSession(
             UUID id,
             EmailAddress emailAddress,
-            ClientFullName userFullName,
-            Username userUsername,
+            UserFullName clientFullName,
+            Username clientUsername,
             ProtectedPassword userPassword,
             ProtectedVerificationCode verificationCode,
             RequestClientIdentifier requestClientIdentifier,
@@ -62,9 +62,9 @@ public class ClientRegistrationSession extends DomainAggregateRoot {
     ) {
         this.id = id;
         this.emailAddress = emailAddress;
-        this.userFullName = userFullName;
-        this.userUsername = userUsername;
-        this.userPassword = userPassword;
+        this.clientFullName = clientFullName;
+        this.clientUsername = clientUsername;
+        this.clientPassword = userPassword;
         this.verificationCode = verificationCode;
         this.requestClientIdentifier = requestClientIdentifier;
         this.verificationAttempts = verificationAttempts;
@@ -81,25 +81,25 @@ public class ClientRegistrationSession extends DomainAggregateRoot {
             LocalDateTime currentDateTime,
             UUID newSessionId,
             EmailAddress emailAddress,
-            ClientFullName userFullName,
-            Username userUsername,
-            ProtectedPassword userPassword,
+            UserFullName clientFullName,
+            Username clientUsername,
+            ProtectedPassword clientPassword,
             PlainVerificationCode plainVerificationCode,
             RequestClientIdentifier requestClientIdentifier,
             VerificationCodeProtector verificationCodeProtector
     ) {
         ProtectedVerificationCode verificationCode = verificationCodeProtector.protect(plainVerificationCode);
 
-        return new ClientRegistrationSession(newSessionId,emailAddress,userFullName,userUsername,userPassword,
-                verificationCode,requestClientIdentifier,(short) 0,false,false,false,false,currentDateTime,null,null);
+        return new ClientRegistrationSession(newSessionId, emailAddress, clientFullName, clientUsername, clientPassword,
+                verificationCode, requestClientIdentifier, (short) 0, false, false, false, false, currentDateTime, null, null);
     }
 
     public static ClientRegistrationSession existingSession(
             UUID id,
             EmailAddress emailAddress,
-            ClientFullName userFullName,
-            Username userUsername,
-            ProtectedPassword userPassword,
+            UserFullName clientFullName,
+            Username clientUsername,
+            ProtectedPassword clientPassword,
             ProtectedVerificationCode verificationCode,
             RequestClientIdentifier requestClientIdentifier,
             short verificationAttempt,
@@ -111,9 +111,9 @@ public class ClientRegistrationSession extends DomainAggregateRoot {
             LocalDateTime closedAt,
             Short version
     ) {
-        return new ClientRegistrationSession(id,emailAddress,userFullName,userUsername,userPassword,
-                verificationCode,requestClientIdentifier,verificationAttempt,blocked,verified,registered,expired,
-                createdAt,closedAt,version);
+        return new ClientRegistrationSession(id, emailAddress, clientFullName, clientUsername, clientPassword,
+                verificationCode, requestClientIdentifier, verificationAttempt, blocked, verified, registered, expired,
+                createdAt, closedAt, version);
     }
 
     public boolean isClosed() {
@@ -132,10 +132,14 @@ public class ClientRegistrationSession extends DomainAggregateRoot {
             VerificationCodeProtector verificationCodeProtector,
             UserAuthenticationConstraints constraints
     ) {
-        if (isClosed()) { throw new ClosedRegistrationSessionException(); }
+        if (isClosed()) {
+            throw new ClosedRegistrationSessionException();
+        }
 
         boolean sameClient = this.requestClientIdentifier.equals(userRequestClientIdentifier);
-        if (!sameClient) { throw new RequestClientIdentifierMismatchException(); }
+        if (!sameClient) {
+            throw new RequestClientIdentifierMismatchException();
+        }
 
         boolean canVerify = this.verificationAttempts < constraints.registrationSessionMaxAllowedAttempts();
         if (!canVerify) {
@@ -144,7 +148,7 @@ public class ClientRegistrationSession extends DomainAggregateRoot {
             return RegistrationVerificationResult.TOO_MANY_ATTEMPTS;
         }
 
-        int secondsElapsed = (int) Math.abs(Duration.between(currentDateTime,this.createdAt).toSeconds());
+        int secondsElapsed = (int) Math.abs(Duration.between(currentDateTime, this.createdAt).toSeconds());
         boolean expired = secondsElapsed >= constraints.registrationSessionLifetimeSeconds();
         if (expired) {
             this.expired = true;
@@ -158,7 +162,7 @@ public class ClientRegistrationSession extends DomainAggregateRoot {
 
         this.verificationAttempts++;
 
-        boolean matches = verificationCodeProtector.matches(userVerificationCode,this.verificationCode);
+        boolean matches = verificationCodeProtector.matches(userVerificationCode, this.verificationCode);
         if (!matches) {
             return RegistrationVerificationResult.CODE_MISMATCH;
         }

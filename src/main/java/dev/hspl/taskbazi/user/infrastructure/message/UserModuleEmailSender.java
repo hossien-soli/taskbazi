@@ -4,8 +4,8 @@ import dev.hspl.taskbazi.common.domain.value.EmailAddress;
 import dev.hspl.taskbazi.common.infrastructure.message.UserFriendlyMessage;
 import dev.hspl.taskbazi.common.infrastructure.message.email.GlobalEmailSender;
 import dev.hspl.taskbazi.user.domain.service.ClientRegistrationEmailSender;
-import dev.hspl.taskbazi.user.domain.value.ClientFullName;
 import dev.hspl.taskbazi.user.domain.value.PlainVerificationCode;
+import dev.hspl.taskbazi.user.domain.value.UserFullName;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
@@ -26,7 +26,7 @@ public class UserModuleEmailSender implements ClientRegistrationEmailSender {
             PlainVerificationCode verificationCode,
             int sessionLifetimeSeconds,
             LocalDateTime sessionValidUntil,
-            ClientFullName clientFullName
+            UserFullName clientFullName
     ) {
         // TODO: create a pretty body for email verification message
         String subject = "";
@@ -34,7 +34,7 @@ public class UserModuleEmailSender implements ClientRegistrationEmailSender {
         String htmlBody = "";
         boolean isImportant = true;
 
-        UserFriendlyMessage emailMessage = new UserFriendlyMessage(subject,plainTextBody,htmlBody,isImportant);
-        globalEmailSender.sendEmailMessage(emailAddress,emailMessage);
+        UserFriendlyMessage emailMessage = new UserFriendlyMessage(subject, plainTextBody, htmlBody, isImportant);
+        globalEmailSender.sendEmailMessage(emailAddress, emailMessage);
     }
 }

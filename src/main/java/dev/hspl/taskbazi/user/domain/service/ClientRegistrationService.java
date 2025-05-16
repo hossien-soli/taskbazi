@@ -1,19 +1,16 @@
 package dev.hspl.taskbazi.user.domain.service;
 
-import dev.hspl.taskbazi.common.domain.value.EmailAddress;
-import dev.hspl.taskbazi.common.domain.value.RequestClientIdentifier;
-import dev.hspl.taskbazi.common.domain.value.UserId;
-import dev.hspl.taskbazi.common.domain.value.Username;
-import dev.hspl.taskbazi.user.domain.entity.Client;
+import dev.hspl.taskbazi.common.domain.value.*;
 import dev.hspl.taskbazi.user.domain.entity.ClientRegistrationSession;
+import dev.hspl.taskbazi.user.domain.entity.User;
 import dev.hspl.taskbazi.user.domain.exception.BadSessionStateRegistrationException;
 import dev.hspl.taskbazi.user.domain.exception.EmailAddressAlreadyInUseException;
 import dev.hspl.taskbazi.user.domain.exception.RegistrationSessionRestrictionException;
 import dev.hspl.taskbazi.user.domain.exception.UsernameAlreadyInUseException;
-import dev.hspl.taskbazi.user.domain.value.ClientFullName;
 import dev.hspl.taskbazi.user.domain.value.PlainPassword;
 import dev.hspl.taskbazi.user.domain.value.PlainVerificationCode;
 import dev.hspl.taskbazi.user.domain.value.ProtectedPassword;
+import dev.hspl.taskbazi.user.domain.value.UserFullName;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -37,25 +34,29 @@ public class ClientRegistrationService {
     public ClientRegistrationSession createNewSession(
             LocalDateTime currentDateTime,
             UUID newSessionId,
-            EmailAddress emailAddress,
-            ClientFullName userFullName,
-            Username userUsername,
-            PlainPassword userPlainPassword,
+            EmailAddress clientEmailAddress,
+            UserFullName clientFullName,
+            Username clientUsername,
+            PlainPassword clientPlainPassword,
             PlainVerificationCode plainVerificationCode,
             RequestClientIdentifier requestClientIdentifier,
             LocalDateTime lastSessionCreationTime // last session creation by email address or request client identifier
     ) {
-        boolean isUsernameUnique = userUniquenessChecker.checkUsernameIsUnique(userUsername);
-        if (!isUsernameUnique) { throw new UsernameAlreadyInUseException(); }
+        boolean isUsernameUnique = userUniquenessChecker.checkUsernameIsUnique(clientUsername, UserRole.CLIENT);
+        if (!isUsernameUnique) {
+            throw new UsernameAlreadyInUseException();
+        }
 
-        boolean isEmailAddressUnique = userUniquenessChecker.checkEmailAddressIsUnique(emailAddress);
-        if (!isEmailAddressUnique) { throw new EmailAddressAlreadyInUseException(); }
+        boolean isEmailAddressUnique = userUniquenessChecker.checkEmailAddressIsUnique(clientEmailAddress, UserRole.CLIENT);
+        if (!isEmailAddressUnique) {
+            throw new EmailAddressAlreadyInUseException();
+        }
 
         int sessionLimitationDelay = constraints.registrationSessionLimitationDelaySeconds();
 
         boolean hasPreviousSession = lastSessionCreationTime != null; // regardless of the last session state
         if (hasPreviousSession) {
-            int secondsElapsed = (int) Math.abs(Duration.between(lastSessionCreationTime,currentDateTime).toSeconds());
+            int secondsElapsed = (int) Math.abs(Duration.between(lastSessionCreationTime, currentDateTime).toSeconds());
             boolean canCreateNewSession = secondsElapsed >= sessionLimitationDelay;
             if (!canCreateNewSession) {
                 throw new RegistrationSessionRestrictionException(
@@ -65,43 +66,50 @@ public class ClientRegistrationService {
             }
         }
 
-        ProtectedPassword userPassword = passwordProtector.protect(userPlainPassword);
+        ProtectedPassword userPassword = passwordProtector.protect(clientPlainPassword);
 
         int sessionLifetime = constraints.registrationSessionLifetimeSeconds();
         emailSender.sendVerificationEmail(
-                emailAddress,
+                clientEmailAddress,
                 plainVerificationCode,
                 sessionLifetime,
                 currentDateTime.plusSeconds(sessionLifetime),
-                userFullName
+                clientFullName
         );
 
-        return ClientRegistrationSession.newSession(currentDateTime,newSessionId,emailAddress,userFullName,userUsername,
-                userPassword,plainVerificationCode,requestClientIdentifier,verificationCodeProtector);
+        return ClientRegistrationSession.newSession(currentDateTime, newSessionId, clientEmailAddress, clientFullName, clientUsername,
+                userPassword, plainVerificationCode, requestClientIdentifier, verificationCodeProtector);
     }
 
-    public Client registerClient(
+    public User registerClient(
             LocalDateTime currentDateTime,
             UserId newUserId,
             ClientRegistrationSession registrationSession
     ) {
         boolean validate = !registrationSession.isClosed() && registrationSession.isVerified();
-        if (!validate) { throw new BadSessionStateRegistrationException(); }
+        if (!validate) {
+            throw new BadSessionStateRegistrationException();
+        }
 
         registrationSession.registrationCompleted(currentDateTime);
 
-        ClientFullName userFullName = registrationSession.getUserFullName();
-        EmailAddress userEmailAddress = registrationSession.getEmailAddress();
-        Username userUsername = registrationSession.getUserUsername();
-        ProtectedPassword userPassword = registrationSession.getUserPassword();
+        UserFullName clientFullName = registrationSession.getClientFullName();
+        EmailAddress clientEmailAddress = registrationSession.getEmailAddress();
+        Username clientUsername = registrationSession.getClientUsername();
+        ProtectedPassword clientPassword = registrationSession.getClientPassword();
 
-        boolean isUsernameUnique = userUniquenessChecker.checkUsernameIsUnique(userUsername);
-        if (!isUsernameUnique) { throw new UsernameAlreadyInUseException(); }
+        boolean isUsernameUnique = userUniquenessChecker.checkUsernameIsUnique(clientUsername, UserRole.CLIENT);
+        if (!isUsernameUnique) {
+            throw new UsernameAlreadyInUseException();
+        }
 
-        boolean isEmailAddressUnique = userUniquenessChecker.checkEmailAddressIsUnique(userEmailAddress);
-        if (!isEmailAddressUnique) { throw new EmailAddressAlreadyInUseException(); }
+        boolean isEmailAddressUnique = userUniquenessChecker.checkEmailAddressIsUnique(clientEmailAddress, UserRole.CLIENT);
+        if (!isEmailAddressUnique) {
+            throw new EmailAddressAlreadyInUseException();
+        }
 
-        return Client.newUniqueClient(currentDateTime,newUserId,userFullName,userEmailAddress,userUsername,userPassword);
+        return User.newUniqueUser(currentDateTime, newUserId, clientFullName, clientEmailAddress,
+                clientUsername, clientPassword, UserRole.CLIENT);
     }
 
     //    public void changeUserUsername(

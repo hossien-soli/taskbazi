@@ -1,10 +1,12 @@
 package dev.hspl.taskbazi.user.domain.service;
 
-import dev.hspl.taskbazi.common.domain.value.GenericUser;
 import dev.hspl.taskbazi.common.domain.value.RequestClientIdentifier;
+import dev.hspl.taskbazi.common.domain.value.UserRole;
 import dev.hspl.taskbazi.user.domain.entity.RefreshToken;
+import dev.hspl.taskbazi.user.domain.entity.User;
 import dev.hspl.taskbazi.user.domain.exception.PasswordMismatchException;
 import dev.hspl.taskbazi.user.domain.exception.TooManyActiveLoginSessionException;
+import dev.hspl.taskbazi.user.domain.exception.UserRoleMismatchLoginException;
 import dev.hspl.taskbazi.user.domain.value.*;
 import lombok.RequiredArgsConstructor;
 
@@ -20,8 +22,8 @@ public class UserLoginService {
 
     public LoginSessionTrackingInfo loginUser(
             LocalDateTime currentDateTime,
-            AuthenticatableUser authenticatableUser,
-            GenericUser genericUserInfo,
+            UserRole roleToLogin,
+            User userToLogin,
             PlainPassword plainPassword,
             int numberOfUserActiveSessions,
             UUID newRefreshTokenId,
@@ -30,9 +32,16 @@ public class UserLoginService {
             RequestIdentificationDetails requestIdentificationDetails,
             PlainOpaqueToken plainActualRefreshToken
     ) {
-        ProtectedPassword userPassword = authenticatableUser.getAuthUserProtectedPassword();
-        boolean matches = passwordProtector.matches(plainPassword,userPassword);
-        if (!matches) { throw new PasswordMismatchException(); }
+        boolean roleMatches = roleToLogin.equals(userToLogin.userRole());
+        if (!roleMatches) {
+            throw new UserRoleMismatchLoginException();
+        }
+
+        ProtectedPassword userPassword = userToLogin.getPassword();
+        boolean matches = passwordProtector.matches(plainPassword, userPassword);
+        if (!matches) {
+            throw new PasswordMismatchException();
+        }
 
         short maxAllowedActiveLoginSessionsByUser = constraints.maxAllowedActiveLoginSessions();
         boolean canHaveMoreSession = numberOfUserActiveSessions < maxAllowedActiveLoginSessionsByUser;
@@ -45,7 +54,7 @@ public class UserLoginService {
                 newRefreshTokenId,
                 plainActualRefreshToken,
                 newLoginSessionId,
-                genericUserInfo,
+                userToLogin,
                 requestClientIdentifier,
                 requestIdentificationDetails,
                 constraints,
@@ -53,7 +62,7 @@ public class UserLoginService {
         );
 
         AccessToken accessToken = accessTokenService.generateTokenForUser(
-                genericUserInfo,
+                userToLogin,
                 constraints.accessTokenLifetimeMinutes()
         );
 
@@ -69,6 +78,6 @@ public class UserLoginService {
             RefreshToken tokenToRefresh,
             PlainOpaqueToken userPlainActualRefreshToken
     ) {
-
+        return null;
     }
 }

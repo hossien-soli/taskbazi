@@ -27,10 +27,10 @@ public class ClientRegistrationSessionJPAEntity {
     private String clientFullName;
 
     @Column(nullable = false,name = "username",updatable = false,length = 30)
-    private String userUsername;
+    private String clientUsername;
 
     @Column(nullable = false,name = "password",updatable = false)
-    private String userHashedPassword;
+    private String clientHashedPassword;
 
     @Column(nullable = false,name = "verification_code",updatable = false)
     private String hashedVerificationCode;

@@ -2,14 +2,14 @@ package dev.hspl.taskbazi.common.domain.value;
 
 // a way to track authenticated user in other modules and some other usage
 
-public interface GenericUser {
-    UserId genericUserId();
+public interface UniversalUser {
+    UserId universalUserId();
 
-    String genericUserFullName();
+    String universalUserFullName();
 
-    EmailAddress genericUserEmailAddress();
+    EmailAddress universalUserEmailAddress();
 
-    Username genericUserUsername();
+    Username universalUserUsername();
 
     boolean isAccountActive();
 

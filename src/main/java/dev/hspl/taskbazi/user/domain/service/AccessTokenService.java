@@ -1,6 +1,6 @@
 package dev.hspl.taskbazi.user.domain.service;
 
-import dev.hspl.taskbazi.common.domain.value.GenericUser;
+import dev.hspl.taskbazi.common.domain.value.UniversalUser;
 import dev.hspl.taskbazi.user.domain.exception.InvalidAccessTokenException;
 import dev.hspl.taskbazi.user.domain.value.AccessToken;
 
@@ -12,9 +12,9 @@ import dev.hspl.taskbazi.user.domain.value.AccessToken;
 
 public interface AccessTokenService {
     AccessToken generateTokenForUser(
-            GenericUser genericUser,
+            UniversalUser universalUser,
             short accessTokenLifetimeMinutes
     );
 
-    GenericUser validateTokenAndExtractUserInfo(AccessToken token) throws InvalidAccessTokenException;
+    UniversalUser validateTokenAndExtractUserInfo(AccessToken token) throws InvalidAccessTokenException;
 }

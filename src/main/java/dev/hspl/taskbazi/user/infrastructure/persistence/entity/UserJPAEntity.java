@@ -9,6 +9,9 @@ import lombok.ToString;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+// jpa-entity/model for all type/role of users in a single table
+// actually domain allow us to store different type/role of users inside separate tables
+
 @Entity(name = "User")
 @Table(name = "users")
 @Getter

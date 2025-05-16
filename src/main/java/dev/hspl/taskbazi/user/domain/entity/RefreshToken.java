@@ -2,7 +2,6 @@ package dev.hspl.taskbazi.user.domain.entity;
 
 import dev.hspl.taskbazi.common.domain.DomainAggregateRoot;
 import dev.hspl.taskbazi.common.domain.event.DomainNotificationRequestEvent;
-import dev.hspl.taskbazi.common.domain.value.GenericUser;
 import dev.hspl.taskbazi.common.domain.value.RequestClientIdentifier;
 import dev.hspl.taskbazi.common.domain.value.UserId;
 import dev.hspl.taskbazi.user.domain.event.NewAccountLoginDomainEvent;
@@ -61,7 +60,7 @@ public class RefreshToken extends DomainAggregateRoot {
             UUID newRefreshTokenId,
             PlainOpaqueToken plainActualRefreshToken,
             UUID newLoginSessionId,
-            GenericUser genericUserInfo,
+            User userToLogin,
             RequestClientIdentifier requestClientIdentifier,
             RequestIdentificationDetails requestIdentificationDetails,
             UserAuthenticationConstraints constraints,
@@ -71,15 +70,15 @@ public class RefreshToken extends DomainAggregateRoot {
         short tokenLifetime = constraints.refreshTokenLifetimeHours();
 
         LoginSession loginSession = LoginSession.newSession(currentDateTime,newLoginSessionId,
-                genericUserInfo.genericUserId(),requestClientIdentifier,requestIdentificationDetails);
+                userToLogin.getId(),requestClientIdentifier,requestIdentificationDetails);
 
         DomainNotificationRequestEvent notifRequestEvent = new NewAccountLoginDomainEvent(
                 currentDateTime,
                 RefreshToken.class.getSimpleName(),
                 newRefreshTokenId,
-                genericUserInfo.userRole(),
-                genericUserInfo.genericUserId(),
-                genericUserInfo.genericUserEmailAddress(),
+                userToLogin.getRole(),
+                userToLogin.getId(),
+                userToLogin.getEmailAddress(),
                 requestClientIdentifier,
                 requestIdentificationDetails,
                 newLoginSessionId
@@ -128,6 +127,5 @@ public class RefreshToken extends DomainAggregateRoot {
         this.refreshed = true;
         this.refreshedAt = currentDateTime;
         this.loginSession.newTokenRefresh(newRequestClientIdentifier,newRequestIdentificationDetails);
-        //registerDomainEvent(new TokenRefreshedDomainEvent());
     }
 }
