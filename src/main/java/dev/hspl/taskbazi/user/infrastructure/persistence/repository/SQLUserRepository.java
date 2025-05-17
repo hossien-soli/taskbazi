@@ -1,6 +1,7 @@
 package dev.hspl.taskbazi.user.infrastructure.persistence.repository;
 
 import dev.hspl.taskbazi.common.domain.value.EmailAddress;
+import dev.hspl.taskbazi.common.domain.value.UserId;
 import dev.hspl.taskbazi.common.domain.value.UserRole;
 import dev.hspl.taskbazi.common.domain.value.Username;
 import dev.hspl.taskbazi.user.domain.entity.User;
@@ -28,35 +29,42 @@ public class SQLUserRepository implements UserRepository {
     }
 
     @Override
-    public Optional<User> findByUsername(Username username, UserRole userRole) {
+    public Optional<User> find(UserId id, UserRole role) {
         // apply role for more efficiency in application use-case and domain layer
-        Optional<UserJPAEntity> fetchResult = jpaRepository.findRoleByUsername(
-                userRole,
-                username.value()
+        Optional<UserJPAEntity> fetchResult = jpaRepository.findByIdAndRoleMatch(id.value(),role);
+        return fetchResult.map(mapper::mapJPAEntityToUser);
+    }
+
+    @Override
+    public Optional<User> findByUsername(Username username, UserRole role) {
+        // apply role for more efficiency in application use-case and domain layer
+        Optional<UserJPAEntity> fetchResult = jpaRepository.findByUsernameAndRoleMatch(
+                username.value(),
+                role
         );
 
         return fetchResult.map(mapper::mapJPAEntityToUser);
     }
 
     @Override
-    public Optional<User> findByEmailAddress(EmailAddress emailAddress, UserRole userRole) {
+    public Optional<User> findByEmailAddress(EmailAddress emailAddress, UserRole role) {
         // apply role for more efficiency in application use-case and domain layer
-        Optional<UserJPAEntity> fetchResult = jpaRepository.findRoleByEmailAddress(
-                userRole,
-                emailAddress.value()
+        Optional<UserJPAEntity> fetchResult = jpaRepository.findByEmailAddressAndRoleMatch(
+                emailAddress.value(),
+                role
         );
 
         return fetchResult.map(mapper::mapJPAEntityToUser);
     }
 
     @Override
-    public boolean existsByEmail(EmailAddress emailAddress, UserRole userRole) {
+    public boolean existsByEmail(EmailAddress emailAddress, UserRole role) {
         // we should ignore the role for this implementation because we have a unique constraint in database table for email
         return jpaRepository.existsByEmailAddress(emailAddress.value());
     }
 
     @Override
-    public boolean existsByUsername(Username username, UserRole userRole) {
+    public boolean existsByUsername(Username username, UserRole role) {
         // we should ignore the role for this implementation because we have a unique constraint in database table for username
         return jpaRepository.existsByUsername(username.value());
     }

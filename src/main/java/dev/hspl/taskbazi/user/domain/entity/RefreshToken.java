@@ -1,24 +1,28 @@
 package dev.hspl.taskbazi.user.domain.entity;
 
 import dev.hspl.taskbazi.common.domain.DomainAggregateRoot;
+import dev.hspl.taskbazi.common.domain.DomainException;
 import dev.hspl.taskbazi.common.domain.event.DomainNotificationRequestEvent;
+import dev.hspl.taskbazi.common.domain.event.RefreshTokenReuseDetectedAlertEvent;
 import dev.hspl.taskbazi.common.domain.value.RequestClientIdentifier;
+import dev.hspl.taskbazi.common.domain.value.UniversalUser;
 import dev.hspl.taskbazi.common.domain.value.UserId;
 import dev.hspl.taskbazi.user.domain.event.NewAccountLoginDomainEvent;
+import dev.hspl.taskbazi.user.domain.exception.ActualRefreshTokenMismatchException;
+import dev.hspl.taskbazi.user.domain.exception.ClosedLoginSessionException;
 import dev.hspl.taskbazi.user.domain.service.OpaqueTokenProtector;
 import dev.hspl.taskbazi.user.domain.service.UserAuthenticationConstraints;
-import dev.hspl.taskbazi.user.domain.value.LoginSessionState;
-import dev.hspl.taskbazi.user.domain.value.PlainOpaqueToken;
-import dev.hspl.taskbazi.user.domain.value.ProtectedOpaqueToken;
-import dev.hspl.taskbazi.user.domain.value.RequestIdentificationDetails;
+import dev.hspl.taskbazi.user.domain.value.*;
 import lombok.Getter;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 // session = login-session | sessionState = loginSessionState
 // or in technical and outside the domain -> login-session = refresh-token-family
 // In the database, login sessions will be persisted in a separate table
+// we should have a scheduled task for deleting old finished tokens & sessions(IMPORTANT)
 
 @Getter
 public class RefreshToken extends DomainAggregateRoot {
@@ -26,7 +30,7 @@ public class RefreshToken extends DomainAggregateRoot {
 
     private final ProtectedOpaqueToken actualToken;
 
-    private final short lifetimeHours; // token expiration = login-session expiration
+    private short lifetimeHours; // token expiration = login-session expiration
     private boolean refreshed;
     private final LocalDateTime createdAt;
     private LocalDateTime refreshedAt; // default=NULL
@@ -60,7 +64,7 @@ public class RefreshToken extends DomainAggregateRoot {
             UUID newRefreshTokenId,
             PlainOpaqueToken plainActualRefreshToken,
             UUID newLoginSessionId,
-            User userToLogin,
+            UniversalUser userToLogin,
             RequestClientIdentifier requestClientIdentifier,
             RequestIdentificationDetails requestIdentificationDetails,
             UserAuthenticationConstraints constraints,
@@ -70,15 +74,13 @@ public class RefreshToken extends DomainAggregateRoot {
         short tokenLifetime = constraints.refreshTokenLifetimeHours();
 
         LoginSession loginSession = LoginSession.newSession(currentDateTime,newLoginSessionId,
-                userToLogin.getId(),requestClientIdentifier,requestIdentificationDetails);
+                userToLogin.universalUserId(),requestClientIdentifier,requestIdentificationDetails);
 
         DomainNotificationRequestEvent notifRequestEvent = new NewAccountLoginDomainEvent(
                 currentDateTime,
-                RefreshToken.class.getSimpleName(),
-                newRefreshTokenId,
-                userToLogin.getRole(),
-                userToLogin.getId(),
-                userToLogin.getEmailAddress(),
+                userToLogin.userRole(),
+                userToLogin.universalUserId(),
+                userToLogin.universalUserEmailAddress(),
                 requestClientIdentifier,
                 requestIdentificationDetails,
                 newLoginSessionId
@@ -90,6 +92,20 @@ public class RefreshToken extends DomainAggregateRoot {
         result.registerDomainEvent(notifRequestEvent);
 
         return result;
+    }
+
+    public static RefreshToken newRotate(
+            LocalDateTime currentDateTime,
+            UUID newRefreshTokenId,
+            PlainOpaqueToken newPlainActualRefreshToken,
+            LoginSession relatedLoginSession, // the login session of previous refresh token
+            UserAuthenticationConstraints constraints,
+            OpaqueTokenProtector tokenProtector
+    ) {
+        ProtectedOpaqueToken protectedRefreshToken = tokenProtector.protect(newPlainActualRefreshToken);
+
+        return new RefreshToken(newRefreshTokenId,protectedRefreshToken,constraints.refreshTokenLifetimeHours(),
+                false,currentDateTime,null,relatedLoginSession,null);
     }
 
     public static RefreshToken existingInstance(
@@ -119,13 +135,50 @@ public class RefreshToken extends DomainAggregateRoot {
                 refreshedAt,loginSession,version);
     }
 
-    public void markAsRefreshed(
+    public TokenRefreshResult tryRefresh(
             LocalDateTime currentDateTime,
-            RequestClientIdentifier newRequestClientIdentifier,
-            RequestIdentificationDetails newRequestIdentificationDetails
-    ) {
+            PlainOpaqueToken userPlainActualRefreshToken,
+            UniversalUser relatedUser,
+            RequestClientIdentifier requestClientIdentifier,
+            RequestIdentificationDetails requestIdentificationDetails,
+            OpaqueTokenProtector tokenProtector
+    ) throws DomainException {
+        boolean tokenMatches = tokenProtector.matches(userPlainActualRefreshToken,this.actualToken);
+        if (!tokenMatches) {
+            throw new ActualRefreshTokenMismatchException();
+        }
+
+        if (this.loginSession.isClosed()) {
+            throw new ClosedLoginSessionException();
+        }
+
+        if (this.refreshed) {
+            this.loginSession.updateState(currentDateTime,LoginSessionState.INVALIDATED);
+
+            DomainNotificationRequestEvent reuseAlertEvent = new RefreshTokenReuseDetectedAlertEvent(
+                    currentDateTime,
+                    this.id,
+                    relatedUser.userRole(),
+                    relatedUser.universalUserId(),
+                    requestClientIdentifier,
+                    requestIdentificationDetails,
+                    relatedUser.universalUserEmailAddress()
+            );
+
+            registerDomainEvent(reuseAlertEvent);
+
+            return TokenRefreshResult.REUSE_DETECTION;
+        }
+
+        long hoursElapsed = Math.abs(Duration.between(currentDateTime,this.createdAt).toHours());
+        if (hoursElapsed >= this.lifetimeHours) {
+            this.loginSession.updateState(currentDateTime,LoginSessionState.EXPIRED);
+            return TokenRefreshResult.EXPIRED;
+        }
+
         this.refreshed = true;
         this.refreshedAt = currentDateTime;
-        this.loginSession.newTokenRefresh(newRequestClientIdentifier,newRequestIdentificationDetails);
+        this.loginSession.newTokenRefresh(requestClientIdentifier,requestIdentificationDetails);
+        return TokenRefreshResult.SUCCESS;
     }
 }

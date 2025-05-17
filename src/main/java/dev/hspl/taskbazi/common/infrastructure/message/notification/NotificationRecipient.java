@@ -16,3 +16,5 @@ public record NotificationRecipient(
         }
     }
 }
+
+// make recipient fields optional based on delivery methods

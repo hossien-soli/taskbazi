@@ -8,7 +8,7 @@ import dev.hspl.taskbazi.common.infrastructure.message.UserFriendlyMessage;
 import dev.hspl.taskbazi.common.infrastructure.message.notification.NotificationRecipient;
 import dev.hspl.taskbazi.common.infrastructure.message.notification.NotificationRequest;
 import dev.hspl.taskbazi.common.infrastructure.message.notification.delivery.NotificationDeliveryMethod;
-import dev.hspl.taskbazi.user.domain.value.ClientFullName;
+import dev.hspl.taskbazi.user.domain.value.UserFullName;
 import org.springframework.context.MessageSource;
 import org.springframework.lang.NonNull;
 import org.thymeleaf.TemplateEngine;
@@ -23,7 +23,7 @@ public record RegistrationWelcomeMessageNotification(
         UserRole recipientUserRole,
         UserId recipientUserId,
         EmailAddress recipientEmailAddress,
-        ClientFullName clientFullName,
+        UserFullName clientFullName,
         Username clientUsername
 ) implements NotificationRequest {
     @Override

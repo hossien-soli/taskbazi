@@ -8,6 +8,4 @@ import java.util.UUID;
 
 public interface DomainEvent {
     LocalDateTime eventOccurredAt();
-    String eventAggregateType();
-    UUID eventAggregateId();
 }

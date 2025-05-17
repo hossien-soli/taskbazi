@@ -9,6 +9,8 @@ import lombok.ToString;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+// we should have a scheduled task for deleting old finished tokens & sessions(IMPORTANT)
+
 @Entity(name = "LoginSession")
 @Table(name = "login_sessions")
 @Getter

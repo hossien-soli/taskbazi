@@ -10,15 +10,12 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 // domain notification request event only for clients (UserRole.CLIENT)
 
 @RequiredArgsConstructor
 public class ClientRegisteredDomainEvent implements DomainNotificationRequestEvent {
     private final LocalDateTime currentDateTime;
-    private final String eventAggregateType;
-    private final UUID eventAggregateId;
 
     private final UserId notificationUserId;
     private final EmailAddress notificationUserEmailAddress;
@@ -32,16 +29,6 @@ public class ClientRegisteredDomainEvent implements DomainNotificationRequestEve
     @Override
     public LocalDateTime eventOccurredAt() {
         return this.currentDateTime;
-    }
-
-    @Override
-    public String eventAggregateType() {
-        return this.eventAggregateType;
-    }
-
-    @Override
-    public UUID eventAggregateId() {
-        return this.eventAggregateId;
     }
 
     @Override

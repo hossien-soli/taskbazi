@@ -1,6 +1,7 @@
 package dev.hspl.taskbazi.user.domain.entity;
 
 import dev.hspl.taskbazi.common.domain.DomainAggregateRoot;
+import dev.hspl.taskbazi.common.domain.DomainException;
 import dev.hspl.taskbazi.common.domain.exception.RequestClientIdentifierMismatchException;
 import dev.hspl.taskbazi.common.domain.value.EmailAddress;
 import dev.hspl.taskbazi.common.domain.value.RequestClientIdentifier;
@@ -125,13 +126,13 @@ public class ClientRegistrationSession extends DomainAggregateRoot {
         this.closedAt = registrationDateTime;
     }
 
-    public RegistrationVerificationResult verify(
+    public RegistrationVerificationResult tryVerify(
             LocalDateTime currentDateTime,
             PlainVerificationCode userVerificationCode,
             RequestClientIdentifier userRequestClientIdentifier,
             VerificationCodeProtector verificationCodeProtector,
             UserAuthenticationConstraints constraints
-    ) {
+    ) throws DomainException {
         if (isClosed()) {
             throw new ClosedRegistrationSessionException();
         }

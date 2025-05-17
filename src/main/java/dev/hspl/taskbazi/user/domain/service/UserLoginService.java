@@ -22,7 +22,7 @@ public class UserLoginService {
 
     public LoginSessionTrackingInfo loginUser(
             LocalDateTime currentDateTime,
-            UserRole roleToLogin,
+            UserRole requestedUserRole, // role requested for the login (role based separated logins)
             User userToLogin,
             PlainPassword plainPassword,
             int numberOfUserActiveSessions,
@@ -30,9 +30,9 @@ public class UserLoginService {
             UUID newLoginSessionId,
             RequestClientIdentifier requestClientIdentifier,
             RequestIdentificationDetails requestIdentificationDetails,
-            PlainOpaqueToken plainActualRefreshToken
+            PlainOpaqueToken newPlainActualRefreshToken
     ) {
-        boolean roleMatches = roleToLogin.equals(userToLogin.userRole());
+        boolean roleMatches = requestedUserRole.equals(userToLogin.userRole());
         if (!roleMatches) {
             throw new UserRoleMismatchLoginException();
         }
@@ -52,7 +52,7 @@ public class UserLoginService {
         RefreshToken refreshToken = RefreshToken.newLogin(
                 currentDateTime,
                 newRefreshTokenId,
-                plainActualRefreshToken,
+                newPlainActualRefreshToken,
                 newLoginSessionId,
                 userToLogin,
                 requestClientIdentifier,
@@ -73,11 +73,44 @@ public class UserLoginService {
     // this should detect the duplicate usage of token(reuse detection)
     // can invalidate the login session due to reuse detection
     // also can expire the login session due to a non-refreshed refresh token expiration
-    public RefreshToken refreshAndRotateTheToken(
+    public LoginSessionExtensionResult refreshAndRotateTheToken(
             LocalDateTime currentDateTime,
+            UserRole requestedUserRole, // role requested for the login(refresh) (role based separated logins)
+            User relatedUser,
             RefreshToken tokenToRefresh,
-            PlainOpaqueToken userPlainActualRefreshToken
+            PlainOpaqueToken userPlainActualRefreshToken,
+            UUID newRefreshTokenId,
+            RequestClientIdentifier requestClientIdentifier,
+            RequestIdentificationDetails requestIdentificationDetails,
+            PlainOpaqueToken newPlainActualRefreshToken
     ) {
-        return null;
+        boolean roleMatches = requestedUserRole.equals(relatedUser.getRole());
+        if (!roleMatches) { throw new UserRoleMismatchLoginException(); }
+
+        TokenRefreshResult refreshResult = tokenToRefresh.tryRefresh(currentDateTime,userPlainActualRefreshToken,
+                relatedUser,requestClientIdentifier,requestIdentificationDetails,this.tokenProtector);
+
+        if (refreshResult.equals(TokenRefreshResult.SUCCESS)) {
+            RefreshToken newRefreshToken = RefreshToken.newRotate(
+                    currentDateTime,
+                    newRefreshTokenId,
+                    newPlainActualRefreshToken,
+                    tokenToRefresh.getLoginSession(),
+                    constraints,
+                    tokenProtector
+            );
+
+            AccessToken newAccessToken = accessTokenService.generateTokenForUser(
+                    relatedUser,
+                    constraints.accessTokenLifetimeMinutes()
+            );
+
+            return new LoginSessionExtensionResult(true,refreshResult,new LoginSessionTrackingInfo(
+                    newAccessToken,
+                    newRefreshToken
+            ));
+        }
+
+        return new LoginSessionExtensionResult(false,refreshResult,null);
     }
 }

@@ -56,4 +56,6 @@ public class UserModuleDomainNotificationEventListener {
 
         notificationRequestHandler.handle(actualRequest);
     }
+
+    // TODO: send refresh token reuse detection alert notification to the user
 }

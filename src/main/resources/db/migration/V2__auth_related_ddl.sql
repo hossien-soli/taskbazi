@@ -51,6 +51,7 @@ create table users
 create type LoginSessionState as enum('ACTIVE','LOGGED_OUT','EXPIRED','INVALIDATED');
 
 -- refresh token families
+-- we should have a scheduled task for deleting old finished sessions(IMPORTANT)
 create table login_sessions
 (
     id UUID primary key,
@@ -70,8 +71,8 @@ create table login_sessions
 -- refresh_token_families = login_sessions
 -- each login-session(device) can logout newer login-sessions created after their own session, but not older ones
 -- in-fact user session is based on a family not a simple and actual refresh-token
--- we have a scheduled task for deleting records of old expired,revoked,invalidated families
 -- each login(with username and password) will create a new token family or login session
+-- we should have a scheduled task for deleting old finished sessions(IMPORTANT)
 
 create table refresh_tokens
 (

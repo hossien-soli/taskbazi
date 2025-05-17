@@ -78,6 +78,10 @@ public class LoginSession {
                 requestIdentificationDetails,createdAt,stateUpdatedAt,version);
     }
 
+    public boolean isClosed() {
+        return !this.state.equals(LoginSessionState.ACTIVE);
+    }
+
     public void newTokenRefresh(
             RequestClientIdentifier newRequestClientIdentifier,
             RequestIdentificationDetails newRequestIdentificationDetails

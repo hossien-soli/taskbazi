@@ -42,6 +42,7 @@ public class SQLRefreshTokenRepository implements RefreshTokenRepository {
     @Override
     public Optional<RefreshToken> find(UUID refreshTokenId, UserRole userRole) {
         // just ignore user-role for this implementation since we have all users in one db table
-        return null;
+        Optional<RefreshTokenJPAEntity> fetchResult = tokenJPARepository.findByIdWithLoginSession(refreshTokenId);
+        return fetchResult.map(mapper::mapJPAEntityToRefreshToken);
     }
 }

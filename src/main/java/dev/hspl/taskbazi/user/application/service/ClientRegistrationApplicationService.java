@@ -103,7 +103,7 @@ public class ClientRegistrationApplicationService implements ClientRegistrationR
 
         LocalDateTime currentDateTime = timeProvider.currentDateTime();
 
-        RegistrationVerificationResult result = session.verify(
+        RegistrationVerificationResult result = session.tryVerify(
                 currentDateTime,
                 userVerificationCode,
                 requestClientIdentifier,

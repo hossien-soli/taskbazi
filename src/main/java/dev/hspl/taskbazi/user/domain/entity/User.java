@@ -65,8 +65,6 @@ public class User extends DomainAggregateRoot implements UniversalUser {
         if (role.equals(UserRole.CLIENT)) {
             DomainNotificationRequestEvent notifRequestEvent = new ClientRegisteredDomainEvent(
                     currentDateTime,
-                    User.class.getSimpleName(),
-                    newUserId.value(),
                     newUserId,
                     emailAddress,
                     fullName,

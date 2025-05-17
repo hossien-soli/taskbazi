@@ -6,7 +6,7 @@ import dev.hspl.taskbazi.common.domain.DomainException;
 
 public class UserRoleMismatchLoginException extends DomainException {
     public UserRoleMismatchLoginException() {
-        super("requested user role for login doesn't match the actual role of user!");
+        super("requested user role doesn't match the actual role of user!");
     }
 
     @Override

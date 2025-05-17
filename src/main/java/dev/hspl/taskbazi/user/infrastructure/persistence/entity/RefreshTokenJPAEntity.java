@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 // optimistic locking in database needed for preventing double refresh
+// we should have a scheduled task for deleting old finished tokens & sessions(IMPORTANT)
 
 @Entity(name = "RefreshToken")
 @Table(name = "refresh_tokens")

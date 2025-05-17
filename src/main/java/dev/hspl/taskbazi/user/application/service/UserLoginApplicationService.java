@@ -4,16 +4,20 @@ import dev.hspl.taskbazi.common.application.GlobalDomainEventPublisher;
 import dev.hspl.taskbazi.common.application.TimeProvider;
 import dev.hspl.taskbazi.common.application.UUIDGenerator;
 import dev.hspl.taskbazi.common.domain.value.RequestClientIdentifier;
+import dev.hspl.taskbazi.common.domain.value.UserId;
 import dev.hspl.taskbazi.common.domain.value.UserRole;
 import dev.hspl.taskbazi.user.application.dto.PresentedRefreshToken;
 import dev.hspl.taskbazi.user.application.dto.PresentedRefreshTokenElements;
+import dev.hspl.taskbazi.user.application.exception.InvalidRefreshTokenIdException;
 import dev.hspl.taskbazi.user.application.exception.InvalidUsernameOrEmailAddressLoginException;
-import dev.hspl.taskbazi.user.application.usage.TokenRefreshUseCase;
+import dev.hspl.taskbazi.user.application.exception.UserNotFoundLoginException;
+import dev.hspl.taskbazi.user.application.usage.TokenRotationUseCase;
 import dev.hspl.taskbazi.user.application.usage.UserLoginUseCase;
-import dev.hspl.taskbazi.user.application.usage.cmd.TokenRefreshCommand;
+import dev.hspl.taskbazi.user.application.usage.cmd.TokenRotationCommand;
 import dev.hspl.taskbazi.user.application.usage.cmd.UserLoginCommand;
-import dev.hspl.taskbazi.user.application.usage.result.TokenRefreshResult;
+import dev.hspl.taskbazi.user.application.usage.result.TokenRotationResult;
 import dev.hspl.taskbazi.user.application.usage.result.UserLoginResult;
+import dev.hspl.taskbazi.user.domain.entity.LoginSession;
 import dev.hspl.taskbazi.user.domain.entity.User;
 import dev.hspl.taskbazi.user.domain.entity.RefreshToken;
 import dev.hspl.taskbazi.user.domain.repository.RefreshTokenRepository;
@@ -33,7 +37,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class UserLoginApplicationService implements UserLoginUseCase, TokenRefreshUseCase {
+public class UserLoginApplicationService implements UserLoginUseCase, TokenRotationUseCase {
     private final TimeProvider timeProvider;
     private final UUIDGenerator uuidGenerator;
     private final UserLoginService domainService;
@@ -95,8 +99,22 @@ public class UserLoginApplicationService implements UserLoginUseCase, TokenRefre
     }
 
     @Override
-    public TokenRefreshResult execute(TokenRefreshCommand command) {
+    public TokenRotationResult execute(TokenRotationCommand command) {
         PresentedRefreshTokenElements elements = command.presentedRefreshToken().getOrParseElements();
+        UserRole userRole = elements.userRole();
+        UUID refreshTokenId = elements.refreshTokenId();
+        PlainOpaqueToken plainActualRefreshToken = elements.plainActualRefreshToken();
+
+        Optional<RefreshToken> fetchResult = tokenRepository.find(refreshTokenId,userRole);
+        RefreshToken refreshToken = fetchResult.orElseThrow(InvalidRefreshTokenIdException::new);
+
+        LoginSession loginSession = refreshToken.getLoginSession();
+        UserId relatedUserId = loginSession.getUserId();
+
+        Optional<User> userFetchResult = userRepository.find(relatedUserId,userRole);
+        User relatedUser = userFetchResult.orElseThrow(UserNotFoundLoginException::new);
+
+
 
         return null;
     }

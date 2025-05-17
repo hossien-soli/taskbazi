@@ -13,16 +13,22 @@ import java.util.UUID;
 // actually domain allow us to store different type/role of users inside separate tables
 
 public interface UserJPARepository extends JpaRepository<UserJPAEntity, UUID> {
-    @Query("SELECT u FROM User u WHERE u.username = :username AND u.role = :userRole")
-    Optional<UserJPAEntity> findRoleByUsername(
-            @Param("userRole") UserRole userRole,
-            @Param("username") String username
+    @Query("SELECT u FROM User u WHERE u.id = :id AND u.role = :roleToMatch")
+    Optional<UserJPAEntity> findByIdAndRoleMatch(
+            @Param("id") UUID id,
+            @Param("roleToMatch") UserRole roleToMatch
     );
 
-    @Query("SELECT u FROM User u WHERE u.emailAddress = :emailAddress AND u.role = :userRole")
-    Optional<UserJPAEntity> findRoleByEmailAddress(
-            @Param("userRole") UserRole userRole,
-            @Param("emailAddress") String emailAddress
+    @Query("SELECT u FROM User u WHERE u.username = :username AND u.role = :roleToMatch")
+    Optional<UserJPAEntity> findByUsernameAndRoleMatch(
+            @Param("username") String username,
+            @Param("roleToMatch") UserRole roleToMatch
+    );
+
+    @Query("SELECT u FROM User u WHERE u.emailAddress = :emailAddress AND u.role = :roleToMatch")
+    Optional<UserJPAEntity> findByEmailAddressAndRoleMatch(
+            @Param("emailAddress") String emailAddress,
+            @Param("roleToMatch") UserRole roleToMatch
     );
 
     boolean existsByEmailAddress(String emailAddress);

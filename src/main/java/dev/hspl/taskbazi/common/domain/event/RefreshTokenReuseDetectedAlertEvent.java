@@ -1,6 +1,5 @@
-package dev.hspl.taskbazi.user.domain.event;
+package dev.hspl.taskbazi.common.domain.event;
 
-import dev.hspl.taskbazi.common.domain.event.DomainNotificationRequestEvent;
 import dev.hspl.taskbazi.common.domain.value.EmailAddress;
 import dev.hspl.taskbazi.common.domain.value.RequestClientIdentifier;
 import dev.hspl.taskbazi.common.domain.value.UserId;
@@ -12,22 +11,31 @@ import lombok.RequiredArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+// this is a public event in whole system
+// both the user module and the admin module may use it
+// The admin module needs it to detect malicious behavior
+// The user module is only using it to send a notification to the related user
+
 @RequiredArgsConstructor
-public class NewAccountLoginDomainEvent implements DomainNotificationRequestEvent {
+public class RefreshTokenReuseDetectedAlertEvent implements DomainNotificationRequestEvent {
     private final LocalDateTime currentDateTime;
 
-    private final UserRole notificationUserRole;
-    private final UserId notificationUserId;
+    @Getter
+    private final UUID dataRefreshTokenId;
+
+    @Getter
+    private final UserRole dataRelatedUserRole;
+
+    @Getter
+    private final UserId dataRelatedUserId;
+
+    @Getter
+    private final RequestClientIdentifier dataRequestClientIdentifier;
+
+    @Getter
+    private final RequestIdentificationDetails dataRequestIdentificationDetails;
+
     private final EmailAddress notificationUserEmailAddress;
-
-    @Getter
-    private final RequestClientIdentifier dataRequestClientIdentifier; // required
-
-    @Getter
-    private final RequestIdentificationDetails dataRequestIdentificationDetails; // nullable
-
-    @Getter
-    private final UUID dataNewLoginSessionId; // required
 
     @Override
     public LocalDateTime eventOccurredAt() {
@@ -36,12 +44,12 @@ public class NewAccountLoginDomainEvent implements DomainNotificationRequestEven
 
     @Override
     public UserRole notificationUserRole() {
-        return this.notificationUserRole;
+        return this.dataRelatedUserRole;
     }
 
     @Override
     public UserId notificationUserId() {
-        return this.notificationUserId;
+        return this.dataRelatedUserId;
     }
 
     @Override
