@@ -10,6 +10,7 @@ import dev.hspl.taskbazi.common.domain.value.UserId;
 import dev.hspl.taskbazi.user.domain.event.NewAccountLoginDomainEvent;
 import dev.hspl.taskbazi.user.domain.exception.ActualRefreshTokenMismatchException;
 import dev.hspl.taskbazi.user.domain.exception.ClosedLoginSessionException;
+import dev.hspl.taskbazi.user.domain.exception.TokenRefreshRestrictionException;
 import dev.hspl.taskbazi.user.domain.service.OpaqueTokenProtector;
 import dev.hspl.taskbazi.user.domain.service.UserAuthenticationConstraints;
 import dev.hspl.taskbazi.user.domain.value.*;
@@ -73,8 +74,8 @@ public class RefreshToken extends DomainAggregateRoot {
         ProtectedOpaqueToken protectedRefreshToken = tokenProtector.protect(plainActualRefreshToken);
         short tokenLifetime = constraints.refreshTokenLifetimeHours();
 
-        LoginSession loginSession = LoginSession.newSession(currentDateTime,newLoginSessionId,
-                userToLogin.universalUserId(),requestClientIdentifier,requestIdentificationDetails);
+        LoginSession loginSession = LoginSession.newSession(currentDateTime, newLoginSessionId,
+                userToLogin.universalUserId(), requestClientIdentifier, requestIdentificationDetails);
 
         DomainNotificationRequestEvent notifRequestEvent = new NewAccountLoginDomainEvent(
                 currentDateTime,
@@ -86,8 +87,8 @@ public class RefreshToken extends DomainAggregateRoot {
                 newLoginSessionId
         );
 
-        RefreshToken result = new RefreshToken(newRefreshTokenId,protectedRefreshToken,tokenLifetime,false,
-                currentDateTime,null,loginSession,null);
+        RefreshToken result = new RefreshToken(newRefreshTokenId, protectedRefreshToken, tokenLifetime, false,
+                currentDateTime, null, loginSession, null);
 
         result.registerDomainEvent(notifRequestEvent);
 
@@ -104,8 +105,8 @@ public class RefreshToken extends DomainAggregateRoot {
     ) {
         ProtectedOpaqueToken protectedRefreshToken = tokenProtector.protect(newPlainActualRefreshToken);
 
-        return new RefreshToken(newRefreshTokenId,protectedRefreshToken,constraints.refreshTokenLifetimeHours(),
-                false,currentDateTime,null,relatedLoginSession,null);
+        return new RefreshToken(newRefreshTokenId, protectedRefreshToken, constraints.refreshTokenLifetimeHours(),
+                false, currentDateTime, null, relatedLoginSession, null);
     }
 
     public static RefreshToken existingInstance(
@@ -127,12 +128,12 @@ public class RefreshToken extends DomainAggregateRoot {
             Integer sessionVersion
     ) {
         LoginSession loginSession = LoginSession.existingSession(
-                loginSessionId,userId,sessionNumberOfTokenRefresh,sessionState,requestClientIdentifier,
-                requestIdentificationDetails,sessionCreatedAt,sessionStateUpdatedAt,sessionVersion
+                loginSessionId, userId, sessionNumberOfTokenRefresh, sessionState, requestClientIdentifier,
+                requestIdentificationDetails, sessionCreatedAt, sessionStateUpdatedAt, sessionVersion
         );
 
-        return new RefreshToken(id,actualToken,lifetimeHours,refreshed,createdAt,
-                refreshedAt,loginSession,version);
+        return new RefreshToken(id, actualToken, lifetimeHours, refreshed, createdAt,
+                refreshedAt, loginSession, version);
     }
 
     public TokenRefreshResult tryRefresh(
@@ -141,9 +142,10 @@ public class RefreshToken extends DomainAggregateRoot {
             UniversalUser relatedUser,
             RequestClientIdentifier requestClientIdentifier,
             RequestIdentificationDetails requestIdentificationDetails,
+            UserAuthenticationConstraints constraints,
             OpaqueTokenProtector tokenProtector
     ) throws DomainException {
-        boolean tokenMatches = tokenProtector.matches(userPlainActualRefreshToken,this.actualToken);
+        boolean tokenMatches = tokenProtector.matches(userPlainActualRefreshToken, this.actualToken);
         if (!tokenMatches) {
             throw new ActualRefreshTokenMismatchException();
         }
@@ -152,8 +154,15 @@ public class RefreshToken extends DomainAggregateRoot {
             throw new ClosedLoginSessionException();
         }
 
+        Duration timeElapsed = Duration.between(currentDateTime, this.createdAt);
+        int delaySeconds = constraints.tokenRefreshDelaySeconds();
+        long secondsElapsed = Math.abs(timeElapsed.toSeconds());
+        if (secondsElapsed < delaySeconds) {
+            throw new TokenRefreshRestrictionException(delaySeconds);
+        }
+
         if (this.refreshed) {
-            this.loginSession.updateState(currentDateTime,LoginSessionState.INVALIDATED);
+            this.loginSession.updateState(currentDateTime, LoginSessionState.INVALIDATED);
 
             DomainNotificationRequestEvent reuseAlertEvent = new RefreshTokenReuseDetectedAlertEvent(
                     currentDateTime,
@@ -167,18 +176,18 @@ public class RefreshToken extends DomainAggregateRoot {
 
             registerDomainEvent(reuseAlertEvent);
 
-            return TokenRefreshResult.REUSE_DETECTION;
+            return TokenRefreshResult.REUSE_DETECTED;
         }
 
-        long hoursElapsed = Math.abs(Duration.between(currentDateTime,this.createdAt).toHours());
+        long hoursElapsed = Math.abs(timeElapsed.toHours());
         if (hoursElapsed >= this.lifetimeHours) {
-            this.loginSession.updateState(currentDateTime,LoginSessionState.EXPIRED);
+            this.loginSession.updateState(currentDateTime, LoginSessionState.EXPIRED);
             return TokenRefreshResult.EXPIRED;
         }
 
         this.refreshed = true;
         this.refreshedAt = currentDateTime;
-        this.loginSession.newTokenRefresh(requestClientIdentifier,requestIdentificationDetails);
+        this.loginSession.newTokenRefresh(requestClientIdentifier, requestIdentificationDetails);
         return TokenRefreshResult.SUCCESS;
     }
 }

@@ -24,7 +24,6 @@ import dev.hspl.taskbazi.user.domain.value.PlainPassword;
 import dev.hspl.taskbazi.user.domain.value.PlainVerificationCode;
 import dev.hspl.taskbazi.user.domain.value.RegistrationVerificationResult;
 import lombok.RequiredArgsConstructor;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,10 +44,7 @@ public class ClientRegistrationApplicationService implements ClientRegistrationR
     private final GlobalDomainEventPublisher domainEventPublisher;
 
     @Override
-    public ClientRegistrationRequestResult execute(
-            ClientRegistrationRequestCommand command,
-            @NonNull RequestClientIdentifier requestClientIdentifier
-    ) {
+    public ClientRegistrationRequestResult execute(ClientRegistrationRequestCommand command) {
         PlainPassword password = command.password();
         PlainPassword passwordConfirmation = command.passwordConfirmation();
         boolean matches = password.equals(passwordConfirmation);
@@ -57,6 +53,8 @@ public class ClientRegistrationApplicationService implements ClientRegistrationR
         }
 
         EmailAddress emailAddress = command.emailAddress();
+
+        RequestClientIdentifier requestClientIdentifier = command.requestClientIdentifier();
 
         LocalDateTime lastSessionCreationTime = sessionRepository.getLastSessionByEmailOrRequestClientIdentifier(
                 emailAddress,
@@ -91,10 +89,7 @@ public class ClientRegistrationApplicationService implements ClientRegistrationR
     }
 
     @Override
-    public ClientRegistrationFinalizeResult execute(
-            ClientRegistrationFinalizeCommand command,
-            @NonNull RequestClientIdentifier requestClientIdentifier
-    ) {
+    public ClientRegistrationFinalizeResult execute(ClientRegistrationFinalizeCommand command) {
         UUID sessionId = command.registrationSessionId();
         PlainVerificationCode userVerificationCode = command.verificationCode();
 
@@ -106,7 +101,7 @@ public class ClientRegistrationApplicationService implements ClientRegistrationR
         RegistrationVerificationResult result = session.tryVerify(
                 currentDateTime,
                 userVerificationCode,
-                requestClientIdentifier,
+                command.requestClientIdentifier(),
                 domainService.getVerificationCodeProtector(),
                 domainService.getConstraints()
         );

@@ -30,10 +30,10 @@ public class RefreshTokenReuseDetectedAlertEvent implements DomainNotificationRe
     private final UserId dataRelatedUserId;
 
     @Getter
-    private final RequestClientIdentifier dataRequestClientIdentifier;
+    private final RequestClientIdentifier dataRequestClientIdentifier; // not-null
 
     @Getter
-    private final RequestIdentificationDetails dataRequestIdentificationDetails;
+    private final RequestIdentificationDetails dataRequestIdentificationDetails; // nullable
 
     private final EmailAddress notificationUserEmailAddress;
 

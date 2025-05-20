@@ -10,13 +10,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class ConfigFileUserAuthenticationConstraints implements UserAuthenticationConstraints {
     @Value("${custom.domain.user.registration.session_limitation_delay}")
-    private int limitationDelaySeconds;
+    private int registrationSessionLimitationDelaySeconds;
 
     @Value("${custom.domain.user.registration.session_lifetime}")
-    private int lifetimeSeconds;
+    private int registrationSessionLifetimeSeconds;
 
     @Value("${custom.domain.user.registration.session_max_allowed_attempts}")
-    private short maxAllowedAttempts;
+    private short registrationSessionMaxAllowedAttempts;
 
 //    @Value("${custom.domain.user.login.refresh_token_size_in_random_bytes}")
 //    private short refreshTokenSize; // number of random bytes
@@ -30,25 +30,23 @@ public class ConfigFileUserAuthenticationConstraints implements UserAuthenticati
     @Value("${custom.domain.user.login.max_allowed_active_login_sessions}")
     private short maxAllowedActiveLoginSessions;
 
+    @Value("${custom.domain.user.login.token_refresh_delay_seconds}")
+    private int tokenRefreshDelaySeconds;
+
     @Override
     public int registrationSessionLimitationDelaySeconds() {
-        return limitationDelaySeconds;
+        return registrationSessionLimitationDelaySeconds;
     }
 
     @Override
     public int registrationSessionLifetimeSeconds() {
-        return lifetimeSeconds;
+        return registrationSessionLifetimeSeconds;
     }
 
     @Override
     public short registrationSessionMaxAllowedAttempts() {
-        return maxAllowedAttempts;
+        return registrationSessionMaxAllowedAttempts;
     }
-
-//    @Override
-//    public short refreshTokenSizeInRandomBytes() {
-//        return refreshTokenSize;
-//    }
 
     @Override
     public short refreshTokenLifetimeHours() {
@@ -63,5 +61,10 @@ public class ConfigFileUserAuthenticationConstraints implements UserAuthenticati
     @Override
     public short maxAllowedActiveLoginSessions() {
         return maxAllowedActiveLoginSessions;
+    }
+
+    @Override
+    public int tokenRefreshDelaySeconds() {
+        return tokenRefreshDelaySeconds;
     }
 }

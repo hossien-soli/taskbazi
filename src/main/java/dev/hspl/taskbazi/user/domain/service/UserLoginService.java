@@ -85,10 +85,12 @@ public class UserLoginService {
             PlainOpaqueToken newPlainActualRefreshToken
     ) {
         boolean roleMatches = requestedUserRole.equals(relatedUser.getRole());
-        if (!roleMatches) { throw new UserRoleMismatchLoginException(); }
+        if (!roleMatches) {
+            throw new UserRoleMismatchLoginException();
+        }
 
-        TokenRefreshResult refreshResult = tokenToRefresh.tryRefresh(currentDateTime,userPlainActualRefreshToken,
-                relatedUser,requestClientIdentifier,requestIdentificationDetails,this.tokenProtector);
+        TokenRefreshResult refreshResult = tokenToRefresh.tryRefresh(currentDateTime, userPlainActualRefreshToken,
+                relatedUser, requestClientIdentifier, requestIdentificationDetails, constraints, tokenProtector);
 
         if (refreshResult.equals(TokenRefreshResult.SUCCESS)) {
             RefreshToken newRefreshToken = RefreshToken.newRotate(
@@ -105,12 +107,12 @@ public class UserLoginService {
                     constraints.accessTokenLifetimeMinutes()
             );
 
-            return new LoginSessionExtensionResult(true,refreshResult,new LoginSessionTrackingInfo(
+            return new LoginSessionExtensionResult(refreshResult, new LoginSessionTrackingInfo(
                     newAccessToken,
                     newRefreshToken
             ));
         }
 
-        return new LoginSessionExtensionResult(false,refreshResult,null);
+        return new LoginSessionExtensionResult(refreshResult, null);
     }
 }
