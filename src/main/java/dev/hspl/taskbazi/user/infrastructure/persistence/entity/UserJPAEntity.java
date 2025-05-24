@@ -38,7 +38,7 @@ public class UserJPAEntity {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    @Column(nullable = false,name = "banned",columnDefinition = "boolean")
+    @Column(nullable = false,name = "banned")
     private boolean banned;
 
     @Column(nullable = false,name = "registered_at",updatable = false)

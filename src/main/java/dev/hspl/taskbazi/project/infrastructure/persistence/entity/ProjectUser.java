@@ -1,0 +1,33 @@
+package dev.hspl.taskbazi.project.infrastructure.persistence.entity;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "projects_users")
+@Getter
+@Setter
+public class ProjectUser {
+    @EmbeddedId
+    private ProjectUserId id;
+
+    @ManyToOne(optional = false,fetch = FetchType.LAZY,cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "project_id")
+    @MapsId("projectId")
+    private ProjectJPAEntity project;
+
+    @Column(nullable = false,name = "owner")
+    private boolean owner;
+
+    @Column(nullable = false,name = "role",length = 50)
+    private String role;
+
+    @Column(nullable = false,name = "active")
+    private boolean active;
+
+    @Column(nullable = false,name = "joined_at",updatable = false)
+    private LocalDateTime joinedAt;
+}

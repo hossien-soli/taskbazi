@@ -1,10 +1,12 @@
 package dev.hspl.taskbazi.common.infrastructure.message.notification.delivery.impl;
 
+import dev.hspl.taskbazi.common.domain.value.UserId;
 import dev.hspl.taskbazi.common.domain.value.UserRole;
 import dev.hspl.taskbazi.common.infrastructure.message.UserFriendlyMessage;
 import dev.hspl.taskbazi.common.infrastructure.message.notification.NotificationRecipient;
 import dev.hspl.taskbazi.common.infrastructure.message.notification.delivery.NotificationDeliveryAgent;
 import dev.hspl.taskbazi.common.infrastructure.message.notification.delivery.NotificationDeliveryMethod;
+import dev.hspl.taskbazi.common.infrastructure.message.notification.exception.MissingDeliveryAgentTargetIdentifierException;
 import dev.hspl.taskbazi.common.infrastructure.persistence.entity.PersistedNotification;
 import dev.hspl.taskbazi.common.infrastructure.persistence.repository.PersistedNotificationJPARepository;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +32,13 @@ public class PersistedNotificationDeliveryAgent implements NotificationDeliveryA
         // but we should store them also in a shared database table(persisted_notification)
         // because we are storing all roles in a shared database table(users)
 
+        UserId targetUserId = recipient.userId();
+        if (targetUserId == null) {
+            throw new MissingDeliveryAgentTargetIdentifierException("target user-id for persisted-notification-delivery-agent is missing");
+        }
+
         PersistedNotification notification = new PersistedNotification();
-        notification.setUserId(recipient.userId().value());
+        notification.setUserId(targetUserId.value());
         notification.setSubject(message.subject());
         notification.setMessage(message.plainTextBody());
         notification.setHtmlMessage(message.htmlBody());

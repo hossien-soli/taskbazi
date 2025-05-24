@@ -14,8 +14,7 @@ public interface ClientRegistrationSessionJPARepository extends JpaRepository<Cl
     @Query("""
             SELECT crs.createdAt FROM ClientRegistrationSession crs \
             WHERE crs.emailAddress = :emailAddress OR crs.requestClientIdentifier = :requestClientIdentifier \
-            ORDER BY crs.createdAt DESC\
-            """)
+            ORDER BY crs.createdAt DESC""")
     List<LocalDateTime> creationTimeOfLastSessionsByEmailOrRequestClientID(
             @Param("emailAddress") String emailAddress,
             @Param("requestClientIdentifier") String requestClientIdentifier,

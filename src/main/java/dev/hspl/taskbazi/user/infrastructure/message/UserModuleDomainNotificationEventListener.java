@@ -1,11 +1,9 @@
-package dev.hspl.taskbazi.user.infrastructure.message.notification;
+package dev.hspl.taskbazi.user.infrastructure.message;
 
 import dev.hspl.taskbazi.common.infrastructure.message.notification.NotificationRequest;
 import dev.hspl.taskbazi.common.infrastructure.message.notification.handler.NotificationRequestHandler;
 import dev.hspl.taskbazi.user.domain.event.ClientRegisteredDomainEvent;
 import dev.hspl.taskbazi.user.domain.event.NewAccountLoginDomainEvent;
-import dev.hspl.taskbazi.user.infrastructure.message.notification.request.AccountLoginAlertNotification;
-import dev.hspl.taskbazi.user.infrastructure.message.notification.request.RegistrationWelcomeMessageNotification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -31,12 +29,13 @@ public class UserModuleDomainNotificationEventListener {
     public void handleNewLoginDomainEvent(NewAccountLoginDomainEvent event) {
         NotificationRequest actualRequest = new AccountLoginAlertNotification(
                 event.eventOccurredAt(),
-                event.notificationUserRole(),
+                event.notificationTargetRole(),
                 event.notificationUserId(),
                 event.notificationUserEmailAddress(),
                 event.getDataRequestClientIdentifier(),
                 event.getDataRequestIdentificationDetails(),
-                event.getDataNewLoginSessionId()
+                event.getDataNewLoginSessionId(),
+                event.criticalNotification()
         );
 
         notificationRequestHandler.handle(actualRequest);
@@ -47,11 +46,12 @@ public class UserModuleDomainNotificationEventListener {
     public void handleClientRegisteredDomainEvent(ClientRegisteredDomainEvent event) {
         NotificationRequest actualRequest = new RegistrationWelcomeMessageNotification(
                 event.eventOccurredAt(),
-                event.notificationUserRole(),
+                event.notificationTargetRole(),
                 event.notificationUserId(),
                 event.notificationUserEmailAddress(),
-                event.getDataClientFullName(),
-                event.getDataClientUsername()
+                event.getClientFullName(),
+                event.getClientUsername(),
+                event.criticalNotification()
         );
 
         notificationRequestHandler.handle(actualRequest);

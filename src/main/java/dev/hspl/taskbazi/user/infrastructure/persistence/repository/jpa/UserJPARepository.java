@@ -1,11 +1,14 @@
 package dev.hspl.taskbazi.user.infrastructure.persistence.repository.jpa;
 
 import dev.hspl.taskbazi.common.domain.value.UserRole;
+import dev.hspl.taskbazi.user.infrastructure.persistence.dto.UserIdWithEmailAddress;
 import dev.hspl.taskbazi.user.infrastructure.persistence.entity.UserJPAEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -34,4 +37,19 @@ public interface UserJPARepository extends JpaRepository<UserJPAEntity, UUID> {
     boolean existsByEmailAddress(String emailAddress);
 
     boolean existsByUsername(String username);
+
+    @Query("SELECT u.emailAddress FROM User u WHERE u.id = :id AND u.role = :roleToMatch")
+    Optional<String> getEmailAddressByIdAndRoleMatch(
+            @Param("id") UUID id,
+            @Param("roleToMatch") UserRole roleToMatch
+    );
+
+    @Query("""
+            SELECT new dev.hspl.taskbazi.user.infrastructure.persistence.dto.\
+            UserIdWithEmailAddress(u.id, u.emailAddress) \
+            FROM User u WHERE u.id IN :ids AND u.role = :roleToMatch""")
+    List<UserIdWithEmailAddress> getUserIdWithEmailAddressByIdsAndRoleMatch(
+            @Param("ids") Collection<UUID> ids,
+            @Param("roleToMatch") UserRole roleToMatch
+    );
 }

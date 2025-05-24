@@ -1,4 +1,4 @@
-package dev.hspl.taskbazi.user.infrastructure.message.notification.request;
+package dev.hspl.taskbazi.user.infrastructure.message;
 
 import dev.hspl.taskbazi.common.domain.value.EmailAddress;
 import dev.hspl.taskbazi.common.domain.value.UserId;
@@ -24,7 +24,8 @@ public record RegistrationWelcomeMessageNotification(
         UserId recipientUserId,
         EmailAddress recipientEmailAddress,
         UserFullName clientFullName,
-        Username clientUsername
+        Username clientUsername,
+        boolean isCriticalForDomain
 ) implements NotificationRequest {
     @Override
     @NonNull
@@ -40,12 +41,16 @@ public record RegistrationWelcomeMessageNotification(
     @NonNull
     public UserFriendlyMessage prepareMessage(MessageSource messageSource, TemplateEngine htmlTemplateEngine) {
         // TODO: build a pretty registration welcome message
-        return new UserFriendlyMessage("welcome baby","thanx for your registration!!!","<h2>ich liebe dich</h2>",false);
+        return new UserFriendlyMessage("welcome baby","thanx for your registration!!!","<h2>ich liebe dich</h2>",isCriticalForDomain);
     }
 
     @Override
     @NonNull
     public Set<NotificationDeliveryMethod> deliveryMethods() {
-        return Set.of(NotificationDeliveryMethod.PERSISTED, NotificationDeliveryMethod.EMAIL);
+        if (isCriticalForDomain) {
+            return Set.of(NotificationDeliveryMethod.PERSISTED, NotificationDeliveryMethod.EMAIL);
+        }
+
+        return Set.of(NotificationDeliveryMethod.PERSISTED);
     }
 }

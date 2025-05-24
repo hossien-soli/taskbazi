@@ -43,7 +43,7 @@ public class RefreshTokenReuseDetectedAlertEvent implements DomainNotificationRe
     }
 
     @Override
-    public UserRole notificationUserRole() {
+    public UserRole notificationTargetRole() {
         return this.dataRelatedUserRole;
     }
 
@@ -55,5 +55,10 @@ public class RefreshTokenReuseDetectedAlertEvent implements DomainNotificationRe
     @Override
     public EmailAddress notificationUserEmailAddress() {
         return this.notificationUserEmailAddress;
+    }
+
+    @Override
+    public boolean criticalNotification() {
+        return true;
     }
 }

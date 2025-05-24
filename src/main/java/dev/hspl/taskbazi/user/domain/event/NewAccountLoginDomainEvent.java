@@ -35,7 +35,7 @@ public class NewAccountLoginDomainEvent implements DomainNotificationRequestEven
     }
 
     @Override
-    public UserRole notificationUserRole() {
+    public UserRole notificationTargetRole() {
         return this.notificationUserRole;
     }
 
@@ -47,5 +47,10 @@ public class NewAccountLoginDomainEvent implements DomainNotificationRequestEven
     @Override
     public EmailAddress notificationUserEmailAddress() {
         return this.notificationUserEmailAddress;
+    }
+
+    @Override
+    public boolean criticalNotification() {
+        return true;
     }
 }

@@ -3,18 +3,12 @@ package dev.hspl.taskbazi.common.infrastructure.message.notification;
 import dev.hspl.taskbazi.common.domain.value.EmailAddress;
 import dev.hspl.taskbazi.common.domain.value.UserId;
 import dev.hspl.taskbazi.common.domain.value.UserRole;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 
 public record NotificationRecipient(
-        UserRole userRole,
-        UserId userId,
-        EmailAddress emailAddress
+        @NonNull UserRole userRole,
+        @Nullable UserId userId, // required for some delivery agents
+        @Nullable EmailAddress emailAddress // required for some delivery agents
 ) {
-    public NotificationRecipient {
-        boolean validate = userRole != null && userId != null && emailAddress != null;
-        if (!validate) {
-            throw new IllegalStateException("all fields of notification-recipient record are required!!!");
-        }
-    }
 }
-
-// make recipient fields optional based on delivery methods

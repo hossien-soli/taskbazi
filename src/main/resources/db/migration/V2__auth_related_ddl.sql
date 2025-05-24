@@ -42,6 +42,9 @@ create table users
 
     version int null
 );
+
+create index users_role_index on users(role);
+
 -- users.full_name -> min:5
 -- users.username -> min:5
 -- users.password -> min:8 - hashed_password - BCrypt

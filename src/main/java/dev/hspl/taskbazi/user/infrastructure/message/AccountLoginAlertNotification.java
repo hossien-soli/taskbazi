@@ -1,4 +1,4 @@
-package dev.hspl.taskbazi.user.infrastructure.message.notification.request;
+package dev.hspl.taskbazi.user.infrastructure.message;
 
 import dev.hspl.taskbazi.common.domain.value.EmailAddress;
 import dev.hspl.taskbazi.common.domain.value.RequestClientIdentifier;
@@ -24,7 +24,8 @@ public record AccountLoginAlertNotification(
         EmailAddress recipientEmailAddress,
         RequestClientIdentifier requestClientIdentifier, // required
         RequestIdentificationDetails requestIdentificationDetails, // nullable
-        UUID newLoginSessionId // required
+        UUID newLoginSessionId, // required
+        boolean isCriticalForDomain
 ) implements NotificationRequest {
     @Override
     @NonNull
@@ -40,12 +41,16 @@ public record AccountLoginAlertNotification(
     @NonNull
     public UserFriendlyMessage prepareMessage(MessageSource messageSource, TemplateEngine htmlTemplateEngine) {
         // TODO: build the account login alert message body
-        return new UserFriendlyMessage("new login alert","new login alert",null,true);
+        return new UserFriendlyMessage("new login alert","new login alert",null,isCriticalForDomain);
     }
 
     @Override
     @NonNull
     public Set<NotificationDeliveryMethod> deliveryMethods() {
-        return Set.of(NotificationDeliveryMethod.PERSISTED, NotificationDeliveryMethod.EMAIL);
+        if (isCriticalForDomain) {
+            return Set.of(NotificationDeliveryMethod.PERSISTED, NotificationDeliveryMethod.EMAIL);
+        }
+
+        return Set.of(NotificationDeliveryMethod.PERSISTED);
     }
 }

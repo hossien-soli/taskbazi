@@ -4,7 +4,7 @@ import dev.hspl.taskbazi.common.infrastructure.message.notification.Notification
 
 // OutboxingAwareNotificationRequestHandler -> ...
 // because we have email outboxing and push-notification(native-app) outboxing it is better to...
-// ...call handler inside an active database transaction using DefaultNotificationRequestHandler
+// ...call handler inside an active database transaction using OutboxingAwareNotificationRequestHandler
 // otherwise never call these heavy operations(sending email or push-notification) inside an active database transaction
 // OutboxingAware? = knows that email sender is outboxed and native-app push-notification sender is also outboxed
 

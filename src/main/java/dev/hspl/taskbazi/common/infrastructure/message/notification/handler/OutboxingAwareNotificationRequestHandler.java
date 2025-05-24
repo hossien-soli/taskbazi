@@ -32,13 +32,14 @@ public class OutboxingAwareNotificationRequestHandler implements NotificationReq
     @Transactional // because all delivery agents are working with database!!
     public void handle(NotificationRequest request) {
         NotificationRecipient recipient = request.recipient();
-        UserFriendlyMessage message = request.prepareMessage(messageSource,htmlTemplateEngine);
+        UserFriendlyMessage message = request.prepareMessage(messageSource, htmlTemplateEngine);
         Set<NotificationDeliveryMethod> deliveryMethods = request.deliveryMethods();
 
         for (NotificationDeliveryMethod method : deliveryMethods) {
             for (NotificationDeliveryAgent currentAgent : this.deliveryAgents) {
-                boolean support = currentAgent.support(method);
-                if (support) { currentAgent.tryDeliver(message,recipient); }
+                if (currentAgent.support(method)) {
+                    currentAgent.tryDeliver(message, recipient);
+                }
             }
         }
     }

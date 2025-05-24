@@ -26,7 +26,7 @@ public class User extends DomainAggregateRoot implements UniversalUser {
     private UserRole role;
 
     private final Integer version; // default=NULL - increments by repository implementations (jpa)
-    // Optimistic concurrency control check with front-end clients in the domain layer!!!
+    // Optimistic concurrency control check with front-end clients in the application layer!!!
 
     private User(
             UserId id,
@@ -39,6 +39,8 @@ public class User extends DomainAggregateRoot implements UniversalUser {
             UserRole role,
             Integer version
     ) {
+        // TODO: add validation for value-object references
+
         this.id = id;
         this.fullName = fullName;
         this.emailAddress = emailAddress;
@@ -119,14 +121,6 @@ public class User extends DomainAggregateRoot implements UniversalUser {
     @Override
     public UserRole userRole() {
         return this.role;
-    }
-
-    public void updateEmailAddress(EmailAddress uniqueEmailAddress) {
-        this.emailAddress = uniqueEmailAddress;
-    }
-
-    public void updateUsername(Username uniqueUsername) {
-        this.username = uniqueUsername;
     }
 
     public void changePassword(
