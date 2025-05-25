@@ -2,15 +2,13 @@ package dev.hspl.taskbazi.project.domain.exception;
 
 import dev.hspl.taskbazi.common.domain.DomainException;
 
-// TODO: add messages
-
 public class ProjectIsNotEditableException extends DomainException {
     public ProjectIsNotEditableException() {
-        super("");
+        super("The project has been permanently closed and cannot be edited.");
     }
 
     @Override
     public String problemKey() {
-        return "";
+        return "project.info.not_editable";
     }
 }

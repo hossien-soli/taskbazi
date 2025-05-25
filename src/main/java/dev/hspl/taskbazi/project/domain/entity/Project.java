@@ -28,7 +28,7 @@ public class Project extends DomainAggregateRoot {
     private final LocalDateTime registeredAt;
     private LocalDateTime startedAt; // nullable
     private LocalDateTime closedAt; // nullable | Archived or Completed or Cancelled or Blocked
-    private LocalDateTime editedAt;
+    private LocalDateTime editedAt; // nullable
 
     private final List<Collaborator> collaborators; // nullable or empty list (final for only reference)
 

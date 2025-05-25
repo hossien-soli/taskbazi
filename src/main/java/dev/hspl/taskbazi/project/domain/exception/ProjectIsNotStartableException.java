@@ -4,11 +4,11 @@ import dev.hspl.taskbazi.common.domain.DomainException;
 
 public class ProjectIsNotStartableException extends DomainException {
     public ProjectIsNotStartableException() {
-        super("current status of project should be REGISTERED or ARCHIVED for starting it!");
+        super("The project has already started or has been permanently closed.");
     }
 
     @Override
     public String problemKey() {
-        return ""; // TODO: find a good message for this
+        return "project.status.not_startable";
     }
 }

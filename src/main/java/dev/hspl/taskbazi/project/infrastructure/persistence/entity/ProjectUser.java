@@ -14,7 +14,7 @@ public class ProjectUser {
     @EmbeddedId
     private ProjectUserId id;
 
-    @ManyToOne(optional = false,fetch = FetchType.LAZY,cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne(optional = false,fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")
     @MapsId("projectId")
     private ProjectJPAEntity project;
@@ -28,6 +28,10 @@ public class ProjectUser {
     @Column(nullable = false,name = "active")
     private boolean active;
 
-    @Column(nullable = false,name = "joined_at",updatable = false)
+    @Column(nullable = false,name = "joined_at")
     private LocalDateTime joinedAt;
+
+    @Column(nullable = true,name = "version")
+    @Version
+    private Short version; // check for optimistic concurrency control with front-end clients in the application layer
 }
