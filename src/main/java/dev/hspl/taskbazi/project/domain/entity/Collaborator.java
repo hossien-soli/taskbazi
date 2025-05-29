@@ -6,8 +6,9 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-// Only owner can assign task to managingAssignment collaborators!
-// managingAssignment collaborators can assign task to non-managingAssignment collaborators
+// owner can assign task to everyone
+// normal collaborators(non-managing) can't assign task to others
+// managingAssignment collaborators can assign task to others(even other managingAssignment collaborators)
 // everyone can assign task to itself (by default)
 // Inactive collaborators cannot take any actions and are only preserved for record-keeping
 // Inactive collaborators will not receive any notifications regarding the project
@@ -18,15 +19,12 @@ public class Collaborator {
 
     private CollaboratorRole role; // like Backend-Developer
 
-    private boolean managingAssignment; // can assign task to non-managingAssignment collaborators
-    private boolean selfAssignment; // can assign task to itself
+    private boolean managingAssignment;
+    private boolean selfAssignment; // can assign task to itself (default true)
 
     private boolean active;
 
     private final LocalDateTime joinedAt;
-    // maybe a date-time field for capturing last activity of collaborator
-
-    private final Short version; // just a data transfer property
 
     private Collaborator(
             UserId userId,
@@ -34,8 +32,7 @@ public class Collaborator {
             boolean managingAssignment,
             boolean selfAssignment,
             boolean active,
-            LocalDateTime joinedAt,
-            Short version
+            LocalDateTime joinedAt
     ) {
         this.userId = userId;
         this.role = role;
@@ -43,7 +40,28 @@ public class Collaborator {
         this.selfAssignment = selfAssignment;
         this.active = active;
         this.joinedAt = joinedAt;
-        this.version = version;
+    }
+
+    public static Collaborator joinNewCollaborator(
+            LocalDateTime currentDateTime,
+            UserId userId,
+            CollaboratorRole role,
+            boolean managingAssignment
+    ) {
+        // TODO: add validation(null-check) for required fields
+        return new Collaborator(userId,role,managingAssignment,true,true,currentDateTime);
+    }
+
+    public static Collaborator joinedCollaborator(
+            UserId userId,
+            CollaboratorRole role,
+            boolean managingAssignment,
+            boolean selfAssignment,
+            boolean active,
+            LocalDateTime joinedAt
+    ) {
+        // TODO: add validation(null-check) for required fields
+        return new Collaborator(userId,role,managingAssignment,selfAssignment,active,joinedAt);
     }
 
     public void changeRole(CollaboratorRole newRole) {

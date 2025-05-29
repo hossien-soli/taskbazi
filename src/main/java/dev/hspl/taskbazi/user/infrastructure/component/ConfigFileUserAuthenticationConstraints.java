@@ -18,9 +18,6 @@ public class ConfigFileUserAuthenticationConstraints implements UserAuthenticati
     @Value("${custom.domain.user.registration.session_max_allowed_attempts}")
     private short registrationSessionMaxAllowedAttempts;
 
-//    @Value("${custom.domain.user.login.refresh_token_size_in_random_bytes}")
-//    private short refreshTokenSize; // number of random bytes
-
     @Value("${custom.domain.user.login.refresh_token_lifetime_hours}")
     private short refreshTokenLifetimeHours;
 

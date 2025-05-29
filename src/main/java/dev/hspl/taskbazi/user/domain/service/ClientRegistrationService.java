@@ -56,7 +56,7 @@ public class ClientRegistrationService {
 
         boolean hasPreviousSession = lastSessionCreationTime != null; // regardless of the last session state
         if (hasPreviousSession) {
-            int secondsElapsed = (int) Math.abs(Duration.between(lastSessionCreationTime, currentDateTime).toSeconds());
+            long secondsElapsed = Math.abs(Duration.between(lastSessionCreationTime, currentDateTime).toSeconds());
             boolean canCreateNewSession = secondsElapsed >= sessionLimitationDelay;
             if (!canCreateNewSession) {
                 throw new RegistrationSessionRestrictionException(

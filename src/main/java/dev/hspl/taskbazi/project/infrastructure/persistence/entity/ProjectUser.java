@@ -1,8 +1,7 @@
 package dev.hspl.taskbazi.project.infrastructure.persistence.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -10,6 +9,9 @@ import java.time.LocalDateTime;
 @Table(name = "projects_users")
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class ProjectUser {
     @EmbeddedId
     private ProjectUserId id;
@@ -25,13 +27,15 @@ public class ProjectUser {
     @Column(nullable = false,name = "role",length = 50)
     private String role;
 
+    @Column(nullable = false,name = "managing_assign")
+    private boolean managingAssignment;
+
+    @Column(nullable = false,name = "self_assign")
+    private boolean selfAssignment;
+
     @Column(nullable = false,name = "active")
     private boolean active;
 
     @Column(nullable = false,name = "joined_at")
     private LocalDateTime joinedAt;
-
-    @Column(nullable = true,name = "version")
-    @Version
-    private Short version; // check for optimistic concurrency control with front-end clients in the application layer
 }

@@ -8,9 +8,9 @@ import lombok.Getter;
 @Getter
 public class RegistrationSessionRestrictionException extends DomainException {
     private final int sessionLimitationDelay;
-    private final int secondsToNextSession;
+    private final long secondsToNextSession;
 
-    public RegistrationSessionRestrictionException(int sessionLimitationDelay, int secondsToNextSession) {
+    public RegistrationSessionRestrictionException(int sessionLimitationDelay, long secondsToNextSession) {
         super("There is a %d-second delay restriction for creating a new registration session or sending a verification email.".formatted(
                 sessionLimitationDelay
         ));

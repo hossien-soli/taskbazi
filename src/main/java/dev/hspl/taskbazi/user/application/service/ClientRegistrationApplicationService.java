@@ -118,7 +118,7 @@ public class ClientRegistrationApplicationService implements ClientRegistrationR
             userRegistered = true;
         }
 
-        sessionRepository.saveSession(session); // actually with jpa we don't need this!!!
+        sessionRepository.saveSession(session);
 
         return new ClientRegistrationFinalizeResult(userRegistered, result);
     }

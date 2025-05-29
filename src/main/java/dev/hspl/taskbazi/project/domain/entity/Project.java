@@ -6,7 +6,7 @@ import dev.hspl.taskbazi.common.domain.value.UserId;
 import dev.hspl.taskbazi.project.domain.event.ProjectStartedDomainEvent;
 import dev.hspl.taskbazi.project.domain.exception.ProjectIsNotEditableException;
 import dev.hspl.taskbazi.project.domain.exception.ProjectIsNotStartableException;
-import dev.hspl.taskbazi.project.domain.value.ProjectDescription;
+import dev.hspl.taskbazi.common.domain.value.Description;
 import dev.hspl.taskbazi.project.domain.value.ProjectId;
 import dev.hspl.taskbazi.project.domain.value.ProjectStatus;
 import dev.hspl.taskbazi.project.domain.value.ProjectTitle;
@@ -21,7 +21,7 @@ public class Project extends DomainAggregateRoot {
     private final UserId owner; // maybe in the future changing the owner of project become possible!
 
     private ProjectTitle title;
-    private ProjectDescription description; // nullable - check for cross-site scripting in the infrastructure!!!
+    private Description description; // optional-nullable - check for cross-site scripting in the infrastructure!!!
 
     private ProjectStatus status;
 
@@ -38,7 +38,7 @@ public class Project extends DomainAggregateRoot {
             ProjectId id,
             UserId owner,
             ProjectTitle title,
-            ProjectDescription description,
+            Description description,
             ProjectStatus status,
             LocalDateTime registeredAt,
             LocalDateTime startedAt,
@@ -65,7 +65,7 @@ public class Project extends DomainAggregateRoot {
             ProjectId newProjectId,
             UserId owner,
             ProjectTitle title,
-            ProjectDescription description // nullable
+            Description description // nullable
     ) {
         // TODO: add validation(null-check) for required fields
         return new Project(newProjectId,owner,title,description,ProjectStatus.REGISTERED,currentDateTime,
@@ -76,7 +76,7 @@ public class Project extends DomainAggregateRoot {
             ProjectId id,
             UserId owner,
             ProjectTitle title,
-            ProjectDescription description,
+            Description description,
             ProjectStatus status,
             LocalDateTime registeredAt,
             LocalDateTime startedAt,
@@ -126,14 +126,10 @@ public class Project extends DomainAggregateRoot {
 
     }
 
-    public void blockProject(LocalDateTime currentDateTime) {
-
-    }
-
     public void edit(
             LocalDateTime currentDateTime,
             ProjectTitle newTitle,
-            ProjectDescription newDescription
+            Description newDescription
     ) {
         boolean editable = this.status.equals(ProjectStatus.REGISTERED) || this.status.equals(ProjectStatus.IN_PROGRESS)
                 || this.status.equals(ProjectStatus.ARCHIVED);

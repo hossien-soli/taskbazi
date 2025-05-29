@@ -22,8 +22,9 @@ create table projects_users
     user_id UUID not null references users(id) on delete cascade on update cascade,
     owner boolean not null,
     role varchar(50) not null,
+    managing_assign boolean not null,
+    self_assign boolean not null,
     active boolean not null,
     joined_at timestamp not null,
-    version smallint null,
     primary key (project_id,user_id)
 );
