@@ -1,4 +1,4 @@
-package dev.hspl.taskbazi.user.infrastructure.presentation.web.security;
+package dev.hspl.taskbazi.user.infrastructure.component.security;
 
 import dev.hspl.taskbazi.common.domain.value.UniversalUser;
 import org.springframework.security.core.Authentication;
@@ -12,34 +12,34 @@ public class JWTAuthenticationDTO implements Authentication {
     private final boolean authenticated;
 
     private final String plainJWTToken;
-    private final String requestIP;
+    private final String requestIdentifier; // ip for web clients
 
     private final UniversalUser authenticatedUser;
 
     private JWTAuthenticationDTO(
             boolean authenticated,
             String plainJWTToken,
-            String requestIP,
+            String requestIdentifier,
             UniversalUser authenticatedUser
     ) {
         this.authenticated = authenticated;
         this.plainJWTToken = plainJWTToken;
-        this.requestIP = requestIP;
+        this.requestIdentifier = requestIdentifier;
         this.authenticatedUser = authenticatedUser;
     }
 
     public static JWTAuthenticationDTO unauthenticated(
             String plainJWTToken,
-            String requestIP
+            String requestIdentifier
     ) {
-        return new JWTAuthenticationDTO(false,plainJWTToken,requestIP,null);
+        return new JWTAuthenticationDTO(false,plainJWTToken,requestIdentifier,null);
     }
 
     public static JWTAuthenticationDTO authenticated(
-            String requestIP,
+            String requestIdentifier,
             UniversalUser authenticatedUser
     ) {
-        return new JWTAuthenticationDTO(true,null,requestIP,authenticatedUser);
+        return new JWTAuthenticationDTO(true,null,requestIdentifier,authenticatedUser);
     }
 
     @Override
@@ -49,7 +49,7 @@ public class JWTAuthenticationDTO implements Authentication {
 
     @Override
     public Object getDetails() {
-        return requestIP;
+        return requestIdentifier;
     }
 
     @Override

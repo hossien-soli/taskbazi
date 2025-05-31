@@ -1,4 +1,4 @@
-package dev.hspl.taskbazi.user.infrastructure.component;
+package dev.hspl.taskbazi.user.infrastructure.component.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;

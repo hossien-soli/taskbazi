@@ -1,10 +1,8 @@
 package dev.hspl.taskbazi.user.infrastructure.presentation.web.security;
 
-import dev.hspl.taskbazi.user.infrastructure.component.JWTAccessTokenService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -31,16 +29,5 @@ public class WebSecurityConfig {
                         UsernamePasswordAuthenticationFilter.class
                 )
                 .build();
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(JWTAccessTokenService jwtAccessTokenService) {
-        ProviderManager manager = new ProviderManager(
-                new JWTAuthenticationProvider(jwtAccessTokenService)
-        );
-
-        manager.setEraseCredentialsAfterAuthentication(true);
-        //manager.setAuthenticationEventPublisher(authenticationEventPublisher);
-        return manager;
     }
 }

@@ -3,6 +3,7 @@ package dev.hspl.taskbazi.project.application.service;
 import dev.hspl.taskbazi.common.application.GlobalDomainEventPublisher;
 import dev.hspl.taskbazi.common.application.TimeProvider;
 import dev.hspl.taskbazi.common.application.UUIDGenerator;
+import dev.hspl.taskbazi.common.domain.value.UniversalUser;
 import dev.hspl.taskbazi.project.application.usage.RegisterProjectUseCase;
 import dev.hspl.taskbazi.project.application.usage.cmd.RegisterProjectCommand;
 import dev.hspl.taskbazi.project.application.usage.result.RegisterProjectResult;
@@ -23,7 +24,10 @@ public class ProjectManagingApplicationService implements RegisterProjectUseCase
     private final ProjectRepository projectRepository;
 
     @Override
-    public RegisterProjectResult execute(RegisterProjectCommand command) {
+    public RegisterProjectResult execute(
+            UniversalUser authenticatedUser,
+            RegisterProjectCommand command
+    ) {
 
         return null;
     }

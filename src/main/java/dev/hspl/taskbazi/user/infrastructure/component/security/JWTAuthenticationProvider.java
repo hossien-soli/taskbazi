@@ -1,9 +1,8 @@
-package dev.hspl.taskbazi.user.infrastructure.presentation.web.security;
+package dev.hspl.taskbazi.user.infrastructure.component.security;
 
 import dev.hspl.taskbazi.common.domain.value.UniversalUser;
 import dev.hspl.taskbazi.user.domain.exception.InvalidAccessTokenException;
 import dev.hspl.taskbazi.user.domain.value.AccessToken;
-import dev.hspl.taskbazi.user.infrastructure.component.JWTAccessTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -17,14 +16,14 @@ public class JWTAuthenticationProvider implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String plainJWTToken = (String) authentication.getCredentials();
-        String requestIP = (String) authentication.getDetails();
+        String requestIdentifier = (String) authentication.getDetails();
 
         try {
             UniversalUser extractedUser = jwtAccessTokenService.validateTokenAndExtractUserInfo(
                     new AccessToken(plainJWTToken)
             );
 
-            return JWTAuthenticationDTO.authenticated(requestIP,extractedUser);
+            return JWTAuthenticationDTO.authenticated(requestIdentifier,extractedUser);
         } catch (InvalidAccessTokenException exception) {
             throw new BadCredentialsException("jwt access token is invalid!!!!");
         }
