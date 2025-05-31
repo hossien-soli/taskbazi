@@ -6,5 +6,5 @@ public interface ProjectRepository {
     void save(Project project);
 }
 
-is putting project instance counter inside this repository is oK!!????
-how about last project creation detection
+//is putting project instance counter inside this repository is oK!!????
+//how about last project creation detection
