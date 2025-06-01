@@ -12,7 +12,7 @@ public interface ClientRegistrationSessionRepository {
     LocalDateTime getLastSessionByEmailOrRequestClientIdentifier(
             EmailAddress emailAddress,
             RequestClientIdentifier requestClientIdentifier
-    ); // null = no-session
+    ); // null = no-session (be careful with reverse proxies like nginx(same ip comes to application))
 
     void saveSession(ClientRegistrationSession session);
 

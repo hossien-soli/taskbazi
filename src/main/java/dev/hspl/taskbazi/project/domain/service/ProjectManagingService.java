@@ -5,7 +5,7 @@ import dev.hspl.taskbazi.common.domain.value.UserRole;
 import dev.hspl.taskbazi.project.domain.entity.Project;
 import dev.hspl.taskbazi.project.domain.exception.ProjectRegistrationRestrictionException;
 import dev.hspl.taskbazi.project.domain.exception.TooManyProjectInstanceException;
-import dev.hspl.taskbazi.project.domain.exception.UnsupportedAccountProjectRegistrationException;
+import dev.hspl.taskbazi.common.domain.exception.UnsupportedAccountException;
 import dev.hspl.taskbazi.common.domain.value.Description;
 import dev.hspl.taskbazi.project.domain.value.ProjectId;
 import dev.hspl.taskbazi.project.domain.value.ProjectTitle;
@@ -24,12 +24,12 @@ public class ProjectManagingService {
             ProjectId newProjectId,
             ProjectTitle projectTitle,
             Description projectDescription, // nullable
-            LocalDateTime lastUserProjectCreationTime, // nullable (null=no previous project)
+            LocalDateTime lastUserProjectRegistrationTime, // nullable (null=no previous project)
             short numberOfUserCurrentProjectInstances // owned & joined projects
     ) {
         boolean checkAccount = authenticatedUser.userRole().equals(UserRole.CLIENT) && authenticatedUser.isAccountActive();
         if (!checkAccount) {
-            throw new UnsupportedAccountProjectRegistrationException();
+            throw new UnsupportedAccountException();
         }
 
         short maxAllowedProjectInstance = constraints.maxAllowedProjectInstance();
@@ -38,10 +38,10 @@ public class ProjectManagingService {
             throw new TooManyProjectInstanceException(maxAllowedProjectInstance);
         }
 
-        boolean hasPreviousProject = lastUserProjectCreationTime != null;
+        boolean hasPreviousProject = lastUserProjectRegistrationTime != null;
         if (hasPreviousProject) {
             int registrationLimitationDelaySeconds = constraints.projectRegistrationLimitationDelaySeconds();
-            long secondsElapsed = Math.abs(Duration.between(currentDateTime, lastUserProjectCreationTime).toSeconds());
+            long secondsElapsed = Math.abs(Duration.between(currentDateTime, lastUserProjectRegistrationTime).toSeconds());
             boolean canCreateRightNow = secondsElapsed >= registrationLimitationDelaySeconds;
             if (!canCreateRightNow) {
                 throw new ProjectRegistrationRestrictionException(

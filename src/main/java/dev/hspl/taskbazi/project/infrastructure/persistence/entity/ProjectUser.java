@@ -5,6 +5,9 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
+// only clients can have project!!!
+// userId = clientId
+
 @Entity
 @Table(name = "projects_users")
 @Getter
@@ -37,5 +40,5 @@ public class ProjectUser {
     private boolean active;
 
     @Column(nullable = false,name = "joined_at")
-    private LocalDateTime joinedAt;
+    private LocalDateTime joinedAt; // for owners -> project.registered_at = joined_at
 }

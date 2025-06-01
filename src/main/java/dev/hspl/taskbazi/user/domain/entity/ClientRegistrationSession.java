@@ -30,7 +30,9 @@ public class ClientRegistrationSession extends DomainAggregateRoot {
     private final ProtectedPassword clientPassword;
 
     private final ProtectedVerificationCode verificationCode;
-    private final RequestClientIdentifier requestClientIdentifier; // technical client (server/client) not a business client
+    private final RequestClientIdentifier requestClientIdentifier; // usually is an ip address
+    // be careful with reverse proxies like nginx(same ip comes to application)
+    // technical client (server/client) not a business client
 
     private short verificationAttempts;
 
