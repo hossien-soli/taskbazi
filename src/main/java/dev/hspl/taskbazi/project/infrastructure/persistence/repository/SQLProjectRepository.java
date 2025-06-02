@@ -3,6 +3,7 @@ package dev.hspl.taskbazi.project.infrastructure.persistence.repository;
 import dev.hspl.taskbazi.common.domain.value.UserId;
 import dev.hspl.taskbazi.project.domain.entity.Project;
 import dev.hspl.taskbazi.project.domain.repository.ProjectRepository;
+import dev.hspl.taskbazi.project.domain.value.ProjectId;
 import dev.hspl.taskbazi.project.infrastructure.persistence.ProjectModulePersistenceMapper;
 import dev.hspl.taskbazi.project.infrastructure.persistence.repository.jpa.ProjectJPARepository;
 import dev.hspl.taskbazi.project.infrastructure.persistence.repository.jpa.ProjectUserRepository;
@@ -39,5 +40,10 @@ public class SQLProjectRepository implements ProjectRepository {
     @Override
     public void save(Project project) {
         jpaRepository.save(mapper.mapProjectToJPAEntity(project));
+    }
+
+    @Override
+    public Optional<Project> find(ProjectId id) {
+        return jpaRepository.findByIdWithUsers(id.value()).map(mapper::mapJPAEntityToProject);
     }
 }

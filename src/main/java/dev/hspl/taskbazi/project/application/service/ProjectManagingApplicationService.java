@@ -1,14 +1,20 @@
 package dev.hspl.taskbazi.project.application.service;
 
 import dev.hspl.taskbazi.common.application.GlobalDomainEventPublisher;
+import dev.hspl.taskbazi.common.application.InvalidApplicationCommandException;
 import dev.hspl.taskbazi.common.application.TimeProvider;
 import dev.hspl.taskbazi.common.application.UUIDGenerator;
 import dev.hspl.taskbazi.common.domain.value.UniversalUser;
 import dev.hspl.taskbazi.common.domain.value.UserId;
 import dev.hspl.taskbazi.common.domain.value.UserRole;
+import dev.hspl.taskbazi.project.application.exception.InvalidProjectIdException;
+import dev.hspl.taskbazi.project.application.usage.CloseProjectUseCase;
+import dev.hspl.taskbazi.project.application.usage.StartProjectUseCase;
 import dev.hspl.taskbazi.project.application.usage.RegisterProjectUseCase;
+import dev.hspl.taskbazi.project.application.usage.cmd.CloseProjectCommand;
 import dev.hspl.taskbazi.project.application.usage.cmd.RegisterProjectCommand;
 import dev.hspl.taskbazi.common.domain.exception.UnsupportedAccountException;
+import dev.hspl.taskbazi.project.application.usage.cmd.StartProjectCommand;
 import dev.hspl.taskbazi.project.domain.entity.Project;
 import dev.hspl.taskbazi.project.domain.repository.ProjectRepository;
 import dev.hspl.taskbazi.project.domain.service.ProjectManagingService;
@@ -22,7 +28,7 @@ import java.time.LocalDateTime;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class ProjectManagingApplicationService implements RegisterProjectUseCase {
+public class ProjectManagingApplicationService implements RegisterProjectUseCase, StartProjectUseCase, CloseProjectUseCase {
     private final ProjectManagingService domainService;
     private final TimeProvider timeProvider;
     private final UUIDGenerator uuidGenerator;
@@ -30,10 +36,7 @@ public class ProjectManagingApplicationService implements RegisterProjectUseCase
     private final ProjectRepository projectRepository;
 
     @Override
-    public void execute(
-            UniversalUser authenticatedUser,
-            RegisterProjectCommand command
-    ) {
+    public void execute(UniversalUser authenticatedUser, RegisterProjectCommand command) {
         boolean checkAccount = authenticatedUser.userRole().equals(UserRole.CLIENT) && authenticatedUser.isAccountActive();
         if (!checkAccount) {
             throw new UnsupportedAccountException();
@@ -56,5 +59,31 @@ public class ProjectManagingApplicationService implements RegisterProjectUseCase
 
         projectRepository.save(project);
         domainEventPublisher.publishAll(project);
+    }
+
+    @Override
+    public void execute(UniversalUser authenticatedUser, StartProjectCommand command) {
+        boolean checkAccount = authenticatedUser.userRole().equals(UserRole.CLIENT) && authenticatedUser.isAccountActive();
+        if (!checkAccount) {
+            throw new UnsupportedAccountException();
+        }
+
+        Project project = projectRepository.find(command.projectId())
+                .orElseThrow(InvalidProjectIdException::new);
+        // maybe we should check the ownership of project here in query(more performance)
+
+        domainService.tryStartProject(
+                timeProvider.currentDateTime(),
+                authenticatedUser,
+                project
+        );
+
+        projectRepository.save(project);
+        domainEventPublisher.publishAll(project);
+    }
+
+    @Override
+    public void execute(UniversalUser authenticatedUser, CloseProjectCommand command) {
+
     }
 }

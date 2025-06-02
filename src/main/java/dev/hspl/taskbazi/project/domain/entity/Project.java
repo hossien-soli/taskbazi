@@ -18,7 +18,7 @@ import java.util.List;
 @Getter
 public class Project extends DomainAggregateRoot {
     private final ProjectId id;
-    private final UserId owner; // maybe in the future changing the owner of project become possible!
+    private final UserId owner;
 
     private ProjectTitle title;
     private Description description; // optional-nullable - check for cross-site scripting in the infrastructure!!!

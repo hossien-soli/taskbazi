@@ -3,11 +3,13 @@ package dev.hspl.taskbazi.project.domain.service;
 import dev.hspl.taskbazi.common.domain.value.UniversalUser;
 import dev.hspl.taskbazi.common.domain.value.UserRole;
 import dev.hspl.taskbazi.project.domain.entity.Project;
+import dev.hspl.taskbazi.project.domain.exception.OwnerOnlyActionException;
 import dev.hspl.taskbazi.project.domain.exception.ProjectRegistrationRestrictionException;
 import dev.hspl.taskbazi.project.domain.exception.TooManyProjectInstanceException;
 import dev.hspl.taskbazi.common.domain.exception.UnsupportedAccountException;
 import dev.hspl.taskbazi.common.domain.value.Description;
 import dev.hspl.taskbazi.project.domain.value.ProjectId;
+import dev.hspl.taskbazi.project.domain.value.ProjectStatus;
 import dev.hspl.taskbazi.project.domain.value.ProjectTitle;
 import lombok.RequiredArgsConstructor;
 
@@ -53,6 +55,24 @@ public class ProjectManagingService {
 
         return Project.registerNewProject(currentDateTime, newProjectId, authenticatedUser.universalUserId(),
                 projectTitle, projectDescription);
+    }
+
+    public void tryStartProject(
+            LocalDateTime currentDateTime,
+            UniversalUser authenticatedUser,
+            Project targetProject
+    ) {
+        boolean checkAccount = authenticatedUser.userRole().equals(UserRole.CLIENT) && authenticatedUser.isAccountActive();
+        if (!checkAccount) {
+            throw new UnsupportedAccountException();
+        }
+
+        boolean isOwner = authenticatedUser.universalUserId().equals(targetProject.getOwner());
+        if (!isOwner) {
+            throw new OwnerOnlyActionException();
+        }
+
+        targetProject.startProject(currentDateTime);
     }
 
     public void authorizeProjectDeletion(
