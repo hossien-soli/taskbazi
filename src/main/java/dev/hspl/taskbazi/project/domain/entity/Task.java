@@ -1,13 +1,13 @@
 package dev.hspl.taskbazi.project.domain.entity;
 
 import dev.hspl.taskbazi.common.domain.DomainAggregateRoot;
-import dev.hspl.taskbazi.common.domain.value.Description;
-import dev.hspl.taskbazi.common.domain.value.UserId;
-import dev.hspl.taskbazi.common.domain.value.UserNote;
-import dev.hspl.taskbazi.project.domain.value.TaskPriority;
-import dev.hspl.taskbazi.project.domain.value.ProjectId;
-import dev.hspl.taskbazi.project.domain.value.TaskStatus;
-import dev.hspl.taskbazi.project.domain.value.TaskTitle;
+import dev.hspl.taskbazi.common.domain.event.DomainNotificationRequestEvent;
+import dev.hspl.taskbazi.common.domain.exception.MissingUserNoteException;
+import dev.hspl.taskbazi.common.domain.exception.UnsupportedAccountException;
+import dev.hspl.taskbazi.common.domain.value.*;
+import dev.hspl.taskbazi.project.domain.event.ManagingTaskAssignmentDomainEvent;
+import dev.hspl.taskbazi.project.domain.exception.UnsupportedTargetAccountTaskAssignmentException;
+import dev.hspl.taskbazi.project.domain.value.*;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -89,18 +89,50 @@ public class Task extends DomainAggregateRoot {
         this.verifiedAt = verifiedAt;
     }
 
-    public static Task assignNewTask(
+    public static Task newTask(
             LocalDateTime currentDateTime,
             UUID newTaskId,
             ProjectId projectId,
-            UserId assignedBy,
-            UserId assignedTo,
+            UniversalUser assignerUser, // assignedByUser
+            UniversalUser targetUser, // assignedToUser
             TaskTitle title,
-            Description description,
+            Description description, // optional-nullable
             TaskPriority priority,
-            LocalDateTime dueDateTime
+            LocalDateTime dueDateTime, // optional-nullable
+            ProjectTitle relatedProjectTitle  // needed for domain notification event
     ) {
+        boolean checkAccount = assignerUser.userRole().equals(UserRole.CLIENT) && assignerUser.isAccountActive();
+        if (!checkAccount) {
+            throw new UnsupportedAccountException();
+        }
 
+        boolean checkTargetAccount = targetUser.userRole().equals(UserRole.CLIENT) && targetUser.isAccountActive();
+        if (!checkTargetAccount) {
+            throw new UnsupportedTargetAccountTaskAssignmentException();
+        }
+
+        TaskStatus newTaskStatus = TaskStatus.ASSIGNED;
+        LocalDateTime acceptedAt = null;
+        boolean isSelfAssignment = assignerUser.universalUserId().equals(targetUser.universalUserId());
+        if (isSelfAssignment) {
+            newTaskStatus = TaskStatus.ACCEPTED;
+            acceptedAt = currentDateTime;
+        }
+
+        Task result = new Task(newTaskId,projectId,assignerUser.universalUserId(),targetUser.universalUserId(),
+                title,description,priority,newTaskStatus,dueDateTime,null,null,currentDateTime,acceptedAt,
+                null,null,null,null,null);
+
+        if (!isSelfAssignment) {
+            DomainNotificationRequestEvent event = new ManagingTaskAssignmentDomainEvent(
+                    currentDateTime,targetUser.universalUserId(),targetUser.universalUserEmailAddress(),
+                    projectId,relatedProjectTitle,title,priority
+            );
+
+            result.registerDomainEvent(event);
+        }
+
+        return result;
     }
 
     public static Task existingTask(
@@ -125,5 +157,57 @@ public class Task extends DomainAggregateRoot {
     ) {
         return new Task(id,projectId,assignedBy,assignedTo,title,description,priority,status,dueDateTime,rejectReason,
                 cancelReason,assignedAt,acceptedAt,startedAt,completedAt,canceledAt,rejectedAt,verifiedAt);
+    }
+
+    public void acceptTask(
+            LocalDateTime currentDateTime,
+            UniversalUser acceptorUser  // user who wants to accept this task
+    ) {
+        boolean checkAccount = acceptorUser.userRole().equals(UserRole.CLIENT) && acceptorUser.isAccountActive();
+        if (!checkAccount) {
+            throw new UnsupportedAccountException();
+        }
+
+        boolean checkUser = acceptorUser.universalUserId().equals(this.assignedTo);
+        if (!checkUser) {
+
+        }
+
+        boolean checkStatus = this.status.equals(TaskStatus.ASSIGNED);
+        if (!checkStatus) {
+
+        }
+
+        this.status = TaskStatus.ACCEPTED;
+        this.acceptedAt = currentDateTime;
+    }
+
+    public void rejectTask(
+            LocalDateTime currentDateTime,
+            UniversalUser rejecterUser,  // user who wants to reject this task
+            UserNote rejectReason // not-null / required
+    ) {
+        if (rejectReason == null) {
+            throw new MissingUserNoteException();
+        }
+
+        boolean checkAccount = rejecterUser.userRole().equals(UserRole.CLIENT) && rejecterUser.isAccountActive();
+        if (!checkAccount) {
+            throw new UnsupportedAccountException();
+        }
+
+        boolean checkUser = rejecterUser.universalUserId().equals(this.assignedTo);
+        if (!checkUser) {
+
+        }
+
+        boolean checkStatus = this.status.equals(TaskStatus.ASSIGNED);
+        if (!checkStatus) {
+
+        }
+
+        this.status = TaskStatus.REJECTED;
+        this.rejectedAt = currentDateTime;
+        this.rejectReason = rejectReason;
     }
 }

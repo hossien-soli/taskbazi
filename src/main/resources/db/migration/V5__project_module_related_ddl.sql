@@ -28,3 +28,8 @@ create table projects_users
     joined_at timestamp not null,
     primary key (project_id,user_id)
 );
+
+create table tasks
+(
+
+);

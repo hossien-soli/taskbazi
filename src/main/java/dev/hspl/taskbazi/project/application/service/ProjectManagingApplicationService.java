@@ -1,7 +1,7 @@
 package dev.hspl.taskbazi.project.application.service;
 
 import dev.hspl.taskbazi.common.application.GlobalDomainEventPublisher;
-import dev.hspl.taskbazi.common.application.InvalidApplicationCommandException;
+import dev.hspl.taskbazi.common.application.ResourceVersionConflictException;
 import dev.hspl.taskbazi.common.application.TimeProvider;
 import dev.hspl.taskbazi.common.application.UUIDGenerator;
 import dev.hspl.taskbazi.common.domain.value.UniversalUser;
@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -72,13 +73,19 @@ public class ProjectManagingApplicationService implements RegisterProjectUseCase
                 .orElseThrow(InvalidProjectIdException::new);
         // maybe we should check the ownership of project here in query(more performance)
 
+        // check version with client
+        boolean versionMatch = Objects.equals(project.getVersion(),command.clientResourceVersion());
+        if (!versionMatch) {
+            throw new ResourceVersionConflictException();
+        }
+
         domainService.tryStartProject(
                 timeProvider.currentDateTime(),
                 authenticatedUser,
                 project
         );
 
-        projectRepository.save(project);
+        projectRepository.save(project); // handle OptimisticLockException using @RestControllerAdvice & @ExceptionHandler
         domainEventPublisher.publishAll(project);
     }
 

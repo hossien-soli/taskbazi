@@ -2,7 +2,10 @@ package dev.hspl.taskbazi.project.domain.entity;
 
 import dev.hspl.taskbazi.common.domain.DomainAggregateRoot;
 import dev.hspl.taskbazi.common.domain.event.DomainNotificationBroadcastEvent;
+import dev.hspl.taskbazi.common.domain.exception.UnsupportedAccountException;
+import dev.hspl.taskbazi.common.domain.value.UniversalUser;
 import dev.hspl.taskbazi.common.domain.value.UserId;
+import dev.hspl.taskbazi.common.domain.value.UserRole;
 import dev.hspl.taskbazi.project.domain.event.ProjectStartedDomainEvent;
 import dev.hspl.taskbazi.project.domain.exception.ProjectIsNotEditableException;
 import dev.hspl.taskbazi.project.domain.exception.ProjectIsNotStartableException;
@@ -63,12 +66,17 @@ public class Project extends DomainAggregateRoot {
     public static Project registerNewProject(
             LocalDateTime currentDateTime,
             ProjectId newProjectId,
-            UserId owner,
+            UniversalUser registrarUser,
             ProjectTitle title,
             Description description // nullable
     ) {
         // TODO: add validation(null-check) for required fields
-        return new Project(newProjectId,owner,title,description,ProjectStatus.REGISTERED,currentDateTime,
+        boolean checkAccount = registrarUser.userRole().equals(UserRole.CLIENT) && registrarUser.isAccountActive();
+        if (!checkAccount) {
+            throw new UnsupportedAccountException();
+        }
+
+        return new Project(newProjectId,registrarUser.universalUserId(),title,description,ProjectStatus.REGISTERED,currentDateTime,
                 null,null,null,null,null);
     }
 

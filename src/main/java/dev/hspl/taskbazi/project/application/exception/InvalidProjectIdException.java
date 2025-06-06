@@ -6,7 +6,7 @@ import dev.hspl.taskbazi.common.application.ApplicationException;
 
 public class InvalidProjectIdException extends ApplicationException {
     public InvalidProjectIdException() {
-        super("no project found in system with provided id!");
+        super("no project found with provided id!");
     }
 
     @Override

@@ -3,8 +3,10 @@ package dev.hspl.taskbazi.project.infrastructure.message;
 import dev.hspl.taskbazi.common.domain.value.EmailAddress;
 import dev.hspl.taskbazi.common.domain.value.UserId;
 import dev.hspl.taskbazi.common.infrastructure.message.notification.NotificationRecipient;
+import dev.hspl.taskbazi.common.infrastructure.message.notification.NotificationRequest;
 import dev.hspl.taskbazi.common.infrastructure.message.notification.handler.NotificationBroadcaster;
 import dev.hspl.taskbazi.common.infrastructure.message.notification.handler.NotificationRequestHandler;
+import dev.hspl.taskbazi.project.domain.event.ManagingTaskAssignmentDomainEvent;
 import dev.hspl.taskbazi.project.domain.event.ProjectCompletedDomainEvent;
 import dev.hspl.taskbazi.project.domain.value.ProjectId;
 import dev.hspl.taskbazi.project.domain.value.ProjectTitle;
@@ -74,5 +76,17 @@ public class ProjectModuleDomainNotificationEventListener {
         }
 
         // TODO: implement BroadcastRequest and broadcast it!
+    }
+
+    @TransactionalEventListener(fallbackExecution = true, phase = TransactionPhase.AFTER_COMMIT)
+    @Async
+    public void handleManagingTaskAssignmentDomainEvent(ManagingTaskAssignmentDomainEvent event) {
+        NotificationRequest actualRequest = new ManagingTaskAssignmentNotification(
+                event.eventOccurredAt(),event.notificationUserId(),event.notificationUserEmailAddress(),
+                event.getRelatedProjectId(),event.getRelatedProjectTitle(),event.getTaskTitle(),
+                event.getTaskPriority(),event.criticalNotification()
+        );
+
+        notificationRequestHandler.handle(actualRequest);
     }
 }

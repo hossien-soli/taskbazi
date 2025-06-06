@@ -9,7 +9,6 @@ import dev.hspl.taskbazi.project.domain.exception.TooManyProjectInstanceExceptio
 import dev.hspl.taskbazi.common.domain.exception.UnsupportedAccountException;
 import dev.hspl.taskbazi.common.domain.value.Description;
 import dev.hspl.taskbazi.project.domain.value.ProjectId;
-import dev.hspl.taskbazi.project.domain.value.ProjectStatus;
 import dev.hspl.taskbazi.project.domain.value.ProjectTitle;
 import lombok.RequiredArgsConstructor;
 
@@ -22,14 +21,14 @@ public class ProjectManagingService {
 
     public Project registerProjectForUser(
             LocalDateTime currentDateTime,
-            UniversalUser authenticatedUser,
+            UniversalUser registrarUser, // usually authenticated user (user who wants to register a project)
             ProjectId newProjectId,
             ProjectTitle projectTitle,
             Description projectDescription, // nullable
             LocalDateTime lastUserProjectRegistrationTime, // nullable (null=no previous project)
             short numberOfUserCurrentProjectInstances // owned & joined projects
     ) {
-        boolean checkAccount = authenticatedUser.userRole().equals(UserRole.CLIENT) && authenticatedUser.isAccountActive();
+        boolean checkAccount = registrarUser.userRole().equals(UserRole.CLIENT) && registrarUser.isAccountActive();
         if (!checkAccount) {
             throw new UnsupportedAccountException();
         }
@@ -53,21 +52,21 @@ public class ProjectManagingService {
             }
         }
 
-        return Project.registerNewProject(currentDateTime, newProjectId, authenticatedUser.universalUserId(),
+        return Project.registerNewProject(currentDateTime, newProjectId, registrarUser,
                 projectTitle, projectDescription);
     }
 
     public void tryStartProject(
             LocalDateTime currentDateTime,
-            UniversalUser authenticatedUser,
+            UniversalUser starterUser, // usually authenticated user (user who wants to start the project)
             Project targetProject
     ) {
-        boolean checkAccount = authenticatedUser.userRole().equals(UserRole.CLIENT) && authenticatedUser.isAccountActive();
+        boolean checkAccount = starterUser.userRole().equals(UserRole.CLIENT) && starterUser.isAccountActive();
         if (!checkAccount) {
             throw new UnsupportedAccountException();
         }
 
-        boolean isOwner = authenticatedUser.universalUserId().equals(targetProject.getOwner());
+        boolean isOwner = starterUser.universalUserId().equals(targetProject.getOwner());
         if (!isOwner) {
             throw new OwnerOnlyActionException();
         }
@@ -76,7 +75,7 @@ public class ProjectManagingService {
     }
 
     public void authorizeProjectDeletion(
-            UniversalUser authenticatedUser,
+            UniversalUser user, // usually authenticated user (user who wants to delete the project)
             Project project
     ) {
         // check user can delete this project

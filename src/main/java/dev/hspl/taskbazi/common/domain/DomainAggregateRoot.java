@@ -10,7 +10,7 @@ import java.util.List;
 // org.springframework.data.domain.AbstractAggregateRoot
 
 public abstract class DomainAggregateRoot {
-    private transient final List<DomainEvent> domainEvents = new ArrayList<>(5);
+    private transient final List<DomainEvent> domainEvents = new ArrayList<>(3);
 
     protected void registerDomainEvent(DomainEvent event) {
         this.domainEvents.add(event);
