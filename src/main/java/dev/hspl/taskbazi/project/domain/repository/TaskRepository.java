@@ -1,5 +1,7 @@
 package dev.hspl.taskbazi.project.domain.repository;
 
-public interface TaskRepository {
+import dev.hspl.taskbazi.project.domain.entity.Task;
 
+public interface TaskRepository {
+    void save(Task task);
 }

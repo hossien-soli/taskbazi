@@ -27,8 +27,9 @@ public class Task extends DomainAggregateRoot {
     private final UUID id;
     private final ProjectId projectId;
 
-    private final UserId assignedBy; // not-optional but can be null if the user leave the project
-    private final UserId assignedTo; // not-optional but can be null if the user leave the project
+    private final UserId assignedBy; // not-optional but can be null if the user leave the project or deleted
+    private final UserId assignedTo; // not-optional but can be null if the user leave the project or deleted
+    // deletion or leave of user cannot cause task deletion just the value set to null!!
 
     private TaskTitle title;
     private Description description; // optional-nullable
@@ -45,9 +46,11 @@ public class Task extends DomainAggregateRoot {
     private LocalDateTime acceptedAt;   // nullable
     private LocalDateTime startedAt;    // nullable
     private LocalDateTime completedAt;  // nullable
-    private LocalDateTime canceledAt;   // nullable
+    private LocalDateTime cancelledAt;   // nullable
     private LocalDateTime rejectedAt;   // nullable
     private LocalDateTime verifiedAt;   // nullable
+
+    private final Integer version; // just a data transfer property
 
     private Task(
             UUID id,
@@ -65,9 +68,10 @@ public class Task extends DomainAggregateRoot {
             LocalDateTime acceptedAt,
             LocalDateTime startedAt,
             LocalDateTime completedAt,
-            LocalDateTime canceledAt,
+            LocalDateTime cancelledAt,
             LocalDateTime rejectedAt,
-            LocalDateTime verifiedAt
+            LocalDateTime verifiedAt,
+            Integer version
     ) {
         this.id = id;
         this.projectId = projectId;
@@ -84,9 +88,10 @@ public class Task extends DomainAggregateRoot {
         this.acceptedAt = acceptedAt;
         this.startedAt = startedAt;
         this.completedAt = completedAt;
-        this.canceledAt = canceledAt;
+        this.cancelledAt = cancelledAt;
         this.rejectedAt = rejectedAt;
         this.verifiedAt = verifiedAt;
+        this.version = version;
     }
 
     public static Task newTask(
@@ -121,7 +126,7 @@ public class Task extends DomainAggregateRoot {
 
         Task result = new Task(newTaskId,projectId,assignerUser.universalUserId(),targetUser.universalUserId(),
                 title,description,priority,newTaskStatus,dueDateTime,null,null,currentDateTime,acceptedAt,
-                null,null,null,null,null);
+                null,null,null,null,null,null);
 
         if (!isSelfAssignment) {
             DomainNotificationRequestEvent event = new ManagingTaskAssignmentDomainEvent(
@@ -151,12 +156,13 @@ public class Task extends DomainAggregateRoot {
             LocalDateTime acceptedAt,
             LocalDateTime startedAt,
             LocalDateTime completedAt,
-            LocalDateTime canceledAt,
+            LocalDateTime cancelledAt,
             LocalDateTime rejectedAt,
-            LocalDateTime verifiedAt
+            LocalDateTime verifiedAt,
+            Integer version
     ) {
         return new Task(id,projectId,assignedBy,assignedTo,title,description,priority,status,dueDateTime,rejectReason,
-                cancelReason,assignedAt,acceptedAt,startedAt,completedAt,canceledAt,rejectedAt,verifiedAt);
+                cancelReason,assignedAt,acceptedAt,startedAt,completedAt,cancelledAt,rejectedAt,verifiedAt,version);
     }
 
     public void acceptTask(
