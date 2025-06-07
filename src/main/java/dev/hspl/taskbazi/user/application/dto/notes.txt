@@ -1,2 +1,0 @@
-DTO
-Actually these(Data transfer objects) are value objects for the application layer
