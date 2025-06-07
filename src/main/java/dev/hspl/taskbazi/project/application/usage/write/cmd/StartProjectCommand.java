@@ -1,4 +1,4 @@
-package dev.hspl.taskbazi.project.application.usage.cmd;
+package dev.hspl.taskbazi.project.application.usage.write.cmd;
 
 import dev.hspl.taskbazi.common.application.InvalidApplicationCommandException;
 import dev.hspl.taskbazi.project.domain.value.ProjectId;

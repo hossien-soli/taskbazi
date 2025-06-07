@@ -1,7 +1,7 @@
-package dev.hspl.taskbazi.project.application.usage;
+package dev.hspl.taskbazi.project.application.usage.write;
 
 import dev.hspl.taskbazi.common.domain.value.UniversalUser;
-import dev.hspl.taskbazi.project.application.usage.cmd.RegisterProjectCommand;
+import dev.hspl.taskbazi.project.application.usage.write.cmd.RegisterProjectCommand;
 
 public interface RegisterProjectUseCase {
     void execute(

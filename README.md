@@ -32,8 +32,8 @@
 - High-throughput asynchronous processing via Java virtual threads
 
 ### Data Management
-- **Primary Database**: PostgreSQL (easily replaceable due to architecture & dependency-inversion)
-- **Persistence**: JPA/Hibernate (Spring Data) as infrastructure concern
+- **Primary Database**: PostgreSQL (easily replaceable(even to NoSQL/MongoDB) due to architecture & dependency-inversion)
+- **Persistence**: JPA/Hibernate (Spring Data) as infrastructure concern(replaceable to anything!)
 - Data integrity ensured through:
   - Relational constraints
   - ACID transactions
