@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 // everyone can assign task to itself (by default)
 // Inactive collaborators cannot take any actions and are only preserved for record-keeping
 // Inactive collaborators will not receive any notifications regarding the project
+// Inactive collaborators can see or track the project(read-only access)
 
 @Getter
 public class Collaborator {

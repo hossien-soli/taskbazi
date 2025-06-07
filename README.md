@@ -42,6 +42,7 @@
 
 ### API & Documentation
 - **API Documentation**: OpenAPI specification via springdoc-openapi
+- **Localization (i18n)**: API responses and error messages support **English** and **Persian** via Spring's `MessageSource`
 
 ### Concurrency Control
 - **Optimistic concurrency control**:
@@ -77,5 +78,8 @@
 - Tasks also have strict states (Assigned/Accepted/In Progress/Completed/Verified/Cancelled/Rejected)
 - Collaborators can accept or reject tasks; owners and permitted collaborators can verify or cancel the tasks
 - Important events in the application can trigger notifications to users
+
+### 🚧 Project Status
+- This project is currently **under development!**
 
 **- This file was organized by AI.**

@@ -16,6 +16,3 @@ public interface ProjectRepository {
 
     Optional<Project> find(ProjectId id); // maybe we should add owner(user) match to this for better performance
 }
-
-//is putting project instance counter inside this repository is oK!!????
-//how about last project creation detection

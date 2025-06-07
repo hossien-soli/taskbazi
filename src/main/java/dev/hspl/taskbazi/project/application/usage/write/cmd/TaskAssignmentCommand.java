@@ -1,5 +1,6 @@
-package dev.hspl.taskbazi.project.application.usage.cmd;
+package dev.hspl.taskbazi.project.application.usage.write.cmd;
 
+import dev.hspl.taskbazi.common.application.InvalidApplicationCommandException;
 import dev.hspl.taskbazi.common.domain.value.Description;
 import dev.hspl.taskbazi.common.domain.value.UserId;
 import dev.hspl.taskbazi.project.domain.value.ProjectId;
@@ -17,6 +18,9 @@ public record TaskAssignmentCommand(
         LocalDateTime dueDateTime // optional-nullable
 ) {
     public TaskAssignmentCommand {
-
+        boolean validate = targetProjectId != null && targetUserId != null && taskTitle != null && taskPriority != null;
+        if (!validate) {
+            throw new InvalidApplicationCommandException("task assignment command is invalid!");
+        }
     }
 }

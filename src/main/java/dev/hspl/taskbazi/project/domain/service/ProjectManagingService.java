@@ -83,5 +83,6 @@ public class ProjectManagingService {
         // allowed status for deletion ARCHIVED, COMPLETED, CANCELLED
         // user can't delete BLOCKED projects
         // a delay between creation and deleting the project should set: 1H
+        // notify collaborators for deletion
     }
 }

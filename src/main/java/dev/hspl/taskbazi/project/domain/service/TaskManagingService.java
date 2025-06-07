@@ -8,10 +8,7 @@ import dev.hspl.taskbazi.common.domain.value.UserRole;
 import dev.hspl.taskbazi.project.domain.entity.Collaborator;
 import dev.hspl.taskbazi.project.domain.entity.Project;
 import dev.hspl.taskbazi.project.domain.entity.Task;
-import dev.hspl.taskbazi.project.domain.exception.InvalidTargetUserTaskAssignmentException;
-import dev.hspl.taskbazi.project.domain.exception.InvalidUserTaskAssignmentException;
-import dev.hspl.taskbazi.project.domain.exception.UnacceptableProjectStatusTaskAssignmentException;
-import dev.hspl.taskbazi.project.domain.exception.UnsupportedTargetAccountTaskAssignmentException;
+import dev.hspl.taskbazi.project.domain.exception.*;
 import dev.hspl.taskbazi.project.domain.value.ProjectStatus;
 import dev.hspl.taskbazi.project.domain.value.TaskPriority;
 import dev.hspl.taskbazi.project.domain.value.TaskTitle;
@@ -55,7 +52,9 @@ public class TaskManagingService {
         if (!isAssigningByOwner) {
             boolean assigningByValidCollaborator = collaborators != null && collaborators.stream().anyMatch(collaborator -> {
                 boolean collaboratorMatch = collaborator.getUserId().equals(assignerUserId);
-                if (!collaboratorMatch) { return false; }
+                if (!collaboratorMatch) {
+                    return false;
+                }
 
                 return collaborator.isActive() && (collaborator.isManagingAssignment() || collaborator.isSelfAssignment());
             });
@@ -101,7 +100,7 @@ public class TaskManagingService {
             }
         }
 
-        return Task.newTask(currentDateTime,newTaskId,targetProject.getId(),assignerUser,
-                targetUser,taskTitle,taskDescription,taskPriority,dueDateTime,targetProject.getTitle());
+        return Task.newTask(currentDateTime, newTaskId, targetProject.getId(), assignerUser,
+                targetUser, taskTitle, taskDescription, taskPriority, dueDateTime, targetProject.getTitle());
     }
 }
