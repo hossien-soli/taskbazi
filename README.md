@@ -77,3 +77,5 @@
 - Tasks also have strict states (Assigned/Accepted/In Progress/Completed/Verified/Cancelled/Rejected)
 - Collaborators can accept or reject tasks; owners and permitted collaborators can verify or cancel the tasks
 - Important events in the application can trigger notifications to users
+
+**- This file was organized by AI.**
