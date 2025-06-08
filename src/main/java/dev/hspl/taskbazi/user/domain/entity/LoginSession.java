@@ -1,7 +1,7 @@
 package dev.hspl.taskbazi.user.domain.entity;
 
 import dev.hspl.taskbazi.common.domain.value.RequestClientIdentifier;
-import dev.hspl.taskbazi.user.domain.value.RequestIdentificationDetails;
+import dev.hspl.taskbazi.common.domain.value.RequestIdentificationDetails;
 import dev.hspl.taskbazi.common.domain.value.UserId;
 import dev.hspl.taskbazi.user.domain.value.LoginSessionState;
 import lombok.Getter;

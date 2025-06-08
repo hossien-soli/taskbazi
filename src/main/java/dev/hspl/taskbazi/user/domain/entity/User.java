@@ -3,7 +3,7 @@ package dev.hspl.taskbazi.user.domain.entity;
 import dev.hspl.taskbazi.common.domain.DomainAggregateRoot;
 import dev.hspl.taskbazi.common.domain.event.DomainNotificationRequestEvent;
 import dev.hspl.taskbazi.common.domain.value.*;
-import dev.hspl.taskbazi.user.domain.event.ClientRegisteredDomainEvent;
+import dev.hspl.taskbazi.common.domain.event.ClientRegisteredDomainEvent;
 import dev.hspl.taskbazi.user.domain.exception.PasswordMismatchException;
 import dev.hspl.taskbazi.user.domain.service.PasswordProtector;
 import dev.hspl.taskbazi.user.domain.value.PlainPassword;
@@ -69,7 +69,7 @@ public class User extends DomainAggregateRoot implements UniversalUser {
                     currentDateTime,
                     newUserId,
                     emailAddress,
-                    fullName,
+                    fullName.value(),
                     username
             );
 

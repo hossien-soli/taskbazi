@@ -1,10 +1,10 @@
 package dev.hspl.taskbazi.user.application.usage.cmd;
 
-import dev.hspl.taskbazi.common.application.InvalidApplicationCommandException;
+import dev.hspl.taskbazi.common.application.exception.InvalidApplicationCommandException;
 import dev.hspl.taskbazi.common.domain.value.RequestClientIdentifier;
 import dev.hspl.taskbazi.common.domain.value.UserRole;
 import dev.hspl.taskbazi.user.domain.value.PlainPassword;
-import dev.hspl.taskbazi.user.domain.value.RequestIdentificationDetails;
+import dev.hspl.taskbazi.common.domain.value.RequestIdentificationDetails;
 import dev.hspl.taskbazi.user.domain.value.UsernameOrEmailAddress;
 
 public record UserLoginCommand(

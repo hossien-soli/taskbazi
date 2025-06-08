@@ -1,6 +1,7 @@
 package dev.hspl.taskbazi.user.domain.service;
 
 import dev.hspl.taskbazi.common.domain.value.RequestClientIdentifier;
+import dev.hspl.taskbazi.common.domain.value.RequestIdentificationDetails;
 import dev.hspl.taskbazi.common.domain.value.UserRole;
 import dev.hspl.taskbazi.user.domain.entity.RefreshToken;
 import dev.hspl.taskbazi.user.domain.entity.User;

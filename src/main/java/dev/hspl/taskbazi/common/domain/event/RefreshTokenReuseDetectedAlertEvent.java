@@ -4,7 +4,7 @@ import dev.hspl.taskbazi.common.domain.value.EmailAddress;
 import dev.hspl.taskbazi.common.domain.value.RequestClientIdentifier;
 import dev.hspl.taskbazi.common.domain.value.UserId;
 import dev.hspl.taskbazi.common.domain.value.UserRole;
-import dev.hspl.taskbazi.user.domain.value.RequestIdentificationDetails;
+import dev.hspl.taskbazi.common.domain.value.RequestIdentificationDetails;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

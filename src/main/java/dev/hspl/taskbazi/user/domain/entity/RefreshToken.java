@@ -1,13 +1,14 @@
 package dev.hspl.taskbazi.user.domain.entity;
 
 import dev.hspl.taskbazi.common.domain.DomainAggregateRoot;
-import dev.hspl.taskbazi.common.domain.DomainException;
+import dev.hspl.taskbazi.common.domain.exception.DomainException;
 import dev.hspl.taskbazi.common.domain.event.DomainNotificationRequestEvent;
 import dev.hspl.taskbazi.common.domain.event.RefreshTokenReuseDetectedAlertEvent;
 import dev.hspl.taskbazi.common.domain.value.RequestClientIdentifier;
+import dev.hspl.taskbazi.common.domain.value.RequestIdentificationDetails;
 import dev.hspl.taskbazi.common.domain.value.UniversalUser;
 import dev.hspl.taskbazi.common.domain.value.UserId;
-import dev.hspl.taskbazi.user.domain.event.NewAccountLoginDomainEvent;
+import dev.hspl.taskbazi.common.domain.event.NewAccountLoginDomainEvent;
 import dev.hspl.taskbazi.user.domain.exception.ActualRefreshTokenMismatchException;
 import dev.hspl.taskbazi.user.domain.exception.ClosedLoginSessionException;
 import dev.hspl.taskbazi.user.domain.exception.TokenRefreshRestrictionException;

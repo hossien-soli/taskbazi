@@ -1,7 +1,7 @@
 package dev.hspl.taskbazi.project.application.service;
 
 import dev.hspl.taskbazi.common.application.GlobalDomainEventPublisher;
-import dev.hspl.taskbazi.common.application.InvalidUserIdException;
+import dev.hspl.taskbazi.common.application.exception.InvalidUserIdException;
 import dev.hspl.taskbazi.common.application.TimeProvider;
 import dev.hspl.taskbazi.common.application.UUIDGenerator;
 import dev.hspl.taskbazi.common.domain.exception.UnsupportedAccountException;
@@ -16,7 +16,7 @@ import dev.hspl.taskbazi.project.domain.exception.UnsupportedTargetAccountTaskAs
 import dev.hspl.taskbazi.project.domain.repository.ProjectRepository;
 import dev.hspl.taskbazi.project.domain.repository.TaskRepository;
 import dev.hspl.taskbazi.project.domain.service.TaskManagingService;
-import dev.hspl.taskbazi.user.UniversalUserResolver;
+import dev.hspl.taskbazi.user.UniversalUserResolverAPI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +29,7 @@ public class TaskManagingApplicationService implements TaskAssignmentUseCase {
     private final TimeProvider timeProvider;
     private final UUIDGenerator uuidGenerator;
     private final GlobalDomainEventPublisher domainEventPublisher;
-    private final UniversalUserResolver userResolver;
+    private final UniversalUserResolverAPI userResolver;
     private final ProjectRepository projectRepository;
     private final TaskRepository taskRepository;
 

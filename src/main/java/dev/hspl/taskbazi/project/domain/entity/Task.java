@@ -5,7 +5,7 @@ import dev.hspl.taskbazi.common.domain.event.DomainNotificationRequestEvent;
 import dev.hspl.taskbazi.common.domain.exception.MissingUserNoteException;
 import dev.hspl.taskbazi.common.domain.exception.UnsupportedAccountException;
 import dev.hspl.taskbazi.common.domain.value.*;
-import dev.hspl.taskbazi.project.domain.event.ManagingTaskAssignmentDomainEvent;
+import dev.hspl.taskbazi.common.domain.event.ManagingTaskAssignmentDomainEvent;
 import dev.hspl.taskbazi.project.domain.exception.UnsupportedTargetAccountTaskAssignmentException;
 import dev.hspl.taskbazi.project.domain.value.*;
 import lombok.Getter;
@@ -131,7 +131,7 @@ public class Task extends DomainAggregateRoot {
         if (!isSelfAssignment) {
             DomainNotificationRequestEvent event = new ManagingTaskAssignmentDomainEvent(
                     currentDateTime,targetUser.universalUserId(),targetUser.universalUserEmailAddress(),
-                    projectId,relatedProjectTitle,title,priority
+                    projectId.value(),relatedProjectTitle.value(),title.value(),priority.toString()
             );
 
             result.registerDomainEvent(event);

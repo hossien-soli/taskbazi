@@ -1,7 +1,5 @@
 package dev.hspl.taskbazi.common.domain.exception;
 
-import dev.hspl.taskbazi.common.domain.DomainException;
-
 public class MissingUserIdException extends DomainException {
     public MissingUserIdException() {
         super("user id is missing!!!");

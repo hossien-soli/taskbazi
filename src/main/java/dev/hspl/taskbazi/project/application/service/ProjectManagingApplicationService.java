@@ -1,7 +1,7 @@
 package dev.hspl.taskbazi.project.application.service;
 
 import dev.hspl.taskbazi.common.application.GlobalDomainEventPublisher;
-import dev.hspl.taskbazi.common.application.ResourceVersionConflictException;
+import dev.hspl.taskbazi.common.application.exception.ResourceVersionConflictException;
 import dev.hspl.taskbazi.common.application.TimeProvider;
 import dev.hspl.taskbazi.common.application.UUIDGenerator;
 import dev.hspl.taskbazi.common.domain.value.UniversalUser;

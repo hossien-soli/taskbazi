@@ -1,6 +1,6 @@
 package dev.hspl.taskbazi.user.domain.exception;
 
-import dev.hspl.taskbazi.common.domain.DomainException;
+import dev.hspl.taskbazi.common.domain.exception.DomainException;
 
 public class MissingAccessTokenException extends DomainException {
     public MissingAccessTokenException() {

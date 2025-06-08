@@ -1,9 +1,9 @@
 package dev.hspl.taskbazi.user.application.usage.cmd;
 
-import dev.hspl.taskbazi.common.application.InvalidApplicationCommandException;
+import dev.hspl.taskbazi.common.application.exception.InvalidApplicationCommandException;
 import dev.hspl.taskbazi.common.domain.value.RequestClientIdentifier;
 import dev.hspl.taskbazi.user.application.dto.PresentedRefreshToken;
-import dev.hspl.taskbazi.user.domain.value.RequestIdentificationDetails;
+import dev.hspl.taskbazi.common.domain.value.RequestIdentificationDetails;
 
 public record TokenRotationCommand(
         PresentedRefreshToken presentedRefreshToken, // required

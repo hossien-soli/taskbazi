@@ -11,14 +11,14 @@ public class DomainServiceInitialization {
             PasswordProtector passwordProtector,
             VerificationCodeProtector verificationCodeProtector,
             UserUniquenessChecker userUniquenessChecker,
-            ClientRegistrationEmailSender clientRegistrationEmailSender,
+            VerificationCodeDeliveryService verificationCodeDeliveryService,
             UserAuthenticationConstraints userAuthenticationConstraints
     ) {
         return new ClientRegistrationService(
                 passwordProtector,
                 verificationCodeProtector,
                 userUniquenessChecker,
-                clientRegistrationEmailSender,
+                verificationCodeDeliveryService,
                 userAuthenticationConstraints
         );
     }

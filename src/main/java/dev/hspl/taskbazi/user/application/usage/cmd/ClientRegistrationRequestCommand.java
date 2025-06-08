@@ -1,6 +1,6 @@
 package dev.hspl.taskbazi.user.application.usage.cmd;
 
-import dev.hspl.taskbazi.common.application.InvalidApplicationCommandException;
+import dev.hspl.taskbazi.common.application.exception.InvalidApplicationCommandException;
 import dev.hspl.taskbazi.common.domain.value.EmailAddress;
 import dev.hspl.taskbazi.common.domain.value.RequestClientIdentifier;
 import dev.hspl.taskbazi.common.domain.value.Username;

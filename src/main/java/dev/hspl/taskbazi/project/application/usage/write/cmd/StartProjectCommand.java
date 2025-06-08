@@ -1,6 +1,6 @@
 package dev.hspl.taskbazi.project.application.usage.write.cmd;
 
-import dev.hspl.taskbazi.common.application.InvalidApplicationCommandException;
+import dev.hspl.taskbazi.common.application.exception.InvalidApplicationCommandException;
 import dev.hspl.taskbazi.project.domain.value.ProjectId;
 
 public record StartProjectCommand(

@@ -26,7 +26,7 @@ public class ClientRegistrationService {
     private final VerificationCodeProtector verificationCodeProtector;
 
     private final UserUniquenessChecker userUniquenessChecker;
-    private final ClientRegistrationEmailSender emailSender;
+    private final VerificationCodeDeliveryService codeDeliveryService;
 
     @Getter
     private final UserAuthenticationConstraints constraints;
@@ -69,8 +69,8 @@ public class ClientRegistrationService {
         ProtectedPassword userPassword = passwordProtector.protect(clientPlainPassword);
 
         int sessionLifetime = constraints.registrationSessionLifetimeSeconds();
-        emailSender.sendVerificationEmail(
-                clientEmailAddress,
+        codeDeliveryService.deliver(
+                clientEmailAddress.value(),
                 plainVerificationCode,
                 sessionLifetime,
                 currentDateTime.plusSeconds(sessionLifetime),

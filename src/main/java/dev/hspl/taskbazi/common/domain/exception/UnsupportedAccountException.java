@@ -1,7 +1,5 @@
 package dev.hspl.taskbazi.common.domain.exception;
 
-import dev.hspl.taskbazi.common.domain.DomainException;
-
 // http status code: 403
 
 public class UnsupportedAccountException extends DomainException {

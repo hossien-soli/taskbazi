@@ -1,5 +1,0 @@
-Global/shared domain events are stored here, while module-specific events go into their module's Java package.
-Events that establish connections or enable collaboration between modules or bounded contexts should be placed here.
-
-Due to AbstractAggregateRoot's dependency on Spring Data repositories for event publishing, I decided to develop a custom event management solution
-org.springframework.data.domain.AbstractAggregateRoot

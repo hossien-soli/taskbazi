@@ -6,7 +6,7 @@ import dev.hspl.taskbazi.common.domain.exception.UnsupportedAccountException;
 import dev.hspl.taskbazi.common.domain.value.UniversalUser;
 import dev.hspl.taskbazi.common.domain.value.UserId;
 import dev.hspl.taskbazi.common.domain.value.UserRole;
-import dev.hspl.taskbazi.project.domain.event.ProjectStartedDomainEvent;
+import dev.hspl.taskbazi.common.domain.event.ProjectStartedDomainEvent;
 import dev.hspl.taskbazi.project.domain.exception.ProjectIsNotEditableException;
 import dev.hspl.taskbazi.project.domain.exception.ProjectIsNotStartableException;
 import dev.hspl.taskbazi.common.domain.value.Description;
@@ -16,6 +16,7 @@ import dev.hspl.taskbazi.project.domain.value.ProjectTitle;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 @Getter
@@ -111,12 +112,18 @@ public class Project extends DomainAggregateRoot {
         this.status = ProjectStatus.IN_PROGRESS;
         this.startedAt = currentDateTime;
 
+        List<UserId> notificationUserIds = Collections.emptyList();
+        if (this.collaborators != null) {
+            notificationUserIds = this.collaborators.stream().filter(Collaborator::isActive)
+                    .map(Collaborator::getUserId).toList();
+        }
+
         DomainNotificationBroadcastEvent domainEvent = new ProjectStartedDomainEvent(
                 currentDateTime,
-                this.id,
-                this.title,
+                this.id.value(),
+                this.title.value(),
                 this.owner,
-                this.collaborators
+                notificationUserIds
         );
 
         registerDomainEvent(domainEvent);

@@ -1,6 +1,6 @@
 package dev.hspl.taskbazi.project.domain.exception;
 
-import dev.hspl.taskbazi.common.domain.DomainException;
+import dev.hspl.taskbazi.common.domain.exception.DomainException;
 
 // http status code: 400
 

@@ -1,6 +1,6 @@
 package dev.hspl.taskbazi.project.domain.exception;
 
-import dev.hspl.taskbazi.common.domain.DomainException;
+import dev.hspl.taskbazi.common.domain.exception.DomainException;
 import lombok.Getter;
 
 // you should extract the properties of this class for generating appropriate message for user

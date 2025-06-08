@@ -1,6 +1,6 @@
 package dev.hspl.taskbazi.user.application.exception;
 
-import dev.hspl.taskbazi.common.domain.DomainException;
+import dev.hspl.taskbazi.common.domain.exception.DomainException;
 
 public class InvalidUsernameOrEmailAddressLoginException extends DomainException {
     public InvalidUsernameOrEmailAddressLoginException() {

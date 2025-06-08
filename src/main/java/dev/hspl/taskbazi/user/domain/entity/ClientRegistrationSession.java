@@ -1,7 +1,7 @@
 package dev.hspl.taskbazi.user.domain.entity;
 
 import dev.hspl.taskbazi.common.domain.DomainAggregateRoot;
-import dev.hspl.taskbazi.common.domain.DomainException;
+import dev.hspl.taskbazi.common.domain.exception.DomainException;
 import dev.hspl.taskbazi.common.domain.exception.RequestClientIdentifierMismatchException;
 import dev.hspl.taskbazi.common.domain.value.EmailAddress;
 import dev.hspl.taskbazi.common.domain.value.RequestClientIdentifier;

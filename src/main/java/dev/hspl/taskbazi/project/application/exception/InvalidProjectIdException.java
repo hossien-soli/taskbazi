@@ -1,6 +1,6 @@
 package dev.hspl.taskbazi.project.application.exception;
 
-import dev.hspl.taskbazi.common.application.ApplicationException;
+import dev.hspl.taskbazi.common.application.exception.ApplicationException;
 
 // http status code = 404
 
