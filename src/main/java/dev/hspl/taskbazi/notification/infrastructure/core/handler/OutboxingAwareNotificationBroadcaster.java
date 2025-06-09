@@ -26,19 +26,24 @@ public class OutboxingAwareNotificationBroadcaster implements NotificationBroadc
 
     @Override
     @Transactional
-    public void broadcast(NotificationBroadcastRequest broadcastRequest) {
+    public short broadcast(NotificationBroadcastRequest broadcastRequest) {
         Collection<NotificationRecipient> recipients = broadcastRequest.recipients();
         UserFriendlyMessage message = broadcastRequest.prepareMessage(messageSource, htmlTemplateEngine);
         Set<NotificationDeliveryMethod> deliveryMethods = broadcastRequest.deliveryMethods();
 
+        short successCount = 0;
         for (NotificationDeliveryMethod method : deliveryMethods) {
             for (NotificationDeliveryAgent currentAgent : deliveryAgents) {
                 if (currentAgent.support(method)) {
                     for (NotificationRecipient currentRecipient : recipients) {
-                        currentAgent.tryDeliver(message, currentRecipient);
+                        if (currentAgent.tryDeliver(message, currentRecipient)) {
+                            successCount++;
+                        }
                     }
                 }
             }
         }
+
+        return successCount;
     }
 }

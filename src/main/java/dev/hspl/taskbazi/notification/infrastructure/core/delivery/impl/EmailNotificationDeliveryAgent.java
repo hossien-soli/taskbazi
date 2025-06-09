@@ -2,11 +2,10 @@ package dev.hspl.taskbazi.notification.infrastructure.core.delivery.impl;
 
 import dev.hspl.taskbazi.common.domain.value.EmailAddress;
 import dev.hspl.taskbazi.notification.infrastructure.UserFriendlyMessage;
-import dev.hspl.taskbazi.notification.infrastructure.email.GlobalEmailSender;
 import dev.hspl.taskbazi.notification.infrastructure.core.NotificationRecipient;
 import dev.hspl.taskbazi.notification.infrastructure.core.delivery.NotificationDeliveryAgent;
 import dev.hspl.taskbazi.notification.infrastructure.core.delivery.NotificationDeliveryMethod;
-import dev.hspl.taskbazi.notification.infrastructure.core.exception.MissingDeliveryAgentTargetIdentifierException;
+import dev.hspl.taskbazi.notification.infrastructure.email.GlobalEmailSender;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -23,13 +22,18 @@ public class EmailNotificationDeliveryAgent implements NotificationDeliveryAgent
     }
 
     @Override
-    public void tryDeliver(UserFriendlyMessage message, NotificationRecipient recipient) {
+    public boolean tryDeliver(UserFriendlyMessage message, NotificationRecipient recipient) {
         EmailAddress targetEmailAddress = recipient.emailAddress();
 
         if (targetEmailAddress == null) {
-            throw new MissingDeliveryAgentTargetIdentifierException("target email-address for email-notification-delivery-agent is missing!");
+            return false;
         }
 
-        globalEmailSender.sendEmailMessage(recipient.emailAddress(),message);
+        try {
+            globalEmailSender.sendEmailMessage(recipient.emailAddress(), message);
+            return true;
+        } catch (Exception exception) {
+            return false;
+        }
     }
 }

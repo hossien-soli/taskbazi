@@ -7,8 +7,8 @@ import dev.hspl.taskbazi.notification.infrastructure.core.exception.MissingDeliv
 public interface NotificationDeliveryAgent {
     boolean support(NotificationDeliveryMethod deliveryMethod);
 
-    void tryDeliver(
+    boolean tryDeliver(
             UserFriendlyMessage message,
             NotificationRecipient recipient
-    ) throws MissingDeliveryAgentTargetIdentifierException;
+    );
 }

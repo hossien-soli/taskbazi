@@ -7,5 +7,6 @@ import dev.hspl.taskbazi.notification.infrastructure.core.NotificationBroadcastR
 //    OutboxingNotificationBroadcaster -> first store broadcast requests inside a db table
 
 public interface NotificationBroadcaster {
-    void broadcast(NotificationBroadcastRequest broadcastRequest);
+    // returns the count of success hits
+    short broadcast(NotificationBroadcastRequest broadcastRequest);
 }

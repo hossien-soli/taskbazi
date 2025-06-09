@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RequiredArgsConstructor
-public class ProjectCompletedDomainEvent implements DomainNotificationBroadcastEvent {
+public class ProjectClosedDomainEvent implements DomainNotificationBroadcastEvent {
     private final LocalDateTime currentDateTime;
 
     @Getter
@@ -19,6 +19,9 @@ public class ProjectCompletedDomainEvent implements DomainNotificationBroadcastE
 
     @Getter
     private final String projectTitle;
+
+    @Getter
+    private final String closeStatus; // linked to ProjectCloseStatus enum in project module(ARCHIVED/COMPLETED/CANCELLED)
 
     @Getter
     private final UserId projectOwner;

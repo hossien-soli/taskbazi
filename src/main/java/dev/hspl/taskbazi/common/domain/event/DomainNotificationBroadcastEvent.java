@@ -17,6 +17,7 @@ import java.util.Collection;
 public interface DomainNotificationBroadcastEvent extends DomainEvent {
     UserRole notificationTargetRole();
 
+    // don't return null!!!
     Collection<UserId> notificationUserIds();
 
     boolean criticalNotification(); // critical in the perspective of user (may(?should) cause sending email)

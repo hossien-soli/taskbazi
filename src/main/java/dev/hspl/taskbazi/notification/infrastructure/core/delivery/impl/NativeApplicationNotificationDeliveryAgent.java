@@ -20,9 +20,10 @@ public class NativeApplicationNotificationDeliveryAgent implements NotificationD
     }
 
     @Override
-    public void tryDeliver(UserFriendlyMessage message, NotificationRecipient recipient) {
+    public boolean tryDeliver(UserFriendlyMessage message, NotificationRecipient recipient) {
         // do nothing and just return for now!!!
         // we should create an outbox pattern for pushing notifications to the native front-end applications
         // OUTBOX-PATTERN
+        return false;
     }
 }

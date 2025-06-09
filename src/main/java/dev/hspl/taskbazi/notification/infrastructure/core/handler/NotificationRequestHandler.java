@@ -15,5 +15,6 @@ import dev.hspl.taskbazi.notification.infrastructure.core.NotificationRequest;
 // note that the implementation of GlobalEmailSender also is outboxing
 
 public interface NotificationRequestHandler {
-    void handle(NotificationRequest request);
+    // returns the count of success hits
+    byte handle(NotificationRequest request);
 }

@@ -27,20 +27,25 @@ public class ApplicationPersistedNotificationDeliveryAgent implements Notificati
     }
 
     @Override
-    public void tryDeliver(UserFriendlyMessage message, NotificationRecipient recipient) {
+    public boolean tryDeliver(UserFriendlyMessage message, NotificationRecipient recipient) {
         UserId targetUserId = recipient.userId();
         if (targetUserId == null) {
-            throw new MissingDeliveryAgentTargetIdentifierException("target user-id for persisted-notification-delivery-agent is missing");
+            return false;
         }
 
-        PersistedNotification notification = PersistedNotification.newNotification(
-                targetUserId.value(),
-                message.subject(),
-                message.plainTextBody(),
-                message.htmlBody(),
-                message.isImportant()
-        );
+        try {
+            PersistedNotification notification = PersistedNotification.newNotification(
+                    targetUserId.value(),
+                    message.subject(),
+                    message.plainTextBody(),
+                    message.htmlBody(),
+                    message.isImportant()
+            );
 
-        applicationRepository.saveNewNotification(notification,recipient.userRole());
+            applicationRepository.saveNewNotification(notification, recipient.userRole());
+            return true;
+        } catch (Exception exception) {
+            return false;
+        }
     }
 }

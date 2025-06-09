@@ -83,7 +83,7 @@
   - Implement HTTP/GRPC versions without changing business logic (Dependency Inversion Principle)
 
 - **Asynchronous Communication**:
-  - Replace `GlobalDomainEventPublisher` with a message broker implementation
+  - Replace the implementation of `GlobalDomainEventPublisher` with a external message broker implementation
   - Recommended pattern:
     - Outbox pattern for publishers
     - Inbox pattern for consumers (with idempotent operations)

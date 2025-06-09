@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Set;
 
 public interface NotificationBroadcastRequest {
+    @NonNull
     Collection<NotificationRecipient> recipients();
 
     @NonNull

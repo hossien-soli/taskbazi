@@ -42,6 +42,6 @@ public class ProjectStartedDomainEvent implements DomainNotificationBroadcastEve
 
     @Override
     public boolean criticalNotification() {
-        return false;
+        return true; // set to false for preventing email delivery
     }
 }
