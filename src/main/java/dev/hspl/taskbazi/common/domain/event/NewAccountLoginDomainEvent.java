@@ -7,11 +7,13 @@ import dev.hspl.taskbazi.common.domain.value.UserRole;
 import dev.hspl.taskbazi.common.domain.value.RequestIdentificationDetails;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @RequiredArgsConstructor
+@ToString
 public class NewAccountLoginDomainEvent implements DomainNotificationRequestEvent {
     private final LocalDateTime currentDateTime;
 

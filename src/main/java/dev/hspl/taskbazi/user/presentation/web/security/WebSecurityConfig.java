@@ -1,4 +1,4 @@
-package dev.hspl.taskbazi.user.infrastructure.presentation.web.security;
+package dev.hspl.taskbazi.user.presentation.web.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

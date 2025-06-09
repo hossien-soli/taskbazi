@@ -1,11 +1,11 @@
 package dev.hspl.taskbazi.project.infrastructure.persistence;
 
+import dev.hspl.taskbazi.common.domain.value.Description;
 import dev.hspl.taskbazi.common.domain.value.UserId;
 import dev.hspl.taskbazi.project.domain.entity.Collaborator;
 import dev.hspl.taskbazi.project.domain.entity.Project;
 import dev.hspl.taskbazi.project.domain.entity.Task;
 import dev.hspl.taskbazi.project.domain.value.CollaboratorRole;
-import dev.hspl.taskbazi.common.domain.value.Description;
 import dev.hspl.taskbazi.project.domain.value.ProjectId;
 import dev.hspl.taskbazi.project.domain.value.ProjectTitle;
 import dev.hspl.taskbazi.project.infrastructure.persistence.entity.ProjectJPAEntity;
@@ -22,7 +22,7 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class ProjectModulePersistenceMapper {
-    private final ProjectJPARepository projectJPARepository; // needed for get references for ProjectJPAEntity
+    private final ProjectJPARepository projectJPARepository;
 
     public ProjectJPAEntity mapProjectToJPAEntity(Project project) {
         ProjectJPAEntity result = new ProjectJPAEntity();

@@ -2,6 +2,7 @@ package dev.hspl.taskbazi.project.domain.entity;
 
 import dev.hspl.taskbazi.common.domain.DomainAggregateRoot;
 import dev.hspl.taskbazi.common.domain.event.DomainNotificationBroadcastEvent;
+import dev.hspl.taskbazi.common.domain.event.ProjectEditedDomainEvent;
 import dev.hspl.taskbazi.common.domain.exception.UnsupportedAccountException;
 import dev.hspl.taskbazi.common.domain.value.UniversalUser;
 import dev.hspl.taskbazi.common.domain.value.UserId;
@@ -144,15 +145,23 @@ public class Project extends DomainAggregateRoot {
     public void edit(
             LocalDateTime currentDateTime,
             ProjectTitle newTitle,
-            Description newDescription
+            Description newDescription  // nullable-optional
     ) {
+        // TODO: add null-check for value objects
         boolean editable = this.status.equals(ProjectStatus.REGISTERED) || this.status.equals(ProjectStatus.IN_PROGRESS)
                 || this.status.equals(ProjectStatus.ARCHIVED);
         if (!editable) {
             throw new ProjectIsNotEditableException();
         }
 
-        // TODO: add null-check for value objects
+        registerDomainEvent(new ProjectEditedDomainEvent(
+                currentDateTime,this.id.value(),
+                this.title.value(),newTitle.value(),
+                this.description != null ? this.description.value() : null,
+                newDescription != null ? newDescription.value() : null,
+                this.version
+        ));
+
         this.title = newTitle;
         this.description = newDescription;
         this.editedAt = currentDateTime;

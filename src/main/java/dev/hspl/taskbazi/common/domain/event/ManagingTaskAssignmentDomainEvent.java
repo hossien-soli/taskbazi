@@ -5,18 +5,21 @@ import dev.hspl.taskbazi.common.domain.value.UserId;
 import dev.hspl.taskbazi.common.domain.value.UserRole;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-// new task assigned to a collaborator by owner or managingAssignment collaborator to another collaborator(not a self assignment!!)
+// new task assigned by owner or a managingAssignment collaborator to another collaborator(not a self assignment!!)
 
 @RequiredArgsConstructor
+@ToString
 public class ManagingTaskAssignmentDomainEvent implements DomainNotificationRequestEvent {
     private final LocalDateTime currentDateTime;
 
-    private final UserId notificationUserId;
-    private final EmailAddress notificationUserEmailAddress;
+    @Getter
+    private final UserId targetUserId; // target collaborator
+    private final EmailAddress targetUserEmailAddress; // target collaborator
 
     @Getter
     private final UUID relatedProjectId;
@@ -42,12 +45,12 @@ public class ManagingTaskAssignmentDomainEvent implements DomainNotificationRequ
 
     @Override
     public UserId notificationUserId() {
-        return notificationUserId;
+        return targetUserId;
     }
 
     @Override
     public EmailAddress notificationUserEmailAddress() {
-        return notificationUserEmailAddress;
+        return targetUserEmailAddress;
     }
 
     @Override

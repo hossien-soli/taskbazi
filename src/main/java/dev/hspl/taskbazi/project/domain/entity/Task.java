@@ -2,10 +2,10 @@ package dev.hspl.taskbazi.project.domain.entity;
 
 import dev.hspl.taskbazi.common.domain.DomainAggregateRoot;
 import dev.hspl.taskbazi.common.domain.event.DomainNotificationRequestEvent;
+import dev.hspl.taskbazi.common.domain.event.ManagingTaskAssignmentDomainEvent;
 import dev.hspl.taskbazi.common.domain.exception.MissingUserNoteException;
 import dev.hspl.taskbazi.common.domain.exception.UnsupportedAccountException;
 import dev.hspl.taskbazi.common.domain.value.*;
-import dev.hspl.taskbazi.common.domain.event.ManagingTaskAssignmentDomainEvent;
 import dev.hspl.taskbazi.project.domain.exception.UnsupportedTargetAccountTaskAssignmentException;
 import dev.hspl.taskbazi.project.domain.value.*;
 import lombok.Getter;
@@ -30,6 +30,8 @@ public class Task extends DomainAggregateRoot {
     private final UserId assignedBy; // not-optional but can be null if the user leave the project or deleted
     private final UserId assignedTo; // not-optional but can be null if the user leave the project or deleted
     // deletion or leave of user cannot cause task deletion just the value set to null!!
+
+    // maybe we need to add assignedBy & assignedTo full names to this entity
 
     private TaskTitle title;
     private Description description; // optional-nullable
@@ -124,14 +126,14 @@ public class Task extends DomainAggregateRoot {
             acceptedAt = currentDateTime;
         }
 
-        Task result = new Task(newTaskId,projectId,assignerUser.universalUserId(),targetUser.universalUserId(),
-                title,description,priority,newTaskStatus,dueDateTime,null,null,currentDateTime,acceptedAt,
-                null,null,null,null,null,null);
+        Task result = new Task(newTaskId, projectId, assignerUser.universalUserId(), targetUser.universalUserId(),
+                title, description, priority, newTaskStatus, dueDateTime, null, null, currentDateTime, acceptedAt,
+                null, null, null, null, null, null);
 
         if (!isSelfAssignment) {
             DomainNotificationRequestEvent event = new ManagingTaskAssignmentDomainEvent(
-                    currentDateTime,targetUser.universalUserId(),targetUser.universalUserEmailAddress(),
-                    projectId.value(),relatedProjectTitle.value(),title.value(),priority.toString()
+                    currentDateTime, targetUser.universalUserId(), targetUser.universalUserEmailAddress(),
+                    projectId.value(), relatedProjectTitle.value(), title.value(), priority.toString()
             );
 
             result.registerDomainEvent(event);
@@ -161,8 +163,8 @@ public class Task extends DomainAggregateRoot {
             LocalDateTime verifiedAt,
             Integer version
     ) {
-        return new Task(id,projectId,assignedBy,assignedTo,title,description,priority,status,dueDateTime,rejectReason,
-                cancelReason,assignedAt,acceptedAt,startedAt,completedAt,cancelledAt,rejectedAt,verifiedAt,version);
+        return new Task(id, projectId, assignedBy, assignedTo, title, description, priority, status, dueDateTime, rejectReason,
+                cancelReason, assignedAt, acceptedAt, startedAt, completedAt, cancelledAt, rejectedAt, verifiedAt, version);
     }
 
     public void acceptTask(

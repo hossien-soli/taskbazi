@@ -4,6 +4,7 @@ import dev.hspl.taskbazi.common.domain.value.UserId;
 import dev.hspl.taskbazi.common.domain.value.UserRole;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RequiredArgsConstructor
+@ToString
 public class ProjectClosedDomainEvent implements DomainNotificationBroadcastEvent {
     private final LocalDateTime currentDateTime;
 

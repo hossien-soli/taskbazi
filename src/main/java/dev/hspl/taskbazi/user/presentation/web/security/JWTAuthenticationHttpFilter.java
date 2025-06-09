@@ -1,4 +1,4 @@
-package dev.hspl.taskbazi.user.infrastructure.presentation.web.security;
+package dev.hspl.taskbazi.user.presentation.web.security;
 
 import dev.hspl.taskbazi.user.infrastructure.component.security.JWTAuthenticationDTO;
 import jakarta.servlet.FilterChain;

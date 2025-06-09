@@ -6,12 +6,14 @@ import dev.hspl.taskbazi.common.domain.value.UserRole;
 import dev.hspl.taskbazi.common.domain.value.Username;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
 // domain notification request event only for clients (UserRole.CLIENT)
 
 @RequiredArgsConstructor
+@ToString
 public class ClientRegisteredDomainEvent implements DomainNotificationRequestEvent {
     private final LocalDateTime currentDateTime;
 
