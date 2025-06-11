@@ -11,4 +11,9 @@ public class EmailAddressAlreadyInUseException extends DomainException {
     public String problemKey() {
         return "user.email_address.in_use";
     }
+
+    @Override
+    public short groupingValue() {
+        return 400;
+    }
 }

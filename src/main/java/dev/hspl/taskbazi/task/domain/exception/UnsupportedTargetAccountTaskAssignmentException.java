@@ -13,4 +13,9 @@ public class UnsupportedTargetAccountTaskAssignmentException extends DomainExcep
     public String problemKey() {
         return "task.assignment.target_account.unsupported";
     }
+
+    @Override
+    public short groupingValue() {
+        return 400;
+    }
 }

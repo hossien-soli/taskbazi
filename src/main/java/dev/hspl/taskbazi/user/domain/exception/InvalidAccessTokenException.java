@@ -11,4 +11,9 @@ public class InvalidAccessTokenException extends DomainException {
     public String problemKey() {
         return "user.access_token.invalid";
     }
+
+    @Override
+    public short groupingValue() {
+        return 401;
+    }
 }

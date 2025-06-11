@@ -11,4 +11,9 @@ public class UnacceptableTaskTitleException extends DomainException {
     public String problemKey() {
         return "task.title.unacceptable";
     }
+
+    @Override
+    public short groupingValue() {
+        return 400;
+    }
 }

@@ -11,4 +11,9 @@ public class ProjectIsNotEditableException extends DomainException {
     public String problemKey() {
         return "project.info.not_editable";
     }
+
+    @Override
+    public short groupingValue() {
+        return 400;
+    }
 }

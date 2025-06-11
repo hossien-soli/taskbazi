@@ -21,4 +21,9 @@ public class TooManyProjectInstanceException extends DomainException {
     public String problemKey() {
         return "project.registration.too_many_instance";
     }
+
+    @Override
+    public short groupingValue() {
+        return 429;
+    }
 }

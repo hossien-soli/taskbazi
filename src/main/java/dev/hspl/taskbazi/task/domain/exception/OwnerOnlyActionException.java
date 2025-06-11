@@ -11,4 +11,9 @@ public class OwnerOnlyActionException extends DomainException {
     public String problemKey() {
         return "project.modification.owner_only";
     }
+
+    @Override
+    public short groupingValue() {
+        return 403;
+    }
 }

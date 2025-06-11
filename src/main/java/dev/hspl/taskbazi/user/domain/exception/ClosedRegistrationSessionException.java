@@ -11,4 +11,9 @@ public class ClosedRegistrationSessionException extends DomainException {
     public String problemKey() {
         return "user.registration_session.closed";
     }
+
+    @Override
+    public short groupingValue() {
+        return 400;
+    }
 }

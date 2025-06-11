@@ -11,4 +11,9 @@ public class PasswordConfirmationMismatchException extends ApplicationException 
     public String problemKey() {
         return "user.password_confirmation.mismatch";
     }
+
+    @Override
+    public short groupingValue() {
+        return 400;
+    }
 }

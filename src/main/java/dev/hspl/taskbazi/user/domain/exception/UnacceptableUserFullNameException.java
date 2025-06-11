@@ -11,4 +11,9 @@ public class UnacceptableUserFullNameException extends DomainException {
     public String problemKey() {
         return "user.full_name.unacceptable";
     }
+
+    @Override
+    public short groupingValue() {
+        return 400;
+    }
 }

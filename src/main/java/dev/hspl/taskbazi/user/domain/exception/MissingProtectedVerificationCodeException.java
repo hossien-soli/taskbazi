@@ -11,4 +11,9 @@ public class MissingProtectedVerificationCodeException extends DomainException {
     public String problemKey() {
         return "user.protected_verification_code.missing";
     }
+
+    @Override
+    public short groupingValue() {
+        return 400;
+    }
 }

@@ -11,4 +11,9 @@ public class UnacceptableProjectStatusTaskAssignmentException extends DomainExce
     public String problemKey() {
         return "task.assignment.project_status.unacceptable";
     }
+
+    @Override
+    public short groupingValue() {
+        return 400;
+    }
 }

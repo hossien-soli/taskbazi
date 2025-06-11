@@ -11,4 +11,9 @@ public class UnacceptableProjectTitleException extends DomainException {
     public String problemKey() {
         return "project.title.unacceptable";
     }
+
+    @Override
+    public short groupingValue() {
+        return 400;
+    }
 }

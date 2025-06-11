@@ -11,4 +11,9 @@ public class UnacceptableVerificationCodeException extends DomainException {
     public String problemKey() {
         return "user.verification_code.unacceptable";
     }
+
+    @Override
+    public short groupingValue() {
+        return 400;
+    }
 }

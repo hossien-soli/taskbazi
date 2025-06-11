@@ -18,4 +18,9 @@ public class ResourceVersionConflictException extends ApplicationException {
     public String problemKey() {
         return "frontend_concurrency_problem";
     }
+
+    @Override
+    public short groupingValue() {
+        return 409;
+    }
 }

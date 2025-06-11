@@ -11,4 +11,9 @@ public class UsernameAlreadyInUseException extends DomainException {
     public String problemKey() {
         return "user.username.in_use";
     }
+
+    @Override
+    public short groupingValue() {
+        return 400;
+    }
 }

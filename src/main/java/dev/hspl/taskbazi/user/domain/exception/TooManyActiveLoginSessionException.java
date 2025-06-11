@@ -16,4 +16,9 @@ public class TooManyActiveLoginSessionException extends DomainException {
     public String problemKey() {
         return "user.login.too_many_session";
     }
+
+    @Override
+    public short groupingValue() {
+        return 429;
+    }
 }

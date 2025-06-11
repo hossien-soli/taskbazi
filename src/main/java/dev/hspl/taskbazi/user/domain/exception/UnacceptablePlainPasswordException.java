@@ -11,4 +11,9 @@ public class UnacceptablePlainPasswordException extends DomainException {
     public String problemKey() {
         return "user.plain_password.unacceptable";
     }
+
+    @Override
+    public short groupingValue() {
+        return 400;
+    }
 }

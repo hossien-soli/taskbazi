@@ -9,4 +9,9 @@ public class InvalidApplicationCommandException extends ApplicationException {
     public String problemKey() {
         return "missing_required_data";
     }
+
+    @Override
+    public short groupingValue() {
+        return 400;
+    }
 }

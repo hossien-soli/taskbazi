@@ -11,4 +11,9 @@ public class MissingProtectedOpaqueTokenException extends DomainException {
     public String problemKey() {
         return "user.protected_token.not_provided";
     }
+
+    @Override
+    public short groupingValue() {
+        return 400;
+    }
 }

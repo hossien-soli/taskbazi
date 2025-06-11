@@ -9,4 +9,9 @@ public class UnacceptableDescriptionException extends DomainException {
     public String problemKey() {
         return "common.description.unacceptable";
     }
+
+    @Override
+    public short groupingValue() {
+        return 400;
+    }
 }

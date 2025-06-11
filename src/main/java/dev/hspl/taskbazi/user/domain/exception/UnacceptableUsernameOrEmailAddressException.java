@@ -11,4 +11,9 @@ public class UnacceptableUsernameOrEmailAddressException extends DomainException
     public String problemKey() {
         return "user.username_or_email_address.unacceptable";
     }
+
+    @Override
+    public short groupingValue() {
+        return 400;
+    }
 }

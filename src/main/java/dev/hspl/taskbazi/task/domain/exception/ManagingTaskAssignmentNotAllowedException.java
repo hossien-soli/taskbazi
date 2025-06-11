@@ -11,4 +11,9 @@ public class ManagingTaskAssignmentNotAllowedException extends DomainException {
     public String problemKey() {
         return "task.managing_assignment.not_allowed";
     }
+
+    @Override
+    public short groupingValue() {
+        return 403;
+    }
 }

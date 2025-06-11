@@ -9,4 +9,9 @@ public class RequestClientIdentifierMismatchException extends DomainException {
     public String problemKey() {
         return "common.client_identifier.mismatch";
     }
+
+    @Override
+    public short groupingValue() {
+        return 400;
+    }
 }

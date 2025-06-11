@@ -77,7 +77,7 @@
 - **Database Flexibility**: Microservice database connectivity is replaceable by implementing repository interfaces (maintain consistency in distributed systems)
 - **API Contracts(Inter-Service Communication)**: Keep existing API interfaces(like EmailSenderAPI); implement HTTP/GRPC version of interfaces for communication between microservices
 
-> Currently, the task module is not **isolated**.
+> Currently, the project module is not **isolated**.
 
 #### Communication Patterns
 - **Synchronous Communication**:

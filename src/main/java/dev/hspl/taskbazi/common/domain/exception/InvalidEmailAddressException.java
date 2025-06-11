@@ -9,4 +9,9 @@ public class InvalidEmailAddressException extends DomainException {
     public String problemKey() {
         return "common.email_address.invalid";
     }
+
+    @Override
+    public short groupingValue() {
+        return 400;
+    }
 }

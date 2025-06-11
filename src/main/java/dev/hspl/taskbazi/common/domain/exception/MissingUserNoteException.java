@@ -9,4 +9,9 @@ public class MissingUserNoteException extends DomainException {
     public String problemKey() {
         return "common.user_note.unacceptable";
     }
+
+    @Override
+    public short groupingValue() {
+        return 400;
+    }
 }

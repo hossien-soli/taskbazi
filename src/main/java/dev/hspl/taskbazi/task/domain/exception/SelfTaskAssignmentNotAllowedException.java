@@ -11,4 +11,9 @@ public class SelfTaskAssignmentNotAllowedException extends DomainException {
     public String problemKey() {
         return "task.self_assignment.not_allowed";
     }
+
+    @Override
+    public short groupingValue() {
+        return 403;
+    }
 }

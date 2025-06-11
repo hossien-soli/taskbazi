@@ -11,4 +11,9 @@ public class UnacceptableCollaboratorRoleException extends DomainException {
     public String problemKey() {
         return "project.collaborator_role.unacceptable";
     }
+
+    @Override
+    public short groupingValue() {
+        return 400;
+    }
 }

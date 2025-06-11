@@ -9,4 +9,9 @@ public class MissingRequestClientIdentifierException extends DomainException {
     public String problemKey() {
         return "common.client_identifier.missing";
     }
+
+    @Override
+    public short groupingValue() {
+        return 400;
+    }
 }

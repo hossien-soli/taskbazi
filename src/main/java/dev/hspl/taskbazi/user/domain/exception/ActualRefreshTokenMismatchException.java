@@ -11,4 +11,9 @@ public class ActualRefreshTokenMismatchException extends DomainException {
     public String problemKey() {
         return "unauthorized_request";
     }
+
+    @Override
+    public short groupingValue() {
+        return 401;
+    }
 }

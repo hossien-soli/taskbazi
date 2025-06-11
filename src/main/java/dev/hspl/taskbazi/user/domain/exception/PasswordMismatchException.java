@@ -11,4 +11,9 @@ public class PasswordMismatchException extends DomainException {
     public String problemKey() {
         return "user.password.mismatch";
     }
+
+    @Override
+    public short groupingValue() {
+        return 401;
+    }
 }

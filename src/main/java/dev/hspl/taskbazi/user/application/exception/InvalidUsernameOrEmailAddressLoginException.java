@@ -11,4 +11,9 @@ public class InvalidUsernameOrEmailAddressLoginException extends DomainException
     public String problemKey() {
         return "user.login.invalid_credentials";
     }
+
+    @Override
+    public short groupingValue() {
+        return 401;
+    }
 }

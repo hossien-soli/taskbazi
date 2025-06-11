@@ -11,4 +11,9 @@ public class ProjectIsNotStartableException extends DomainException {
     public String problemKey() {
         return "project.status.not_startable";
     }
+
+    @Override
+    public short groupingValue() {
+        return 400;
+    }
 }

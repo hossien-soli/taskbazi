@@ -11,4 +11,9 @@ public class InvalidPresentedRefreshTokenElementsException extends ApplicationEx
     public String problemKey() {
         return "missing_required_data";
     }
+
+    @Override
+    public short groupingValue() {
+        return 401;
+    }
 }

@@ -11,4 +11,9 @@ public class BadSessionStateRegistrationException extends DomainException {
     public String problemKey() {
         return "user.registration.bad_session_state";
     }
+
+    @Override
+    public short groupingValue() {
+        return 400;
+    }
 }

@@ -11,4 +11,9 @@ public class MissingProtectedPasswordException extends DomainException {
     public String problemKey() {
         return "user.protected_password.missing";
     }
+
+    @Override
+    public short groupingValue() {
+        return 400;
+    }
 }

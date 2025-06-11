@@ -9,4 +9,9 @@ public class UnacceptableAccountUsernameException extends DomainException {
     public String problemKey() {
         return "common.username.unacceptable";
     }
+
+    @Override
+    public short groupingValue() {
+        return 400;
+    }
 }

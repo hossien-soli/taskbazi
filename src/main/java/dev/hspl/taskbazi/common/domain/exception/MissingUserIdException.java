@@ -9,4 +9,9 @@ public class MissingUserIdException extends DomainException {
     public String problemKey() {
         return "common.user_id.missing";
     }
+
+    @Override
+    public short groupingValue() {
+        return 400;
+    }
 }

@@ -11,4 +11,9 @@ public class UserNotFoundLoginException extends ApplicationException {
     public String problemKey() {
         return "unauthorized_request";
     }
+
+    @Override
+    public short groupingValue() {
+        return 401;
+    }
 }

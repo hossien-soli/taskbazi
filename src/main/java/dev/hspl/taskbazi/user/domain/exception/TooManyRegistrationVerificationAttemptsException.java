@@ -16,4 +16,9 @@ public class TooManyRegistrationVerificationAttemptsException extends DomainExce
     public String problemKey() {
         return "user.registration_verification.too_many_attempts";
     }
+
+    @Override
+    public short groupingValue() {
+        return 429;
+    }
 }

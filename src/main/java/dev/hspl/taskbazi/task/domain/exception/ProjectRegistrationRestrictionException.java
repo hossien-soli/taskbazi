@@ -26,4 +26,9 @@ public class ProjectRegistrationRestrictionException extends DomainException {
     public String problemKey() {
         return "project.registration.restriction";
     }
+
+    @Override
+    public short groupingValue() {
+        return 429;
+    }
 }

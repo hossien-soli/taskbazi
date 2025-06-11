@@ -23,4 +23,9 @@ public class RegistrationSessionRestrictionException extends DomainException {
     public String problemKey() {
         return "user.registration_session.restriction_problem";
     }
+
+    @Override
+    public short groupingValue() {
+        return 429;
+    }
 }

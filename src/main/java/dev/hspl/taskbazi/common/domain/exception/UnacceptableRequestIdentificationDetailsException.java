@@ -9,4 +9,9 @@ public class UnacceptableRequestIdentificationDetailsException extends DomainExc
     public String problemKey() {
         return "user.request_identification_details.unacceptable";
     }
+
+    @Override
+    public short groupingValue() {
+        return 400;
+    }
 }

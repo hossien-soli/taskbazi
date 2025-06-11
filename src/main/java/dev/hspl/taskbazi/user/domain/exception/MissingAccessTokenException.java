@@ -11,4 +11,9 @@ public class MissingAccessTokenException extends DomainException {
     public String problemKey() {
         return "user.access_token.missing";
     }
+
+    @Override
+    public short groupingValue() {
+        return 401;
+    }
 }
