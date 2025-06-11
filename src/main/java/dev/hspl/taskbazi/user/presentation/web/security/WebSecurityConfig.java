@@ -22,6 +22,11 @@ public class WebSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(requests -> {
+                    requests.requestMatchers(
+                            "/client/register/request",
+                            "/client/register/finalize"
+                    ).permitAll();
+
                     requests.anyRequest().authenticated();
                 })
                 .addFilterBefore(

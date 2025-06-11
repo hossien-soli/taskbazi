@@ -76,4 +76,15 @@ public class GlobalHttpExceptionHandler {
 
         return ResponseEntity.status(httpStatusCode).body(new ProblemMessage(localizedMessage, relatedData));
     }
+
+    @ExceptionHandler(InvalidUUIDAsStringException.class)
+    public ResponseEntity<ProblemMessage> handleInvalidUUIDException(InvalidUUIDAsStringException exception) {
+        String localizedMessage = messageSource.getMessage(
+                exception.problemKey(), null,
+                "something went wrong!",
+                LocaleContextHolder.getLocale()
+        );
+
+        return ResponseEntity.status(exception.groupingValue()).body(new ProblemMessage(localizedMessage, null));
+    }
 }
