@@ -1,9 +1,9 @@
-package dev.hspl.taskbazi.common.presentation.exception;
+package dev.hspl.taskbazi.common.presentation.web;
 
 import dev.hspl.taskbazi.common.domain.exception.ProblemAware;
 
-public class InvalidUUIDException extends RuntimeException implements ProblemAware {
-    public InvalidUUIDException() {
+public class InvalidUUIDAsStringException extends RuntimeException implements ProblemAware {
+    public InvalidUUIDAsStringException() {
         super("one plain string uuid provided by user is invalid!");
     }
 

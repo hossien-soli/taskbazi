@@ -4,7 +4,8 @@ import dev.hspl.taskbazi.common.domain.exception.MissingRequestClientIdentifierE
 
 // usually = ip address
 // it should be unique but allow some flexibility -> RequestClientUniqueIdentifier
-// be careful with reverse proxies like nginx(same ip comes to application)
+// be careful with reverse proxies like nginx(same ip)
+// for http requests consider using HttpRemoteAddressResolver
 
 public record RequestClientIdentifier(String value) {
     public RequestClientIdentifier {
