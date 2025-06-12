@@ -34,7 +34,7 @@ import java.util.*;
 
 @Component
 @RequiredArgsConstructor
-public class ProjectModuleDomainNotificationEventListener {
+public class TaskModuleRelatedNotificationListener {
     private final NotificationRequestHandler notificationRequestHandler;
     private final NotificationBroadcaster notificationBroadcaster;
     private final UserEmailAddressResolverAPI emailAddressResolver;

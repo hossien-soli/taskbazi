@@ -8,6 +8,8 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+// don't set length for string field in @Column(only the actual database should set length)
+
 @Entity(name = "Task")
 @Table(name = "tasks")
 @Getter
@@ -30,7 +32,13 @@ public class TaskJPAEntity {
     @Column(nullable = true, name = "assigned_to", columnDefinition = "UUID")
     private UUID assignedToUserId; // null when user is deleted
 
-    @Column(nullable = false, name = "title", length = 45)
+    @Column(nullable = false, name = "ab_full_name")
+    private String assignedByUserFullName;
+
+    @Column(nullable = false, name = "at_full_name")
+    private String assignedToUserFullName;
+
+    @Column(nullable = false, name = "title")
     private String title;
 
     @Column(nullable = true, name = "description", columnDefinition = "text")

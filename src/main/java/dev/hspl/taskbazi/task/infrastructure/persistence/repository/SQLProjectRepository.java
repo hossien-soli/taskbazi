@@ -4,7 +4,7 @@ import dev.hspl.taskbazi.common.domain.value.UserId;
 import dev.hspl.taskbazi.task.domain.entity.Project;
 import dev.hspl.taskbazi.task.domain.repository.ProjectRepository;
 import dev.hspl.taskbazi.task.domain.value.ProjectId;
-import dev.hspl.taskbazi.task.infrastructure.persistence.ProjectModulePersistenceMapper;
+import dev.hspl.taskbazi.task.infrastructure.persistence.TaskModulePersistenceMapper;
 import dev.hspl.taskbazi.task.infrastructure.persistence.repository.jpa.ProjectJPARepository;
 import dev.hspl.taskbazi.task.infrastructure.persistence.repository.jpa.ProjectUserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ import java.util.Optional;
 public class SQLProjectRepository implements ProjectRepository {
     private final ProjectJPARepository jpaRepository;
     private final ProjectUserRepository userAwareRepository;
-    private final ProjectModulePersistenceMapper mapper;
+    private final TaskModulePersistenceMapper mapper;
 
     @Override
     public Optional<LocalDateTime> getLastProjectRegistrationOfUser(UserId userId) {

@@ -23,7 +23,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 
 @Component
 @RequiredArgsConstructor
-public class UserModuleDomainNotificationEventListener {
+public class UserModuleRelatedNotificationListener {
     private final NotificationRequestHandler notificationRequestHandler;
 
     @TransactionalEventListener(fallbackExecution = true, phase = TransactionPhase.AFTER_COMMIT)

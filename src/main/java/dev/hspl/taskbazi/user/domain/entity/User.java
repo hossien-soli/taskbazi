@@ -1,7 +1,9 @@
 package dev.hspl.taskbazi.user.domain.entity;
 
 import dev.hspl.taskbazi.common.domain.DomainAggregateRoot;
+import dev.hspl.taskbazi.common.domain.event.DomainEvent;
 import dev.hspl.taskbazi.common.domain.event.DomainNotificationRequestEvent;
+import dev.hspl.taskbazi.common.domain.event.UserFullNameUpdatedDomainEvent;
 import dev.hspl.taskbazi.common.domain.value.*;
 import dev.hspl.taskbazi.common.domain.event.ClientRegisteredDomainEvent;
 import dev.hspl.taskbazi.user.domain.exception.PasswordMismatchException;
@@ -16,7 +18,7 @@ import java.time.LocalDateTime;
 @Getter
 public class User extends DomainAggregateRoot implements UniversalUser {
     private final UserId id;
-    private UserFullName fullName;
+    private UserFullName fullName; // fire UserFullNameUpdatedDomainEvent on edit for notifying task module
     private EmailAddress emailAddress;
     private Username username;
     private ProtectedPassword password;
@@ -121,6 +123,24 @@ public class User extends DomainAggregateRoot implements UniversalUser {
     @Override
     public UserRole userRole() {
         return this.role;
+    }
+
+    public void changeFullName(
+            LocalDateTime currentDateTime,
+            UserFullName newFullName
+    ) {
+        DomainEvent updateEvent = new UserFullNameUpdatedDomainEvent(
+                currentDateTime,
+                this.id,
+                this.role,
+                this.fullName.value(),
+                newFullName.value(),
+                this.version
+        ); // task module need this event for updating itself!!
+
+        registerDomainEvent(updateEvent);
+
+        this.fullName = newFullName;
     }
 
     public void changePassword(

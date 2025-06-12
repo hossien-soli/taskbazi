@@ -34,6 +34,7 @@ create type TaskStatus as enum('ASSIGNED','ACCEPTED','IN_PROGRESS','COMPLETED','
 
 -- assigned_by(user_id) can be null but it is not optional and on task creation it should set
 -- assigned_to(user_id) can be null but it is not optional and on task creation it should set
+-- full_name of users can NOT be null(keep after user leave the project)
 -- we should not delete task if user has been deleted!!! they should keep in the project history
 create table tasks
 (
@@ -41,6 +42,8 @@ create table tasks
     project_id UUID not null references projects(id) on delete cascade on update cascade,
     assigned_by UUID null references users(id) on delete set null on update cascade,
     assigned_to UUID null references users(id) on delete set null on update cascade,
+    ab_full_name UserFullName not null,
+    at_full_name UserFullName not null,
     title varchar(45) not null,
     description text null,
     priority TaskPriority not null,

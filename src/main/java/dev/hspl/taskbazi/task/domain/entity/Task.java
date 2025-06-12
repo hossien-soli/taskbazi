@@ -29,9 +29,12 @@ public class Task extends DomainAggregateRoot {
 
     private final UserId assignedBy; // not-optional but can be null if the user leave the project or deleted
     private final UserId assignedTo; // not-optional but can be null if the user leave the project or deleted
-    // deletion or leave of user cannot cause task deletion just the value set to null!!
+    // deletion or leave of user cannot cause task deletion just the value should set to null!!
 
-    // maybe we need to add assignedBy & assignedTo full names to this entity
+    private final String assignedByFullName; // not-editable by domain layer(read only field for domain)
+    private final String assignedToFullName; // not-editable by domain layer(read only field for domain)
+    // infrastructure should listen to UserFullNameUpdatedDomainEvent(from user module) and update these values(consistency between modules)
+    // these fullName fields can not be null unlike userIds(when user leave the project it fullName should keep here)
 
     private TaskTitle title;
     private Description description; // optional-nullable
@@ -59,6 +62,8 @@ public class Task extends DomainAggregateRoot {
             ProjectId projectId,
             UserId assignedBy,
             UserId assignedTo,
+            String assignedByFullName,
+            String assignedToFullName,
             TaskTitle title,
             Description description,
             TaskPriority priority,
@@ -79,6 +84,8 @@ public class Task extends DomainAggregateRoot {
         this.projectId = projectId;
         this.assignedBy = assignedBy;
         this.assignedTo = assignedTo;
+        this.assignedByFullName = assignedByFullName;
+        this.assignedToFullName = assignedToFullName;
         this.title = title;
         this.description = description;
         this.priority = priority;
@@ -127,6 +134,7 @@ public class Task extends DomainAggregateRoot {
         }
 
         Task result = new Task(newTaskId, projectId, assignerUser.universalUserId(), targetUser.universalUserId(),
+                assignerUser.universalUserFullName(), targetUser.universalUserFullName(),
                 title, description, priority, newTaskStatus, dueDateTime, null, null, currentDateTime, acceptedAt,
                 null, null, null, null, null, null);
 
@@ -147,6 +155,8 @@ public class Task extends DomainAggregateRoot {
             ProjectId projectId,
             UserId assignedBy,
             UserId assignedTo,
+            String assignedByFullName,
+            String assignedToFullName,
             TaskTitle title,
             Description description,
             TaskPriority priority,
@@ -163,7 +173,8 @@ public class Task extends DomainAggregateRoot {
             LocalDateTime verifiedAt,
             Integer version
     ) {
-        return new Task(id, projectId, assignedBy, assignedTo, title, description, priority, status, dueDateTime, rejectReason,
+        return new Task(id, projectId, assignedBy, assignedTo, assignedByFullName, assignedToFullName,
+                title, description, priority, status, dueDateTime, rejectReason,
                 cancelReason, assignedAt, acceptedAt, startedAt, completedAt, cancelledAt, rejectedAt, verifiedAt, version);
     }
 

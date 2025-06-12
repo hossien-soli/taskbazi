@@ -21,7 +21,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class ProjectModulePersistenceMapper {
+public class TaskModulePersistenceMapper {
     private final ProjectJPARepository projectJPARepository;
 
     public ProjectJPAEntity mapProjectToJPAEntity(Project project) {
@@ -125,6 +125,8 @@ public class ProjectModulePersistenceMapper {
                 .project(projectJPARepository.getReferenceById(task.getProjectId().value()))
                 .assignedByUserId(task.getAssignedBy() != null ? task.getAssignedBy().value() : null)
                 .assignedToUserId(task.getAssignedTo() != null ? task.getAssignedTo().value() : null)
+                .assignedByUserFullName(task.getAssignedByFullName())
+                .assignedToUserFullName(task.getAssignedToFullName())
                 .title(task.getTitle().value())
                 .description(task.getDescription() != null ? task.getDescription().value() : null)
                 .priority(task.getPriority())
