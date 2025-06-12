@@ -1,10 +1,10 @@
-package dev.hspl.taskbazi.user.presentation.web.controller;
+package dev.hspl.taskbazi.user.presentation.web;
 
 import dev.hspl.taskbazi.common.domain.value.EmailAddress;
 import dev.hspl.taskbazi.common.domain.value.RequestClientIdentifier;
 import dev.hspl.taskbazi.common.domain.value.Username;
 import dev.hspl.taskbazi.common.presentation.web.ControllerUtils;
-import dev.hspl.taskbazi.common.presentation.web.HttpRemoteAddressResolver;
+import dev.hspl.taskbazi.common.presentation.web.component.HttpRemoteAddressResolver;
 import dev.hspl.taskbazi.user.application.usage.ClientRegistrationFinalizeUseCase;
 import dev.hspl.taskbazi.user.application.usage.ClientRegistrationRequestUseCase;
 import dev.hspl.taskbazi.user.application.usage.cmd.ClientRegistrationFinalizeCommand;
@@ -14,8 +14,8 @@ import dev.hspl.taskbazi.user.application.usage.result.ClientRegistrationRequest
 import dev.hspl.taskbazi.user.domain.value.PlainPassword;
 import dev.hspl.taskbazi.user.domain.value.PlainVerificationCode;
 import dev.hspl.taskbazi.user.domain.value.UserFullName;
-import dev.hspl.taskbazi.user.presentation.web.controller.dto.RegistrationFinalizeHttpRequest;
-import dev.hspl.taskbazi.user.presentation.web.controller.dto.RegistrationRequestHttpRequest;
+import dev.hspl.taskbazi.user.presentation.web.dto.RegistrationFinalizeHttpRequest;
+import dev.hspl.taskbazi.user.presentation.web.dto.RegistrationRequestHttpRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

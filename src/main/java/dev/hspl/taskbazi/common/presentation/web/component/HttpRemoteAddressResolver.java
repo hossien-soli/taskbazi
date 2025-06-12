@@ -1,4 +1,4 @@
-package dev.hspl.taskbazi.common.presentation.web;
+package dev.hspl.taskbazi.common.presentation.web.component;
 
 import jakarta.servlet.http.HttpServletRequest;
 

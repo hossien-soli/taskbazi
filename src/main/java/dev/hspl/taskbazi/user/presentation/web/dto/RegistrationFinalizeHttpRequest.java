@@ -1,4 +1,4 @@
-package dev.hspl.taskbazi.user.presentation.web.controller.dto;
+package dev.hspl.taskbazi.user.presentation.web.dto;
 
 // needed for translating http request to ClientRegistrationFinalizeCommand
 // for having a single point to editing business rules like max length for an email-address...

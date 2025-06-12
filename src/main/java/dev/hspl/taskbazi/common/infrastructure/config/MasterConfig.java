@@ -1,5 +1,6 @@
 package dev.hspl.taskbazi.common.infrastructure.config;
 
+import nl.basjes.parse.useragent.UserAgentAnalyzer;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,4 +29,11 @@ public class MasterConfig {
         result.setUseCodeAsDefaultMessage(true);
         return result;
     }
+
+//    @Bean
+//    public UserAgentAnalyzer userAgentAnalyzer() {
+//        return UserAgentAnalyzer.newBuilder()
+//                .withCache(1000)
+//                .build();
+//    }
 }

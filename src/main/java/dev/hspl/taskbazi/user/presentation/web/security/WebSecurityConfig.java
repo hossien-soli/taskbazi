@@ -24,7 +24,9 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(requests -> {
                     requests.requestMatchers(
                             "/client/register/request",
-                            "/client/register/finalize"
+                            "/client/register/finalize",
+                            "/client/login/new",
+                            "/client/login/follow"
                     ).permitAll();
 
                     requests.anyRequest().authenticated();

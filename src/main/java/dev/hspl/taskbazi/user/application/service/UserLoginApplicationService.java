@@ -90,7 +90,11 @@ public class UserLoginApplicationService implements UserLoginUseCase, TokenRotat
                 plainActualRefreshToken
         );
 
-        return new UserLoginResult(PresentedRefreshToken.buildForUser(elements), result.accessToken());
+        return new UserLoginResult(
+                PresentedRefreshToken.buildForUser(elements),
+                result.accessToken(),
+                user
+        );
     }
 
     @Override

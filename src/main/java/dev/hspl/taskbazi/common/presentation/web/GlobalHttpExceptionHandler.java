@@ -6,6 +6,7 @@ import dev.hspl.taskbazi.task.domain.exception.ProjectRegistrationRestrictionExc
 import dev.hspl.taskbazi.task.domain.exception.TooManyProjectInstanceException;
 import dev.hspl.taskbazi.user.domain.exception.RegistrationSessionRestrictionException;
 import dev.hspl.taskbazi.user.domain.exception.TooManyActiveLoginSessionException;
+import dev.hspl.taskbazi.user.presentation.web.UserRoleMismatchTokenRotationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -79,6 +80,17 @@ public class GlobalHttpExceptionHandler {
 
     @ExceptionHandler(InvalidUUIDAsStringException.class)
     public ResponseEntity<ProblemMessage> handleInvalidUUIDException(InvalidUUIDAsStringException exception) {
+        String localizedMessage = messageSource.getMessage(
+                exception.problemKey(), null,
+                "something went wrong!",
+                LocaleContextHolder.getLocale()
+        );
+
+        return ResponseEntity.status(exception.groupingValue()).body(new ProblemMessage(localizedMessage, null));
+    }
+
+    @ExceptionHandler(UserRoleMismatchTokenRotationException.class)
+    public ResponseEntity<ProblemMessage> handleURMTRException(UserRoleMismatchTokenRotationException exception) {
         String localizedMessage = messageSource.getMessage(
                 exception.problemKey(), null,
                 "something went wrong!",
