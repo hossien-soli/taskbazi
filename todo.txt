@@ -1,0 +1,3 @@
+
+remove length attribute from @Column annotation in all jpa entities in the project!!!
+(preventing future bugs by setting length only in the database ddl statements!`create table`)
