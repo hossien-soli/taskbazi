@@ -1,5 +1,8 @@
 package dev.hspl.taskbazi.common.presentation.web;
 
+import dev.hspl.taskbazi.common.domain.value.UniversalUser;
+import org.springframework.security.core.Authentication;
+
 import java.util.UUID;
 
 public abstract class ControllerUtils {
@@ -13,5 +16,13 @@ public abstract class ControllerUtils {
         } catch (Exception exception) {
             throw new InvalidUUIDAsStringException();
         }
+    }
+
+    protected UniversalUser validateAuthentication(Authentication authentication) {
+        if (authentication.getPrincipal() instanceof UniversalUser authenticatedUser) {
+            return authenticatedUser;
+        }
+
+        throw new UnsupportedAuthenticationSecurityException();
     }
 }

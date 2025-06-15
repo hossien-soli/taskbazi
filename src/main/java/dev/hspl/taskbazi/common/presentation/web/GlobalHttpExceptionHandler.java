@@ -99,4 +99,15 @@ public class GlobalHttpExceptionHandler {
 
         return ResponseEntity.status(exception.groupingValue()).body(new ProblemMessage(localizedMessage, null));
     }
+
+    @ExceptionHandler(UnsupportedAuthenticationSecurityException.class)
+    public ResponseEntity<ProblemMessage> handleUASException(UnsupportedAuthenticationSecurityException exception) {
+        String localizedMessage = messageSource.getMessage(
+                exception.problemKey(), null,
+                "something went wrong!",
+                LocaleContextHolder.getLocale()
+        );
+
+        return ResponseEntity.status(exception.groupingValue()).body(new ProblemMessage(localizedMessage, null));
+    }
 }
