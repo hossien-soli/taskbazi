@@ -1,6 +1,7 @@
 package dev.hspl.taskbazi.common.presentation.web;
 
 import dev.hspl.taskbazi.common.application.exception.ApplicationException;
+import dev.hspl.taskbazi.common.application.exception.EntityVersionConflictException;
 import dev.hspl.taskbazi.common.domain.exception.DomainException;
 import dev.hspl.taskbazi.task.domain.exception.ProjectRegistrationRestrictionException;
 import dev.hspl.taskbazi.task.domain.exception.TooManyProjectInstanceException;
@@ -58,7 +59,7 @@ public class GlobalHttpExceptionHandler {
                 LocaleContextHolder.getLocale()
         );
 
-        return ResponseEntity.status(httpStatusCode).body(new ProblemMessage(localizedMessage, relatedData));
+        return ResponseEntity.status(httpStatusCode).body(new ProblemMessage(problemKey, localizedMessage, relatedData));
     }
 
     @ExceptionHandler(ApplicationException.class)
@@ -69,45 +70,55 @@ public class GlobalHttpExceptionHandler {
         Object[] args = null;
         Map<String, Object> relatedData = null;
 
+        if (exception instanceof EntityVersionConflictException mappedException) {
+            relatedData = Map.of("actualEntityVersion",mappedException.getActualVersion());
+        }
+
         String localizedMessage = messageSource.getMessage(
                 problemKey, args,
                 "something went wrong!",
                 LocaleContextHolder.getLocale()
         );
 
-        return ResponseEntity.status(httpStatusCode).body(new ProblemMessage(localizedMessage, relatedData));
+        return ResponseEntity.status(httpStatusCode).body(new ProblemMessage(problemKey, localizedMessage, relatedData));
     }
 
     @ExceptionHandler(InvalidUUIDAsStringException.class)
     public ResponseEntity<ProblemMessage> handleInvalidUUIDException(InvalidUUIDAsStringException exception) {
+        String problemKey = exception.problemKey();
+
         String localizedMessage = messageSource.getMessage(
-                exception.problemKey(), null,
+                problemKey, null,
                 "something went wrong!",
                 LocaleContextHolder.getLocale()
         );
 
-        return ResponseEntity.status(exception.groupingValue()).body(new ProblemMessage(localizedMessage, null));
+        return ResponseEntity.status(exception.groupingValue()).body(new ProblemMessage(problemKey, localizedMessage, null));
     }
 
     @ExceptionHandler(UserRoleMismatchTokenRotationException.class)
     public ResponseEntity<ProblemMessage> handleURMTRException(UserRoleMismatchTokenRotationException exception) {
+        String problemKey = exception.problemKey();
+
         String localizedMessage = messageSource.getMessage(
-                exception.problemKey(), null,
+                problemKey, null,
                 "something went wrong!",
                 LocaleContextHolder.getLocale()
         );
 
-        return ResponseEntity.status(exception.groupingValue()).body(new ProblemMessage(localizedMessage, null));
+        return ResponseEntity.status(exception.groupingValue()).body(new ProblemMessage(problemKey, localizedMessage, null));
     }
 
     @ExceptionHandler(UnsupportedAuthenticationSecurityException.class)
     public ResponseEntity<ProblemMessage> handleUASException(UnsupportedAuthenticationSecurityException exception) {
+        String problemKey = exception.problemKey();
+
         String localizedMessage = messageSource.getMessage(
-                exception.problemKey(), null,
+                problemKey, null,
                 "something went wrong!",
                 LocaleContextHolder.getLocale()
         );
 
-        return ResponseEntity.status(exception.groupingValue()).body(new ProblemMessage(localizedMessage, null));
+        return ResponseEntity.status(exception.groupingValue()).body(new ProblemMessage(problemKey, localizedMessage, null));
     }
 }

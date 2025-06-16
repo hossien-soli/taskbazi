@@ -1,7 +1,7 @@
 package dev.hspl.taskbazi.task.application.service;
 
 import dev.hspl.taskbazi.common.application.GlobalDomainEventPublisher;
-import dev.hspl.taskbazi.common.application.exception.ResourceVersionConflictException;
+import dev.hspl.taskbazi.common.application.exception.EntityVersionConflictException;
 import dev.hspl.taskbazi.common.application.TimeProvider;
 import dev.hspl.taskbazi.common.application.UUIDGenerator;
 import dev.hspl.taskbazi.common.domain.value.UniversalUser;
@@ -76,7 +76,7 @@ public class ProjectManagingApplicationService implements RegisterProjectUseCase
         // check version with client
         boolean versionMatch = Objects.equals(project.getVersion(),command.clientResourceVersion());
         if (!versionMatch) {
-            throw new ResourceVersionConflictException();
+            throw new EntityVersionConflictException(project.getVersion());
         }
 
         domainService.tryStartProject(

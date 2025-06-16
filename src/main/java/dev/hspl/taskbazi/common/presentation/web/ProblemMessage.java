@@ -5,7 +5,8 @@ import org.springframework.lang.Nullable;
 import java.util.Map;
 
 public record ProblemMessage(
-        String message,
+        String problemKey,
+        String localizedMessage,
         @Nullable Map<String, Object> data
 ) {
 }
