@@ -1,4 +1,4 @@
 package dev.hspl.taskbazi.task.application.repository;
 
-public interface ProjectQueryRepository {
+public interface TaskFetchRepository {
 }

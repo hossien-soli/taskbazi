@@ -2,6 +2,7 @@ package dev.hspl.taskbazi.user.application.usage;
 
 import dev.hspl.taskbazi.user.application.usage.cmd.ClientRegistrationRequestCommand;
 import dev.hspl.taskbazi.user.application.usage.result.ClientRegistrationRequestResult;
+import org.springframework.lang.NonNull;
 
 // Possible predictable exceptions in this use-case:
 // InvalidApplicationCommandException
@@ -13,5 +14,5 @@ import dev.hspl.taskbazi.user.application.usage.result.ClientRegistrationRequest
 // MissingProtectedPasswordException, MissingProtectedVerificationCodeException
 
 public interface ClientRegistrationRequestUseCase {
-    ClientRegistrationRequestResult execute(ClientRegistrationRequestCommand command);
+    ClientRegistrationRequestResult execute(@NonNull ClientRegistrationRequestCommand command);
 }

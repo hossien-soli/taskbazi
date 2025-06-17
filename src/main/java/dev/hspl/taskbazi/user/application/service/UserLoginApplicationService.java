@@ -24,6 +24,7 @@ import dev.hspl.taskbazi.user.domain.repository.UserRepository;
 import dev.hspl.taskbazi.user.domain.service.UserLoginService;
 import dev.hspl.taskbazi.user.domain.value.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,7 +47,7 @@ public class UserLoginApplicationService implements UserLoginUseCase, TokenRotat
     private static final int REFRESH_TOKEN_SCALE = 45;
 
     @Override
-    public UserLoginResult execute(UserLoginCommand command) {
+    public UserLoginResult execute(@NonNull UserLoginCommand command) {
         UserRole roleToLogin = command.roleToLogin();
 
         UsernameOrEmailAddress usernameOrEmailAddress = command.usernameOrEmailAddress();
@@ -98,7 +99,7 @@ public class UserLoginApplicationService implements UserLoginUseCase, TokenRotat
     }
 
     @Override
-    public TokenRotationResult execute(TokenRotationCommand command) {
+    public TokenRotationResult execute(@NonNull TokenRotationCommand command) {
         PresentedRefreshTokenElements elements = command.presentedRefreshToken().getOrParseElements();
         UserRole userRole = elements.userRole();
         UUID refreshTokenId = elements.refreshTokenId();

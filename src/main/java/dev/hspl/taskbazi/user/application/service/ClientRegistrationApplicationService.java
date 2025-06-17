@@ -24,6 +24,7 @@ import dev.hspl.taskbazi.user.domain.value.PlainPassword;
 import dev.hspl.taskbazi.user.domain.value.PlainVerificationCode;
 import dev.hspl.taskbazi.user.domain.value.RegistrationVerificationResult;
 import lombok.RequiredArgsConstructor;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,7 +45,7 @@ public class ClientRegistrationApplicationService implements ClientRegistrationR
     private final GlobalDomainEventPublisher domainEventPublisher;
 
     @Override
-    public ClientRegistrationRequestResult execute(ClientRegistrationRequestCommand command) {
+    public ClientRegistrationRequestResult execute(@NonNull ClientRegistrationRequestCommand command) {
         PlainPassword password = command.password();
         PlainPassword passwordConfirmation = command.passwordConfirmation();
         boolean matches = password.equals(passwordConfirmation);
@@ -89,7 +90,7 @@ public class ClientRegistrationApplicationService implements ClientRegistrationR
     }
 
     @Override
-    public ClientRegistrationFinalizeResult execute(ClientRegistrationFinalizeCommand command) {
+    public ClientRegistrationFinalizeResult execute(@NonNull ClientRegistrationFinalizeCommand command) {
         UUID sessionId = command.registrationSessionId();
         PlainVerificationCode userVerificationCode = command.verificationCode();
 

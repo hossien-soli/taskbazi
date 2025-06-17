@@ -20,6 +20,7 @@ import dev.hspl.taskbazi.task.domain.repository.ProjectRepository;
 import dev.hspl.taskbazi.task.domain.service.ProjectManagingService;
 import dev.hspl.taskbazi.task.domain.value.ProjectId;
 import lombok.RequiredArgsConstructor;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,7 +38,10 @@ public class ProjectManagingApplicationService implements RegisterProjectUseCase
     private final ProjectRepository projectRepository;
 
     @Override
-    public void execute(UniversalUser authenticatedUser, RegisterProjectCommand command) {
+    public void execute(
+            @NonNull UniversalUser authenticatedUser,
+            @NonNull RegisterProjectCommand command
+    ) {
         boolean checkAccount = authenticatedUser.userRole().equals(UserRole.CLIENT) && authenticatedUser.isAccountActive();
         if (!checkAccount) {
             throw new UnsupportedAccountException();
@@ -63,7 +67,10 @@ public class ProjectManagingApplicationService implements RegisterProjectUseCase
     }
 
     @Override
-    public void execute(UniversalUser authenticatedUser, StartProjectCommand command) {
+    public void execute(
+            @NonNull UniversalUser authenticatedUser,
+            @NonNull StartProjectCommand command
+    ) {
         boolean checkAccount = authenticatedUser.userRole().equals(UserRole.CLIENT) && authenticatedUser.isAccountActive();
         if (!checkAccount) {
             throw new UnsupportedAccountException();
@@ -92,7 +99,10 @@ public class ProjectManagingApplicationService implements RegisterProjectUseCase
     }
 
     @Override
-    public void execute(UniversalUser authenticatedUser, CloseProjectCommand command) {
+    public void execute(
+            @NonNull UniversalUser authenticatedUser,
+            @NonNull CloseProjectCommand command
+    ) {
 
     }
 }
