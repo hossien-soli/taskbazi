@@ -1,19 +1,19 @@
 package dev.hspl.taskbazi.task.application.service;
 
 import dev.hspl.taskbazi.common.application.GlobalDomainEventPublisher;
-import dev.hspl.taskbazi.common.application.exception.EntityVersionConflictException;
 import dev.hspl.taskbazi.common.application.TimeProvider;
 import dev.hspl.taskbazi.common.application.UUIDGenerator;
+import dev.hspl.taskbazi.common.application.exception.EntityVersionConflictException;
+import dev.hspl.taskbazi.common.domain.exception.UnsupportedAccountException;
 import dev.hspl.taskbazi.common.domain.value.UniversalUser;
 import dev.hspl.taskbazi.common.domain.value.UserId;
 import dev.hspl.taskbazi.common.domain.value.UserRole;
 import dev.hspl.taskbazi.task.application.exception.InvalidProjectIdException;
 import dev.hspl.taskbazi.task.application.usage.write.CloseProjectUseCase;
-import dev.hspl.taskbazi.task.application.usage.write.StartProjectUseCase;
 import dev.hspl.taskbazi.task.application.usage.write.RegisterProjectUseCase;
+import dev.hspl.taskbazi.task.application.usage.write.StartProjectUseCase;
 import dev.hspl.taskbazi.task.application.usage.write.cmd.CloseProjectCommand;
 import dev.hspl.taskbazi.task.application.usage.write.cmd.RegisterProjectCommand;
-import dev.hspl.taskbazi.common.domain.exception.UnsupportedAccountException;
 import dev.hspl.taskbazi.task.application.usage.write.cmd.StartProjectCommand;
 import dev.hspl.taskbazi.task.domain.entity.Project;
 import dev.hspl.taskbazi.task.domain.repository.ProjectRepository;
@@ -74,9 +74,11 @@ public class ProjectManagingApplicationService implements RegisterProjectUseCase
         // maybe we should check the ownership of project here in query(more performance)
 
         // check version with client
-        boolean versionMatch = Objects.equals(project.getVersion(),command.clientResourceVersion());
-        if (!versionMatch) {
-            throw new EntityVersionConflictException(project.getVersion());
+        if (command.isEntityVersionProvided()) {
+            boolean versionMatch = Objects.equals(project.getVersion(), command.clientEntityVersion());
+            if (!versionMatch) {
+                throw new EntityVersionConflictException(project.getVersion());
+            }
         }
 
         domainService.tryStartProject(

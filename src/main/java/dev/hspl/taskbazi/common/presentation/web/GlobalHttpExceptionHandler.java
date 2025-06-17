@@ -48,8 +48,8 @@ public class GlobalHttpExceptionHandler {
             long seconds = mappedException.getSecondsToNextAllowedRegistration();
             args = new Object[]{seconds <= 60 ? seconds + "s" : Duration.ofSeconds(seconds).toMinutes() + "m"};
             relatedData = Map.of(
-                    "registrationLimitationDelaySeconds",mappedException.getRegistrationLimitationDelaySeconds(),
-                    "secondsToNextAllowedRegistration",mappedException.getSecondsToNextAllowedRegistration()
+                    "registrationLimitationDelaySeconds", mappedException.getRegistrationLimitationDelaySeconds(),
+                    "secondsToNextAllowedRegistration", mappedException.getSecondsToNextAllowedRegistration()
             );
         }
 
@@ -71,7 +71,7 @@ public class GlobalHttpExceptionHandler {
         Map<String, Object> relatedData = null;
 
         if (exception instanceof EntityVersionConflictException mappedException) {
-            relatedData = Map.of("actualEntityVersion",mappedException.getActualVersion());
+            relatedData = Map.of("actualEntityVersion", mappedException.getActualVersion());
         }
 
         String localizedMessage = messageSource.getMessage(
@@ -121,4 +121,7 @@ public class GlobalHttpExceptionHandler {
 
         return ResponseEntity.status(exception.groupingValue()).body(new ProblemMessage(problemKey, localizedMessage, null));
     }
+
+    // TODO: handle standard spring mvc exception and convert its responses to ProblemMessage standard problem response
+    // like: MethodArgumentTypeMismatchException, MissingRequestHeaderException, TypeMismatchException, HttpMessageNotReadableException
 }

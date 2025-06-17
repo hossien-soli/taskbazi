@@ -29,6 +29,12 @@ public class WebSecurityConfig {
                             "/client/login/follow"
                     ).permitAll();
 
+                    requests.requestMatchers(
+                            "/client/project/register",
+                            "/client/project/*/start"
+                    ).hasRole("CLIENT"); // this role also checked in the domain layer!!
+                    // maybe we should remove this role check for respecting the domain rules!!!
+
                     requests.anyRequest().authenticated();
                 })
                 .addFilterBefore(

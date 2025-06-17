@@ -8,12 +8,11 @@ import lombok.Getter;
 // Domain-Repository implementations (like JPA) should increment the version after each update of entity/model/resource!!!
 
 // This situation arises when two authenticated users(client-side) concurrently attempt to modify the same resource.
-// proper Http status code: 409
+// proper Http status code: 412
 // This error should be handled by front-end clients for users (Please refresh the resource to continue)
 
-// We don't use ETag and If-Match or standard Precondition headers!
-// we use a custom header for getting version as a metadata from the client(X-Entity-Version)
-// and sending version in the response json body (Not ETag)
+// the actual check happens only when client-held entity version is provided by clients
+// the client-held entity version can be provided using If-Match http standard header
 
 @Getter
 public class EntityVersionConflictException extends ApplicationException {
@@ -31,6 +30,6 @@ public class EntityVersionConflictException extends ApplicationException {
 
     @Override
     public short groupingValue() {
-        return 409;
+        return 412;
     }
 }
