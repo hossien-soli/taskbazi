@@ -12,7 +12,7 @@
   - Application layer (use cases)
   - Domain layer (business logic)
   - Infrastructure layer (implementations)
-- Comprehensive **Dependency Inversion** principle implementation
+- Comprehensive **Dependency Inversion** principle implementation(Everything is customizable)
 - **Outbox Pattern** for reliable messaging:
   - Email delivery system
   - Notification dispatching
