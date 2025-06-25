@@ -136,12 +136,12 @@
   - Also use these load balancers or reverse proxies for ssl termination and rate-limiting(security)
 
 #### Replicating modular-monolithic application:
-- I think the best choice is custom systemd or supervisor service for each instance/replica of spring application on two or three linux server node
+- If you don't want process isolation security like containers I think the best choice is custom systemd or supervisor service for each instance/replica of spring application on two or three linux server node
 - Implement a health check for each instance/replica using a watchdog script with a cron job or systemd timers.
 - Replicate PostgreSQL database using its built-in features like WAL streaming(the best method for this application).
 - Use NGINX or an external load balancer(recommended) as a single entry point to the application, distributing traffic/load across multiple Spring app instances.
 - Use NGINX for SSL termination, rate limiting, serving static files, caching, and other security-related tasks.
-- Alternatively, using simple Docker containers without Swarm mode might be preferable, since Docker provides automatic restart on crashes and built-in health check managing.
+- Alternatively, using simple Docker containers without Swarm mode might be preferable due to process isolation security and containerization features.
 
 ## Business/Domain Features
 - Users can register with a valid email address through verification (using a verification code sent to the user's email)
