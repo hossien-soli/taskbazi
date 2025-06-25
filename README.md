@@ -113,12 +113,12 @@
   - Consider service replication & load balancing(on swarm cluster)
 
 - **Linux Systemd/Supervisor**:
-  - Or Run each microservice as a linux systemd service on a linux-server or node(api gateway on public/master node)
+  - Or Run each microservice as a linux systemd service(with strict process isolation using linux kernel features) on a linux-server or node(api gateway on public/master node)
   - Implement health checks via:
     - Cron jobs
     - Systemd timers
   - Private network configuration for private microservices(inter-service communication)
-  - Of course, you can implement replication without docker
+  - Of course, you can implement replication without docker or kubernetes
 
 - **Spring-application Replication(Stateless)**:
   - just copy/clone same spring application(or container) in multiple node of the cluster using swarm or other methods
@@ -142,6 +142,7 @@
 - Use NGINX or an external load balancer(recommended) as a single entry point to the application, distributing traffic/load across multiple Spring app instances.
 - Use NGINX for SSL termination, rate limiting, serving static files, caching, and other security-related tasks.
 - Alternatively, using simple Docker containers without Swarm mode might be preferable due to process isolation security and containerization features.
+- Of course we can isolate processes without container or docker using linux kernel features
 
 ## Business/Domain Features
 - Users can register with a valid email address through verification (using a verification code sent to the user's email)
