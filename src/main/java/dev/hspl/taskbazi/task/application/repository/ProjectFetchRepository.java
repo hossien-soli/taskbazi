@@ -2,7 +2,7 @@ package dev.hspl.taskbazi.task.application.repository;
 
 import dev.hspl.taskbazi.common.application.PaginationResult;
 import dev.hspl.taskbazi.common.domain.value.UserId;
-import dev.hspl.taskbazi.task.application.dto.read.MembershipProjectDTO;
+import dev.hspl.taskbazi.task.application.dto.MembershipProjectDTO;
 
 // user is always a client -> role=CLIENT
 

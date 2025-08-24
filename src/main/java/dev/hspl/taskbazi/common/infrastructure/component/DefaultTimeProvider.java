@@ -1,11 +1,11 @@
 package dev.hspl.taskbazi.common.infrastructure.component;
 
 import dev.hspl.taskbazi.common.application.TimeProvider;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
-@Service
+@Component
 public class DefaultTimeProvider implements TimeProvider {
     @Override
     public LocalDateTime currentDateTime() {

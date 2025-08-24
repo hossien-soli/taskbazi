@@ -1,4 +1,4 @@
-package dev.hspl.taskbazi.task.application.dto.read;
+package dev.hspl.taskbazi.task.application.dto;
 
 import java.time.LocalDateTime;
 

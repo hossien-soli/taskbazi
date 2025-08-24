@@ -78,7 +78,7 @@ public class ProjectManagingApplicationService implements RegisterProjectUseCase
 
         Project project = projectRepository.find(command.projectId())
                 .orElseThrow(InvalidProjectIdException::new);
-        // maybe we should check the ownership of project here in query(more performance)
+        // maybe we should check the ownership of project here in query(better performance)
 
         // check version with client
         if (command.isEntityVersionProvided()) {

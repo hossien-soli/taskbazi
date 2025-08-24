@@ -4,4 +4,5 @@ package dev.hspl.taskbazi.task.application.usage.read;
 // the authenticatedUser or requesterUser should be a member of project to fetch users of the project
 
 public interface FetchProjectUsersUseCase {
+
 }
