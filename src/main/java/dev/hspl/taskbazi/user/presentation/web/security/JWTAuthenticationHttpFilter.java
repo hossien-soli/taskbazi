@@ -42,7 +42,7 @@ public class JWTAuthenticationHttpFilter extends OncePerRequestFilter {
 
                     Authentication authResult = authenticationManager.authenticate(authRequest);
                     SecurityContext newContext = SecurityContextHolder.createEmptyContext();
-                    newContext.setAuthentication(authRequest);
+                    newContext.setAuthentication(authResult);
                     SecurityContextHolder.setContext(newContext);
                 } catch (AuthenticationException exception) {
                     // do nothing just let filter chain keep handling remaining filters
